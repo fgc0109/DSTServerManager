@@ -1,0 +1,29 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:DSTServerManager"
+                    xmlns:s="clr-namespace:System;assembly=mscorlib">
+
+    <s:String x:Key="SELECT_LANG">语言</s:String>
+    <s:String x:Key="CHINESE">中文</s:String>
+    <s:String x:Key="ENGLISH">English</s:String>
+
+    <s:String x:Key="GROUP_CLUSTER_SETTING">服务器集群设置</s:String>
+    <s:String x:Key="GROUP_CLUSTER_SERVERS">集群服务器列表</s:String>
+    <s:String x:Key="GROUP_CLUSTER_SERINFO">服务器信息列表</s:String>
+
+    <s:String x:Key="GAMEPLAY_GMMODE">游戏模式</s:String>
+    <s:String x:Key="GAMEPLAY_COUNTS">玩家数量</s:String>
+    <s:String x:Key="GAMEPLAY_CANPVP">玩家对战</s:String>
+    <s:String x:Key="GAMEPLAY_PAUSES">空置暂停</s:String>
+
+    <s:String x:Key="SAVESERVER_INDEXS">编号</s:String>
+    <s:String x:Key="SAVESERVER_FOLDER">文件夹名</s:String>
+    <s:String x:Key="SAVESERVER_SRNAME">服务器名</s:String>
+    <s:String x:Key="SAVESERVER_MASTER">主服务器</s:String>
+    <s:String x:Key="SAVESERVER_PORT_1">端口</s:String>
+    <s:String x:Key="SAVESERVER_PORT_2">Steam端口</s:String>
+    <s:String x:Key="SAVESERVER_PORT_3">Steam端口</s:String>
+    <s:String x:Key="SAVESERVER_SESSON">会话编号</s:String>
+    <s:String x:Key="SAVESERVER_CONNEC">世界连接</s:String>
+
+</ResourceDictionary>

@@ -1,0 +1,30 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"  
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:DSTServerManager"
+                    xmlns:s="clr-namespace:System;assembly=mscorlib">
+
+    <s:String x:Key="SELECT_LANG">Language</s:String>
+    <s:String x:Key="CHINESE">中文</s:String>
+    <s:String x:Key="ENGLISH">English</s:String>
+
+    <s:String x:Key="GROUP_CLUSTER_SETTING">Cluster Setting</s:String>
+    <s:String x:Key="GROUP_CLUSTER_SERVERS">Cluster Servers List</s:String>
+    <s:String x:Key="GROUP_CLUSTER_SERINFO">Servers Information List</s:String>
+
+    <s:String x:Key="GAMEPLAY_GMMODE">Mode</s:String>
+    <s:String x:Key="GAMEPLAY_COUNTS">Player</s:String>
+    <s:String x:Key="GAMEPLAY_CANPVP">PVP</s:String>
+    <s:String x:Key="GAMEPLAY_PAUSES">Pause</s:String>
+
+
+    <s:String x:Key="SAVESERVER_INDEXS">ID</s:String>
+    <s:String x:Key="SAVESERVER_FOLDER">Folder</s:String>
+    <s:String x:Key="SAVESERVER_SRNAME">Name</s:String>
+    <s:String x:Key="SAVESERVER_MASTER">Master</s:String>
+    <s:String x:Key="SAVESERVER_PORT_1">Port</s:String>
+    <s:String x:Key="SAVESERVER_PORT_2">SteamPort</s:String>
+    <s:String x:Key="SAVESERVER_PORT_3">SteamPort</s:String>
+    <s:String x:Key="SAVESERVER_SESSON">Session</s:String>
+    <s:String x:Key="SAVESERVER_CONNEC">Connect</s:String>
+
+</ResourceDictionary>  
