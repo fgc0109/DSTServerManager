@@ -11,6 +11,41 @@
     <s:String x:Key="GROUP_CLUSTER_SERVERS">集群服务器列表</s:String>
     <s:String x:Key="GROUP_CLUSTER_SERINFO">服务器信息列表</s:String>
 
+    <!--子窗口-->
+    <s:String x:Key="SubWin_ConnectionCheck">测试连接</s:String>
+    <s:String x:Key="SubWin_ConnectionSaved">保存连接</s:String>
+
+
+    <!--本地服务器 开启方式-->
+    <s:String x:Key="LocalServer_OpenType">本地服务器开启方式</s:String>
+    <s:String x:Key="LocalServer_OpenType_1">普通窗口   *以Windows标准Shell窗口开启服务器</s:String>
+    <s:String x:Key="LocalServer_OpenType_2">内置窗口   *以程序内置标签页窗口开启服务器</s:String>
+
+    <!--本地服务器 服务器列表-->
+    <s:String x:Key="LocalServer_ServerList">本地服务器列表</s:String>
+    <s:String x:Key="LocalServer_ServerList_Index">编号</s:String>
+    <s:String x:Key="LocalServer_ServerList_Name">类型</s:String>
+    <s:String x:Key="LocalServer_ServerList_Path">路径</s:String>
+    <s:String x:Key="LocalServer_AddServer">添加服务器</s:String>
+    <s:String x:Key="LocalServer_DelServer">删除服务器</s:String>
+
+    <!--本地服务器 集群存档文件列表-->
+    <s:String x:Key="LocalServer_ClusterSaveList">本地服务器集群存档文件列表</s:String>
+
+    <!--远程服务器 服务器列表-->
+    <s:String x:Key="CloudServer_ServerList">远程服务器列表</s:String>
+    <s:String x:Key="CloudServer_ServerList_Index">编号</s:String>
+    <s:String x:Key="CloudServer_ServerList_Name">类型</s:String>
+    <s:String x:Key="CloudServer_ServerList_Path">路径</s:String>
+    <s:String x:Key="CloudServer_AddServer">添加服务器</s:String>
+    <s:String x:Key="CloudServer_DelServer">删除服务器</s:String>
+
+    <!--本地服务器 集群存档文件列表-->
+    <s:String x:Key="CloudServer_ClusterSaveList">远程服务器集群存档文件列表</s:String>
+
+    <s:String x:Key="CloudServer_ConnectionList">远程连接列表</s:String>
+
+
     <s:String x:Key="GAMEPLAY_GMMODE">游戏模式</s:String>
     <s:String x:Key="GAMEPLAY_COUNTS">玩家数量</s:String>
     <s:String x:Key="GAMEPLAY_CANPVP">玩家对战</s:String>

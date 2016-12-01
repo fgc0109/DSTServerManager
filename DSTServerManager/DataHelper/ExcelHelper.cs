@@ -22,6 +22,9 @@ namespace DSTServerManager.DataHelper
     {
         private OleDbConnection m_dbConnection = null;
 
+        public OleDbConnection DBConnection
+        { get { return m_dbConnection; } }
+
         /// <summary>
         /// 尝试打开Excel连接
         /// </summary>
@@ -30,7 +33,7 @@ namespace DSTServerManager.DataHelper
         /// <param name="version">Excel对象文件版本</param>
         /// <param name="exception">异常信息</param>
         /// <returns>文件打开状态</returns>
-        private bool OpenExcel(string filePath, ExcelEngines engines, ExcelVersion version, out string exception)
+        public bool OpenExcel(string filePath, ExcelEngines engines, ExcelVersion version, out string exception)
         {
             StringBuilder connectBuilder = new StringBuilder();
 
@@ -50,7 +53,6 @@ namespace DSTServerManager.DataHelper
             try
             {
                 m_dbConnection.Open();
-
                 exception = string.Empty;
                 return true;
             }
@@ -59,6 +61,28 @@ namespace DSTServerManager.DataHelper
                 exception = ex.ToString();
                 return false;
             }
+        }
+
+        /// <summary>
+        /// 从指定的Excel获取用户存储表格
+        /// </summary>
+        /// <param name="excelConn"></param>
+        /// <param name="tableName"></param>
+        /// <param name="exception"></param>
+        /// <returns></returns>
+        public DataTable ExecuteDataTable(string tableName, out string exception)
+        {
+            DataTable dataTable = new DataTable(tableName);
+            exception = string.Empty;
+
+            //if (m_dbConnection == null || m_dbConnection.State != ConnectionState.Open) return userData;
+            try
+            {
+                OleDbDataAdapter dataAdapter = new OleDbDataAdapter($"select * from [{tableName}$];", m_dbConnection);
+                dataAdapter.Fill(dataTable);
+            }
+            catch (Exception ex) { exception = ex.ToString(); }
+            return dataTable;
         }
     }
 

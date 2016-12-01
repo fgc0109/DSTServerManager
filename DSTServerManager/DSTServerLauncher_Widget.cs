@@ -14,7 +14,11 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using DSTServerManager.Saves;
 using DSTServerManager.Servers;
+using System.Diagnostics;
+using System.Data.OleDb;
 using System.Globalization;
+using System.Data;
+using Renci.SshNet;
 using DSTServerManager.DataHelper;
 
 namespace DSTServerManager
@@ -22,56 +26,46 @@ namespace DSTServerManager
     public partial class DSTServerLauncher : Window
     {
         /// <summary>
-        /// 更新集群服务器信息
+        /// 更新指定存档路径下的集群服务器列表
         /// </summary>
         /// <param name="keyword">筛选关键词</param>
-        private void RefreshClusterData(string keyword)
+        /// <param name="saveFolder">存档文件夹名</param>
+        /// <param name="clusterList">Listbox控件</param>
+        /// <param name="client">远程服务器连接</param>
+        private void RefreshClusterData(string saveFolder, string keyword, ref ListBox clusterList, SftpClient client)
         {
             //获取集群文件夹名称并更新显示
-            m_ClusterFolder = SavesManager.GetClusterFolder(comboBox_SavesFolder.SelectedItem?.ToString(), keyword);
-            listBox_Cluster.Items.Clear();
-            foreach (var item in m_ClusterFolder)
-            {
-                if (!listBox_Cluster.Items.Contains(item))
-                    listBox_Cluster.Items.Add(item);
-            }
+            List<string> clusterFolder = null;
+            if (client == null) clusterFolder = SavesManager.GetClusterFolder(saveFolder, keyword);
+            else clusterFolder = SavesManager.GetClusterFolder(saveFolder, keyword, client);
 
-            //获取集群信息
-            m_ClusterInfo = SavesManager.GetClusterInfo(comboBox_SavesFolder.SelectedItem?.ToString(), keyword, dataGrid_Cluster_Servers.Columns.Count);
-            if (listBox_Cluster.Items.Count != 0)
-                listBox_Cluster.SelectedIndex = 0;
+            clusterList.Items.Clear();
+            foreach (var item in clusterFolder)
+                if (!clusterList.Items.Contains(item)) clusterList.Items.Add(item);
         }
 
         /// <summary>
         /// 更新集群下所有服务器信息
         /// </summary>
-        private void RefreshServersData()
+        /// <param name="clusterInfo">当前选定的集群信息</param>
+        /// <param name="bindData">界面绑定的集群</param>
+        private void RefreshServersData(ClusterInfo clusterInfo, ref UserInterfaceData bindData)
         {
-            int index = listBox_Cluster.SelectedIndex;
-            if (index == -1)
-                return;
-
             //将当前选定的集群信息赋值给界面绑定的类实例
-            CopyHelper.CopyAllProperties(m_ClusterInfo[index].Setting, m_UserInterfaceIniData);
-            if (m_ClusterInfo[index].Servers.Count != 0)
-                dataGrid_Cluster_Servers.SelectedIndex = 0;
+            CopyHelper.CopyAllProperties(clusterInfo.ClusterSetting, bindData);
 
             //更新当前选定的集群服务器DataGrid信息
-            m_UserInterfaceServerData.ClusterServerTable.Clear();
-            for (int i = 0; i < m_ClusterInfo[index].Servers.Count; i++)
-            {
-                m_UserInterfaceServerData.ClusterServerTable.Rows.Add(m_UserInterfaceServerData.ClusterServerTable.NewRow());
-                for (int j = 0; j < m_UserInterfaceServerData.ClusterServerTable.Columns.Count; j++)
-                    m_UserInterfaceServerData.ClusterServerTable.Rows[i][j] = m_ClusterInfo[index].ClusterServerTable.Rows[i][j];
-            }
+            bindData.ClusterServersTable.Clear();
+            CopyHelper.CopyAllProperties(clusterInfo, bindData);
         }
+
 
         /// <summary>
         /// 创建子文件夹
         /// </summary>
         /// <param name="path"></param>
         /// <param name="name"></param>
-        private void CreatChildFolder(string path,string name)
+        private void CreatChildFolder(string path, string name)
         {
 
         }

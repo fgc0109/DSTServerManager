@@ -62,6 +62,17 @@ namespace DSTServerManager.DataHelper
         }
 
         /// <summary>
+        /// 删除INI数据
+        /// </summary>
+        /// <param name="section"></param>
+        /// <param name="key"></param>
+        public void DeleteIniData(string section, string key)
+        {
+            if (m_Section.ContainsKey(section) && m_Section[section].ContainsKey(key))
+                m_Section[section].Remove(key);
+        }
+
+        /// <summary>
         /// 分析文件数据
         /// </summary>
         /// <param name="stream"></param>

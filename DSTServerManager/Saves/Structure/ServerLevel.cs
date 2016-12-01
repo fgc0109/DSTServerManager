@@ -15,7 +15,7 @@ namespace DSTServerManager.Saves
     class ServerLevel
     {
         object[] m_ServerLevelData = null;
-        private readonly DataTable m_ServerDefault = new ServerDefault().GetServersLevelDefaultData();
+        private readonly DataTable m_ServerDefault = new DefaultData().ServersLevelDefaultData();
 
         private DataTable m_ServerLevelTable = new DataTable();
 
@@ -40,7 +40,7 @@ namespace DSTServerManager.Saves
 
             m_ServerLevelData = luaFile.DoFile(path);
 
-            m_ServerLevelTable = new ServerDefault().GetServersLevelDefaultData();
+            m_ServerLevelTable = new DefaultData().ServersLevelDefaultData();
             m_ServerLevelTable.Clear();
 
             Dictionary<object, object> serverLevel = luaFile.GetTableDict(m_ServerLevelData[0] as LuaTable);

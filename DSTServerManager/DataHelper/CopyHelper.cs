@@ -10,7 +10,7 @@ namespace DSTServerManager.DataHelper
     static class  CopyHelper
     {
         /// <summary>
-        /// 拷贝所有属性
+        /// 拷贝类实例中与目标类实例相同的所有属性
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>

@@ -7,6 +7,7 @@ using DSTServerManager.DataHelper;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Reflection;
+using Renci.SshNet;
 using System.IO;
 
 namespace DSTServerManager.Saves
@@ -14,10 +15,8 @@ namespace DSTServerManager.Saves
     /// <summary>
     /// 服务器集群配置文件
     /// </summary>
-    class ServerIni : INotifyPropertyChanged
+    class ServerIni
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
         private IniHelper m_Setting = null;
 
         #region 配置文件字段
@@ -114,9 +113,9 @@ namespace DSTServerManager.Saves
         }
 
         /// <summary>
-        /// 写入配置文件
+        /// 写入位于本地配置文件
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="serverIniFullPath"></param>
         /// <returns></returns>
         public bool WriteToFile(string serverIniFullPath)
         {
@@ -126,7 +125,7 @@ namespace DSTServerManager.Saves
             catch { return false; }
 
             MemoryStream serverDataStream = m_Setting.GetIniStream();
-            FileStream clusterFileStream = new FileStream(serverIniFullPath, FileMode.OpenOrCreate);
+            FileStream clusterFileStream = new FileStream(serverIniFullPath, FileMode.Create);
             BinaryWriter w = new BinaryWriter(clusterFileStream);
             w.Write(serverDataStream.ToArray());
             clusterFileStream.Close();
@@ -136,13 +135,14 @@ namespace DSTServerManager.Saves
         }
 
         /// <summary>
-        /// 
+        /// 写入位于SSH服务器配置文件
         /// </summary>
         /// <param name="serverIniFullPath"></param>
         /// <returns></returns>
-        public bool ReadFromSSH(string serverIniFullPath)
+        public bool ReadFromSSH(string serverIniFullPath, SftpClient client)
         {
             MemoryStream stream = new MemoryStream();
+            client.OpenRead(serverIniFullPath).CopyTo(stream);
 
             m_Setting = new IniHelper(stream, false);
             try { SettingToFields(); }

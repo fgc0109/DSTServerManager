@@ -8,16 +8,15 @@ using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Reflection;
 using System.IO;
+using Renci.SshNet;
 
 namespace DSTServerManager.Saves
 {
     /// <summary>
     /// 服务器集群配置文件
     /// </summary>
-    class ClusterIni : INotifyPropertyChanged
+    class ClusterIni
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
         private IniHelper m_Setting = null;
 
         #region 配置文件字段
@@ -52,141 +51,85 @@ namespace DSTServerManager.Saves
         public GameModeEnum Gameplay_Mode
         {
             get { return gameplay_mode; }
-            set
-            {
-                Enum.TryParse(value.ToString(), out gameplay_mode);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Gameplay_Mode"));
-            }
+            set { Enum.TryParse(value.ToString(), out gameplay_mode); }
         }
 
         public int Gameplay_Player
         {
             get { return gameplay_player; }
-            set
-            {
-                int.TryParse(value.ToString(), out gameplay_player);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Gameplay_Player"));
-            }
+            set { int.TryParse(value.ToString(), out gameplay_player); }
         }
 
         public bool Gameplay_PVP
         {
             get { return gameplay_pvp; }
-            set
-            {
-                bool.TryParse(value.ToString(), out gameplay_pvp);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Gameplay_PVP"));
-            }
+            set { bool.TryParse(value.ToString(), out gameplay_pvp); }
         }
 
         public bool Gameplay_Pause
         {
             get { return gameplay_pause; }
-            set
-            {
-                bool.TryParse(value.ToString(), out gameplay_pause);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Gameplay_Pause"));
-            }
+            set { bool.TryParse(value.ToString(), out gameplay_pause); }
         }
 
         public IntentionEnum Network_Intention
         {
             get { return network_intention; }
-            set
-            {
-                Enum.TryParse(value.ToString(), out network_intention);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Network_Intention"));
-            }
+            set { Enum.TryParse(value.ToString(), out network_intention); }
         }
 
         public bool Network_LanOnly
         {
             get { return network_lanOnly; }
-            set
-            {
-                bool.TryParse(value.ToString(), out network_lanOnly);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Network_LanOnly"));
-            }
+            set { bool.TryParse(value.ToString(), out network_lanOnly); }
         }
 
         public bool Network_Offline
         {
             get { return network_offline; }
-            set
-            {
-                bool.TryParse(value.ToString(), out network_offline);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Network_Offline"));
-            }
+            set { bool.TryParse(value.ToString(), out network_offline); }
         }
 
         public string Network_Disc
         {
             get { return network_disc; }
-            set
-            {
-                network_disc = value;
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Network_Disc"));
-            }
+            set { network_disc = value; }
         }
 
         public string Network_Name
         {
             get { return network_name; }
-            set
-            {
-                network_name = value;
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Network_Name"));
-            }
+            set { network_name = value; }
         }
 
         public string Network_Pass
         {
             get { return network_pass; }
-            set
-            {
-                network_pass = value;
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Network_Pass"));
-            }
+            set { network_pass = value; }
         }
 
         public int Network_TickRate
         {
             get { return network_tickRate; }
-            set
-            {
-                int.TryParse(value.ToString(), out network_tickRate);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Network_TickRate"));
-            }
+            set { int.TryParse(value.ToString(), out network_tickRate); }
         }
 
         public int Network_Timeout
         {
             get { return network_timeout; }
-            set
-            {
-                int.TryParse(value.ToString(), out network_timeout);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Network_Timeout"));
-            }
+            set { int.TryParse(value.ToString(), out network_timeout); }
         }
 
         public bool Misc_Console
         {
             get { return misc_console; }
-            set
-            {
-                bool.TryParse(value.ToString(), out misc_console);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Misc_Console"));
-            }
+            set { bool.TryParse(value.ToString(), out misc_console); }
         }
 
         public bool Misc_Mods
         {
             get { return misc_mods; }
-            set
-            {
-                bool.TryParse(value.ToString(), out misc_mods);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Misc_Mods"));
-            }
+            set { bool.TryParse(value.ToString(), out misc_mods); }
         }
 
         /// <summary>
@@ -195,11 +138,7 @@ namespace DSTServerManager.Saves
         public bool Shard_Enabled
         {
             get { return shard_enabled; }
-            set
-            {
-                bool.TryParse(value.ToString(), out shard_enabled);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Shard_Enabled"));
-            }
+            set { bool.TryParse(value.ToString(), out shard_enabled); }
         }
 
         /// <summary>
@@ -210,11 +149,7 @@ namespace DSTServerManager.Saves
         public string Shard_BindIP
         {
             get { return shard_bindIP; }
-            set
-            {
-                shard_bindIP = value;
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Shard_BindIP"));
-            }
+            set { shard_bindIP = value; }
         }
 
         /// <summary>
@@ -225,11 +160,7 @@ namespace DSTServerManager.Saves
         public string Shard_MasterIP
         {
             get { return shard_masterIP; }
-            set
-            {
-                shard_masterIP = value;
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Shard_MasterIP"));
-            }
+            set { shard_masterIP = value; }
         }
 
         /// <summary>
@@ -238,11 +169,7 @@ namespace DSTServerManager.Saves
         public int Shard_MasterPort
         {
             get { return shard_masterPort; }
-            set
-            {
-                int.TryParse(value.ToString(), out shard_masterPort);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Shard_MasterPort"));
-            }
+            set { int.TryParse(value.ToString(), out shard_masterPort); }
         }
 
         /// <summary>
@@ -252,11 +179,7 @@ namespace DSTServerManager.Saves
         public string Shard_MasterKey
         {
             get { return shard_masterKey; }
-            set
-            {
-                shard_masterKey = value;
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Shard_MasterKey"));
-            }
+            set { shard_masterKey = value; }
         }
 
         #endregion
@@ -310,7 +233,7 @@ namespace DSTServerManager.Saves
         }
 
         /// <summary>
-        /// 写入配置文件
+        /// 写入位于本地的Cluster配置文件
         /// </summary>
         /// <returns></returns>
         public bool WriteToFile(string clusterIniFullPath)
@@ -321,10 +244,46 @@ namespace DSTServerManager.Saves
             catch { return false; }
 
             MemoryStream clusterDataStream = m_Setting.GetIniStream();
-            FileStream clusterFileStream = new FileStream(clusterIniFullPath, FileMode.OpenOrCreate);
+            FileStream clusterFileStream = new FileStream(clusterIniFullPath, FileMode.Create);
             BinaryWriter write = new BinaryWriter(clusterFileStream);
             write.Write(clusterDataStream.ToArray());
             clusterFileStream.Close();
+            clusterDataStream.Close();
+
+            return true;
+        }
+
+        /// <summary>
+        /// 读取位于SSH服务器的Cluster配置文件
+        /// </summary>
+        /// <param name="serverIniFullPath"></param>
+        /// <returns></returns>
+        public bool ReadFromSSH(string clusterIniFullPath, SftpClient client)
+        {
+            MemoryStream stream = new MemoryStream();
+            client.OpenRead(clusterIniFullPath).CopyTo(stream);
+
+            m_Setting = new IniHelper(stream, false);
+            try { SettingToFields(); }
+            catch { return false; }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 写入位于SSH服务器的Cluster配置文件
+        /// </summary>
+        /// <param name="clusterIniFullPath"></param>
+        /// <returns></returns>
+        public bool WriteToSSH(string clusterIniFullPath, SftpClient client)
+        {
+            if (null == m_Setting)
+                return false;
+            try { FieldsToSetting(); }
+            catch { return false; }
+
+            MemoryStream clusterDataStream = m_Setting.GetIniStream();
+            client.WriteAllBytes(clusterIniFullPath, clusterDataStream.ToArray());
             clusterDataStream.Close();
 
             return true;
@@ -378,7 +337,8 @@ namespace DSTServerManager.Saves
             m_Setting.WriteIniData("NETWORK", "tick_rate", network_tickRate.ToString());
             m_Setting.WriteIniData("NETWORK", "connection_timeout", network_timeout.ToString());
 
-            //他妈的,这个傻逼的选项不管改成什么控制台都输不进去命令,去掉就好了
+            //他妈的,研究了两天,最后发现这个傻逼的选项不管改成什么控制台都输不进去命令,去掉就好了
+            m_Setting.DeleteIniData("MISC", "console_enabled");
             //m_Setting.WriteIniData("MISC", "console_enabled", misc_console.ToString());
             m_Setting.WriteIniData("MISC", "mods_enabled", misc_mods.ToString());
 
@@ -393,7 +353,7 @@ namespace DSTServerManager.Saves
     /// <summary>
     /// 游戏模式
     /// </summary>
-    enum GameModeEnum
+    public enum GameModeEnum
     {
         survival,                                   //无尽模式
         endless,                                    //生存模式
@@ -403,7 +363,7 @@ namespace DSTServerManager.Saves
     /// <summary>
     /// 游戏意向
     /// </summary>
-    enum IntentionEnum
+    public enum IntentionEnum
     {
         cooperative,                                //合作模式
         social,                                     //
