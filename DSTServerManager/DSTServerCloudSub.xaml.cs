@@ -20,6 +20,9 @@ namespace DSTServerManager
     /// </summary>
     public partial class DSTServerCloudSub : Window
     {
+        public delegate void PassValuesHandler(object sender, PassValuesEventArgs e);
+        public event PassValuesHandler PassValuesEvent;
+
         public DSTServerCloudSub(string ip, string user, string pass)
         {
             InitializeComponent();
@@ -55,5 +58,44 @@ namespace DSTServerManager
             //    comboBox_SavesFolder_Cloud.Items.Add(item);
             //comboBox_SavesFolder_Cloud.SelectedIndex = 0;
         }
+
+        private void button_SubWin_ConnectionSaved_Click(object sender, RoutedEventArgs e)
+        {
+            PassValuesEventArgs args = new PassValuesEventArgs(textBox_Addr.Text, textBox_User.Text, textBox_Pass.Text);
+            PassValuesEvent(this, args);
+
+            Close();
+        }
     }
+
+    /// <summary>
+    /// 容纳参数传递事件的附加信息
+    /// </summary>
+    public class PassValuesEventArgs : EventArgs
+    {
+        private readonly String m_Addr;
+        private readonly String m_user;
+        private readonly String m_pass;
+
+        public PassValuesEventArgs(String addr, String user, String pass)
+        {
+            m_Addr = addr;
+            m_user = user;
+            m_pass = pass;
+        }
+
+        public String Addr
+        {
+            get { return m_Addr; }
+        }
+        public String User
+        {
+            get { return m_user; }
+        }
+        public String Pass
+        {
+            get { return m_pass; }
+        }
+    }
+
 }

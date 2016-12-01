@@ -288,12 +288,15 @@ namespace DSTServerManager
 
         private void button_CloudServer_AddServer_Click(object sender, RoutedEventArgs e)
         {
-
+            System.Windows.Forms.OpenFileDialog openFile = new System.Windows.Forms.OpenFileDialog();
+            openFile.Filter = "EXE - File(*.exe) | *.exe| 所有文件(*.*) | *.*";
+            openFile.ShowDialog();
         }
 
         private void button_CloudServer_AddConn_Click(object sender, RoutedEventArgs e)
         {
             if (m_DSTServerCloudSub == null) m_DSTServerCloudSub = new DSTServerCloudSub(null, null, null);
+            m_DSTServerCloudSub.PassValuesEvent += new DSTServerCloudSub.PassValuesHandler(ReceiveValues);
             m_DSTServerCloudSub.Show();
             
             m_DSTServerCloudSub.Closed += (object sender2, EventArgs e2) => { m_DSTServerCloudSub = null; };
@@ -302,17 +305,22 @@ namespace DSTServerManager
         private void button_CloudServer_EditConn_Click(object sender, RoutedEventArgs e)
         {
             int indexConn = dataGrid_CloudServer_Connection.SelectedIndex;
-            if (indexConn != -1)
-            {
-            DataRowView conn = dataGrid_CloudServer_Connection.SelectedItem as DataRowView;
-                if (m_DSTServerCloudSub == null)
-                    m_DSTServerCloudSub = new DSTServerCloudSub(conn[1].ToString(), conn[2].ToString(), conn[3].ToString());
-                m_DSTServerCloudSub.Show();
+            if (indexConn == -1) return;
 
-                m_DSTServerCloudSub.Closed += (object sender2, EventArgs e2) => { m_DSTServerCloudSub = null; };
-            }
+            DataRowView conn = dataGrid_CloudServer_Connection.SelectedItem as DataRowView;
+            if (m_DSTServerCloudSub == null)
+                m_DSTServerCloudSub = new DSTServerCloudSub(conn[1].ToString(), conn[2].ToString(), conn[3].ToString());
+            m_DSTServerCloudSub.PassValuesEvent += new DSTServerCloudSub.PassValuesHandler(ReceiveValues);
+            m_DSTServerCloudSub.Show();
+
+            m_DSTServerCloudSub.Closed += (object sender2, EventArgs e2) => { m_DSTServerCloudSub = null; };
         }
 
+        private void ReceiveValues(object sender, PassValuesEventArgs e)
+        {
+            //this.tbValue1.Text = e.Value1;
+            //this.tbValue2.Text = e.Value2.ToString();
+        }
 
 
         //dataGrid和datatable之间数据直接赋值的示例 不应该使用这种方式

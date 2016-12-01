@@ -107,8 +107,6 @@ namespace DSTServerManager
 
         #endregion
 
-
-
         private Binding SetBoolBinding(string path, object source)
         {
             Binding boolBinding = new Binding(path);
