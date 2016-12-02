@@ -34,7 +34,8 @@ namespace DSTServerManager
         private List<ClusterInfo> m_ClusterInfo_Local = null;
         private List<ClusterInfo> m_ClusterInfo_Cloud = null;
 
-        private UserInterfaceData m_UserInterfaceData = null;
+        private UserInterfaceData m_UI_DATA = null;
+
         private DSTServerCloudSub m_DSTServerCloudSub = null;
 
         List<ServerProcess> m_ServerProcess = null;
@@ -45,7 +46,7 @@ namespace DSTServerManager
             InitializeComponent();
 
             #region 界面绑定数据初始化
-            m_UserInterfaceData = new UserInterfaceData(dataGrid_Cluster_Servers.Columns.Count);
+            m_UI_DATA = new UserInterfaceData(dataGrid_Cluster_Servers.Columns.Count);
 
             BindingState();
             GetUserData();
@@ -101,10 +102,10 @@ namespace DSTServerManager
         {
             int indexCluster = listBox_Cluster_Local.SelectedIndex;
             int indexServerPath = dataGrid_LocalServer_ServerList.SelectedIndex;
-            if (indexCluster != -1&& indexServerPath!=-1)
+            if (indexCluster != -1 && indexServerPath != -1)
             {
                 //保存集群配置
-                CopyHelper.CopyAllProperties(m_UserInterfaceData, m_ClusterInfo_Local[indexCluster].ClusterSetting);
+                CopyHelper.CopyAllProperties(m_UI_DATA, m_ClusterInfo_Local[indexCluster].ClusterSetting);
                 SavesManager.SetClusterInfo(comboBox_SavesFolder_Local.SelectedItem?.ToString(), m_ClusterInfo_Local[indexCluster]);
 
                 //服务器和标签页关键信息获取
@@ -153,7 +154,7 @@ namespace DSTServerManager
             int indexCluster = listBox_Cluster_Local.SelectedIndex;
             if (indexCluster != -1)
             {
-                CopyHelper.CopyAllProperties(m_UserInterfaceData, m_ClusterInfo_Local[indexCluster].ClusterSetting);
+                CopyHelper.CopyAllProperties(m_UI_DATA, m_ClusterInfo_Local[indexCluster].ClusterSetting);
                 SavesManager.SetClusterInfo(comboBox_SavesFolder_Local.SelectedItem?.ToString(), m_ClusterInfo_Local[indexCluster]);
             }
         }
@@ -171,7 +172,7 @@ namespace DSTServerManager
             string nameCluster = listBox_Cluster_Local.SelectedItem?.ToString();
 
 
-            CopyHelper.CopyAllProperties(m_UserInterfaceData, m_ClusterInfo_Local[indexCluster]);
+            CopyHelper.CopyAllProperties(m_UI_DATA, m_ClusterInfo_Local[indexCluster]);
 
             for (int i = 0; i < m_ClusterInfo_Local[indexCluster].ClusterServers.Count; i++)
                 SavesManager.SetServerInfo(nameSave, nameCluster, m_ClusterInfo_Local[indexCluster].ClusterServers[i]);
@@ -240,7 +241,7 @@ namespace DSTServerManager
 
             int index = listBox_Cluster_Local.SelectedIndex;
             if (index == -1) return;
-            RefreshServersData(m_ClusterInfo_Local[index], ref m_UserInterfaceData);
+            RefreshServersData(m_ClusterInfo_Local[index], ref m_UI_DATA);
             if (m_ClusterInfo_Local[index].ClusterServers.Count != 0) dataGrid_Cluster_Servers.SelectedIndex = 0;
         }
 
@@ -274,7 +275,7 @@ namespace DSTServerManager
         {
             int index = listBox_Cluster_Local.SelectedIndex;
             if (index == -1) return;
-            RefreshServersData(m_ClusterInfo_Local[index], ref m_UserInterfaceData);
+            RefreshServersData(m_ClusterInfo_Local[index], ref m_UI_DATA);
             if (m_ClusterInfo_Local[index].ClusterServers.Count != 0) dataGrid_Cluster_Servers.SelectedIndex = 0;
         }
 
@@ -282,8 +283,15 @@ namespace DSTServerManager
         {
             int index = listBox_Cluster_Cloud.SelectedIndex;
             if (index == -1) return;
-            RefreshServersData(m_ClusterInfo_Cloud[index], ref m_UserInterfaceData);
+            RefreshServersData(m_ClusterInfo_Cloud[index], ref m_UI_DATA);
             if (m_ClusterInfo_Cloud[index].ClusterServers.Count != 0) dataGrid_Cluster_Servers.SelectedIndex = 0;
+        }
+
+        private void button_LocalServer_AddServer_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.OpenFileDialog openFile = new System.Windows.Forms.OpenFileDialog();
+            openFile.Filter = "EXE - File(*.exe) | *.exe| 所有文件(*.*) | *.*";
+            openFile.ShowDialog();
         }
 
         private void button_CloudServer_AddServer_Click(object sender, RoutedEventArgs e)
@@ -293,34 +301,66 @@ namespace DSTServerManager
             openFile.ShowDialog();
         }
 
+        /// <summary>
+        /// 增加远程服务器链接
+        /// </summary>
         private void button_CloudServer_AddConn_Click(object sender, RoutedEventArgs e)
         {
-            if (m_DSTServerCloudSub == null) m_DSTServerCloudSub = new DSTServerCloudSub(null, null, null);
-            m_DSTServerCloudSub.PassValuesEvent += new DSTServerCloudSub.PassValuesHandler(ReceiveValues);
+            DataRow currentRow = m_UI_DATA.ServerConnectionTable_Cloud.NewRow();
+            int newIndex = m_UI_DATA.ServerConnectionTable_Cloud.Rows.Count + 1;
+
+            if (m_DSTServerCloudSub == null) m_DSTServerCloudSub = new DSTServerCloudSub(currentRow, true, newIndex);
+
+            m_DSTServerCloudSub.PassValuesEvent += new DSTServerCloudSub.PassValuesHandler(window_ReceiveConnectionValues);
             m_DSTServerCloudSub.Show();
-            
+
             m_DSTServerCloudSub.Closed += (object sender2, EventArgs e2) => { m_DSTServerCloudSub = null; };
         }
 
+        /// <summary>
+        /// 编辑当前选中的远程服务器链接
+        /// </summary>
         private void button_CloudServer_EditConn_Click(object sender, RoutedEventArgs e)
         {
             int indexConn = dataGrid_CloudServer_Connection.SelectedIndex;
             if (indexConn == -1) return;
 
-            DataRowView conn = dataGrid_CloudServer_Connection.SelectedItem as DataRowView;
-            if (m_DSTServerCloudSub == null)
-                m_DSTServerCloudSub = new DSTServerCloudSub(conn[1].ToString(), conn[2].ToString(), conn[3].ToString());
-            m_DSTServerCloudSub.PassValuesEvent += new DSTServerCloudSub.PassValuesHandler(ReceiveValues);
+            DataRow currentRow = m_UI_DATA.ServerConnectionTable_Cloud.Rows[indexConn];
+            if (m_DSTServerCloudSub == null) m_DSTServerCloudSub = new DSTServerCloudSub(currentRow, false, 0);
+
+            m_DSTServerCloudSub.PassValuesEvent += new DSTServerCloudSub.PassValuesHandler(window_ReceiveConnectionValues);
             m_DSTServerCloudSub.Show();
 
             m_DSTServerCloudSub.Closed += (object sender2, EventArgs e2) => { m_DSTServerCloudSub = null; };
         }
 
-        private void ReceiveValues(object sender, PassValuesEventArgs e)
+        /// <summary>
+        /// 删除当前选中的远程服务器链接
+        /// </summary>
+        private void button_CloudServer_DeleteConn_Click(object sender, RoutedEventArgs e)
         {
-            //this.tbValue1.Text = e.Value1;
-            //this.tbValue2.Text = e.Value2.ToString();
+            int indexConn = dataGrid_CloudServer_Connection.SelectedIndex;
+            if (indexConn == -1) return;
+
+            m_UI_DATA.ServerConnectionTable_Cloud.Rows[indexConn].Delete();
         }
+
+        /// <summary>
+        /// 子窗口数据传递事件
+        /// </summary>
+        private void window_ReceiveConnectionValues(object sender, PassValuesEventArgs passValue)
+        {
+            if (passValue.IsNewRow) m_UI_DATA.ServerConnectionTable_Cloud.Rows.Add(passValue.GetRow);
+
+            //DataRow effectDataRow = ea.GetRow;
+            //int rowID = int.Parse(effectDataRow[0].ToString());
+
+                //if (m_UserInterfaceData.ServerConnectionTable_Cloud.Select($"ServerConn_0 = {rowID}").Length > 0)
+                //    m_UserInterfaceData.ServerConnectionTable_Cloud.Rows[rowID - 1].ItemArray = effectDataRow.ItemArray;
+                //else m_UserInterfaceData.ServerConnectionTable_Cloud.Rows.Add(effectDataRow);
+        }
+
+
 
 
         //dataGrid和datatable之间数据直接赋值的示例 不应该使用这种方式

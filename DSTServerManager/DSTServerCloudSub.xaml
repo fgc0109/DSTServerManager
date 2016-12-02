@@ -5,11 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DSTServerManager"
         mc:Ignorable="d"
-        Title="DSTServerCloudSub" Height="300" Width="300">
+        Title="DSTServerCloudSub" Height="300" Width="360" WindowStartupLocation="CenterScreen" MinWidth="360" MinHeight="320">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="77*"/>
-            <ColumnDefinition Width="215*"/>
+            <ColumnDefinition Width="80"/>
+            <ColumnDefinition Width="200*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="32"/>
@@ -30,6 +30,8 @@
         <Button x:Name="button_SubWin_ConnectionSaved" Content="{DynamicResource SubWin_ConnectionSaved}" HorizontalAlignment="Right" Margin="115,5,10,5" Grid.Row="4" Width="90" Grid.Column="1" IsEnabled="False" Click="button_SubWin_ConnectionSaved_Click"/>
         <Button x:Name="button_SubWin_ConnectionCheck" Content="{DynamicResource SubWin_ConnectionCheck}" HorizontalAlignment="Left" Margin="10,5,0,5" Grid.Row="4" Width="90" Grid.ColumnSpan="2" Click="button_SubWin_ConnectionCheck_Click"/>
 
-        <Label x:Name="label_Logs" Content="" Margin="10" Grid.Row="5" Grid.ColumnSpan="2" Background="#FFE2E2E2"/>
+        <Label Margin="10" Grid.Row="5" Grid.ColumnSpan="2" Background="#FFE2E2E2">
+            <TextBlock x:Name="label_Logs" TextWrapping="Wrap" Text=""/>
+        </Label>
     </Grid>
 </Window>

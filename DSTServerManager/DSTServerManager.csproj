@@ -110,6 +110,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DatabaseManager.cs" />
     <Compile Include="DataHelper\CopyHelper.cs" />
     <Compile Include="DataHelper\ConfigHelper.cs" />
     <Compile Include="DataHelper\ExcelHelper.cs" />

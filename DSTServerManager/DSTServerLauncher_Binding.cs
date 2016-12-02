@@ -30,39 +30,39 @@ namespace DSTServerManager
         private void BindingState()
         {
             //配置文件
-            textBox_Cluster_Gameplay_Mode.SetBinding(TextBox.TextProperty, new Binding("Gameplay_Mode") { Source = m_UserInterfaceData });
-            textBox_Cluster_Gameplay_Player.SetBinding(TextBox.TextProperty, new Binding("Gameplay_Player") { Source = m_UserInterfaceData });
-            comboBox_Cluster_Gameplay_PVP.SetBinding(ComboBox.SelectedIndexProperty, SetBoolBinding("Gameplay_PVP", m_UserInterfaceData));
-            comboBox_Cluster_Gameplay_Pause.SetBinding(ComboBox.SelectedIndexProperty, new Binding("Gameplay_Pause") { Source = m_UserInterfaceData });
+            textBox_Cluster_Gameplay_Mode.SetBinding(TextBox.TextProperty, new Binding("Gameplay_Mode") { Source = m_UI_DATA });
+            textBox_Cluster_Gameplay_Player.SetBinding(TextBox.TextProperty, new Binding("Gameplay_Player") { Source = m_UI_DATA });
+            comboBox_Cluster_Gameplay_PVP.SetBinding(ComboBox.SelectedIndexProperty, SetBoolBinding("Gameplay_PVP", m_UI_DATA));
+            comboBox_Cluster_Gameplay_Pause.SetBinding(ComboBox.SelectedIndexProperty, new Binding("Gameplay_Pause") { Source = m_UI_DATA });
 
-            textBox_Cluster_Network_Name.SetBinding(TextBox.TextProperty, new Binding("Network_Name") { Source = m_UserInterfaceData });
-            textBox_Cluster_Network_Pass.SetBinding(TextBox.TextProperty, new Binding("Network_Pass") { Source = m_UserInterfaceData });
-            textBox_Cluster_Network_Intention.SetBinding(TextBox.TextProperty, new Binding("Network_Intention") { Source = m_UserInterfaceData });
-            textBox_Cluster_Network_TickRate.SetBinding(TextBox.TextProperty, new Binding("Network_TickRate") { Source = m_UserInterfaceData });
-            textBox_Cluster_Network_Timeout.SetBinding(TextBox.TextProperty, new Binding("Network_Timeout") { Source = m_UserInterfaceData });
-            textBox_Cluster_Network_Disc.SetBinding(TextBox.TextProperty, new Binding("Network_Disc") { Source = m_UserInterfaceData });
+            textBox_Cluster_Network_Name.SetBinding(TextBox.TextProperty, new Binding("Network_Name") { Source = m_UI_DATA });
+            textBox_Cluster_Network_Pass.SetBinding(TextBox.TextProperty, new Binding("Network_Pass") { Source = m_UI_DATA });
+            textBox_Cluster_Network_Intention.SetBinding(TextBox.TextProperty, new Binding("Network_Intention") { Source = m_UI_DATA });
+            textBox_Cluster_Network_TickRate.SetBinding(TextBox.TextProperty, new Binding("Network_TickRate") { Source = m_UI_DATA });
+            textBox_Cluster_Network_Timeout.SetBinding(TextBox.TextProperty, new Binding("Network_Timeout") { Source = m_UI_DATA });
+            textBox_Cluster_Network_Disc.SetBinding(TextBox.TextProperty, new Binding("Network_Disc") { Source = m_UI_DATA });
 
-            comboBox_Cluster_Network_Offline.SetBinding(ComboBox.SelectedIndexProperty, SetBoolBinding("Network_Offline", m_UserInterfaceData));
-            comboBox_Cluster_Network_LanOnly.SetBinding(ComboBox.SelectedIndexProperty, SetBoolBinding("Network_LanOnly", m_UserInterfaceData));
+            comboBox_Cluster_Network_Offline.SetBinding(ComboBox.SelectedIndexProperty, SetBoolBinding("Network_Offline", m_UI_DATA));
+            comboBox_Cluster_Network_LanOnly.SetBinding(ComboBox.SelectedIndexProperty, SetBoolBinding("Network_LanOnly", m_UI_DATA));
 
-            comboBox_Cluster_Misc_Console.SetBinding(ComboBox.SelectedIndexProperty, SetBoolBinding("Misc_Console", m_UserInterfaceData));
-            comboBox_Cluster_Misc_Mods.SetBinding(ComboBox.SelectedIndexProperty, SetBoolBinding("Misc_Mods", m_UserInterfaceData));
+            comboBox_Cluster_Misc_Console.SetBinding(ComboBox.SelectedIndexProperty, SetBoolBinding("Misc_Console", m_UI_DATA));
+            comboBox_Cluster_Misc_Mods.SetBinding(ComboBox.SelectedIndexProperty, SetBoolBinding("Misc_Mods", m_UI_DATA));
 
-            comboBox_Cluster_Shard_Enabled.SetBinding(ComboBox.SelectedIndexProperty, SetBoolBinding("Shard_Enabled", m_UserInterfaceData));
-            textBox_Cluster_Shard_BindIP.SetBinding(TextBox.TextProperty, new Binding("Shard_BindIP") { Source = m_UserInterfaceData });
-            textBox_Cluster_Shard_MasterIP.SetBinding(TextBox.TextProperty, new Binding("Shard_MasterIP") { Source = m_UserInterfaceData });
-            textBox_Cluster_Shard_MasterPort.SetBinding(TextBox.TextProperty, new Binding("Shard_MasterPort") { Source = m_UserInterfaceData });
-            textBox_Cluster_Shard_MasterKey.SetBinding(TextBox.TextProperty, new Binding("Shard_MasterKey") { Source = m_UserInterfaceData });
+            comboBox_Cluster_Shard_Enabled.SetBinding(ComboBox.SelectedIndexProperty, SetBoolBinding("Shard_Enabled", m_UI_DATA));
+            textBox_Cluster_Shard_BindIP.SetBinding(TextBox.TextProperty, new Binding("Shard_BindIP") { Source = m_UI_DATA });
+            textBox_Cluster_Shard_MasterIP.SetBinding(TextBox.TextProperty, new Binding("Shard_MasterIP") { Source = m_UI_DATA });
+            textBox_Cluster_Shard_MasterPort.SetBinding(TextBox.TextProperty, new Binding("Shard_MasterPort") { Source = m_UI_DATA });
+            textBox_Cluster_Shard_MasterKey.SetBinding(TextBox.TextProperty, new Binding("Shard_MasterKey") { Source = m_UI_DATA });
 
             //服务器列表
-            dataGrid_Cluster_Servers.SetBinding(ItemsControl.ItemsSourceProperty, new Binding("ClusterServersTable") { Source = m_UserInterfaceData });
+            dataGrid_Cluster_Servers.SetBinding(ItemsControl.ItemsSourceProperty, new Binding("ClusterServersTable") { Source = m_UI_DATA });
 
             //服务器文件路径列表
-            dataGrid_LocalServer_ServerList.SetBinding(ItemsControl.ItemsSourceProperty, new Binding("ServerFileListTable_Local") { Source = m_UserInterfaceData });
-            dataGrid_CloudServer_ServerList.SetBinding(ItemsControl.ItemsSourceProperty, new Binding("ServerFileListTable_Cloud") { Source = m_UserInterfaceData });
+            dataGrid_LocalServer_ServerList.SetBinding(ItemsControl.ItemsSourceProperty, new Binding("ServerFileListTable_Local") { Source = m_UI_DATA });
+            dataGrid_CloudServer_ServerList.SetBinding(ItemsControl.ItemsSourceProperty, new Binding("ServerFileListTable_Cloud") { Source = m_UI_DATA });
 
             //远程服务器连接列表
-            dataGrid_CloudServer_Connection.SetBinding(ItemsControl.ItemsSourceProperty, new Binding("ServerConnectionTable_Cloud") { Source = m_UserInterfaceData });
+            dataGrid_CloudServer_Connection.SetBinding(ItemsControl.ItemsSourceProperty, new Binding("ServerConnectionTable_Cloud") { Source = m_UI_DATA });
         }
 
         #region 获取用户配置文件数据
@@ -80,28 +80,22 @@ namespace DSTServerManager
 
             SQLiteHelper userDataSQLite = new SQLiteHelper();
             userDataSQLite.OpenSQLite(appStartupPath + @"\DSTServerManager.db", out exception);
-
-            string[] parameter = null;
-            parameter = new string[3] { "ID integer primary key", "Type text", "Path text" };
-            userDataSQLite.CreatDataTable("LocalServerList", parameter, out exception);
-            userDataSQLite.CreatDataTable("CloudServerList", parameter, out exception);
-            parameter = new string[4] { "ID integer primary key", "IP text", "User text", "Password text" };
-            userDataSQLite.CreatDataTable("CloudServerConnList", parameter, out exception);
+            DatabaseManager.CreateDefaultTable(ref userDataSQLite, out exception);
 
             if (File.Exists(appStartupPath + @"\DSTServerManager.xlsx"))
             {
                 ExcelHelper userDataExcel = new ExcelHelper();
                 userDataExcel.OpenExcel(appStartupPath + @"\DSTServerManager.xlsx", ExcelEngines.ACE, ExcelVersion.Office2007, out exception);
 
-                m_UserInterfaceData.ServerFileListTable_Local = userDataExcel.ExecuteDataTable("LocalServerList", out exception);
-                m_UserInterfaceData.ServerFileListTable_Cloud = userDataExcel.ExecuteDataTable("CloudServerList", out exception);
-                m_UserInterfaceData.ServerConnectionTable_Cloud = userDataExcel.ExecuteDataTable("CloudServerConnList", out exception);
+                m_UI_DATA.ServerFileListTable_Local = userDataExcel.ExecuteDataTable("LocalServerList", out exception);
+                m_UI_DATA.ServerFileListTable_Cloud = userDataExcel.ExecuteDataTable("CloudServerList", out exception);
+                m_UI_DATA.ServerConnectionTable_Cloud = userDataExcel.ExecuteDataTable("CloudServerConnList", out exception);
             }
             else
             {
-                m_UserInterfaceData.ServerFileListTable_Local = userDataSQLite.ExecuteDataTable("LocalServerList", out exception);
-                m_UserInterfaceData.ServerFileListTable_Cloud = userDataSQLite.ExecuteDataTable("CloudServerList", out exception);
-                m_UserInterfaceData.ServerConnectionTable_Cloud = userDataSQLite.ExecuteDataTable("CloudServerConnList", out exception);
+                m_UI_DATA.ServerFileListTable_Local = userDataSQLite.ExecuteDataTable("LocalServerList", out exception);
+                m_UI_DATA.ServerFileListTable_Cloud = userDataSQLite.ExecuteDataTable("CloudServerList", out exception);
+                m_UI_DATA.ServerConnectionTable_Cloud = userDataSQLite.ExecuteDataTable("CloudServerConnList", out exception);
             }
         }
 
