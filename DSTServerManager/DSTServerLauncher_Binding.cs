@@ -86,27 +86,26 @@ namespace DSTServerManager
             userDataSQLite.OpenSQLite(appStartupPath + @"\DSTServerManager.db", out exception);
             CreateDefaultTable(ref userDataSQLite, out exception);
 
-            if (File.Exists(appStartupPath + @"\DSTServerManager.xlsx"))
-            {
-                ExcelHelper userDataExcel = new ExcelHelper();
-                userDataExcel.OpenExcel(appStartupPath + @"\DSTServerManager.xlsx", ExcelEngines.ACE, ExcelVersion.Office2007, out exception);
+            //读取数据库数据
+            m_UI_DATA.ServerFileListTable_Local = userDataSQLite.ExecuteDataTable("LocalServerList", out exception);
+            m_UI_DATA.ServerFileListTable_Cloud = userDataSQLite.ExecuteDataTable("CloudServerList", out exception);
+            m_UI_DATA.ServerConnectsTable_Cloud = userDataSQLite.ExecuteDataTable("CloudServerConnList", out exception);
 
-                m_UI_DATA.ServerFileListTable_Local = userDataExcel.ExecuteDataTable("LocalServerList", out exception);
-                m_UI_DATA.ServerFileListTable_Cloud = userDataExcel.ExecuteDataTable("CloudServerList", out exception);
-                m_UI_DATA.ServerConnectsTable_Cloud = userDataExcel.ExecuteDataTable("CloudServerConnList", out exception);
+            m_UI_DATA.ServerConsole = userDataSQLite.ExecuteDataTable("ServerConsole", out exception);
+            m_UI_DATA.ServerLeveled = userDataSQLite.ExecuteDataTable("ServerLeveled", out exception);           
 
-                m_UI_DATA.ServerConsole = userDataExcel.ExecuteDataTable("ServerConsole", out exception);
-                m_UI_DATA.ServerLeveled = userDataExcel.ExecuteDataTable("ServerLeveled", out exception);
-            }
-            else
-            {
-                m_UI_DATA.ServerFileListTable_Local = userDataSQLite.ExecuteDataTable("LocalServerList", out exception);
-                m_UI_DATA.ServerFileListTable_Cloud = userDataSQLite.ExecuteDataTable("CloudServerList", out exception);
-                m_UI_DATA.ServerConnectsTable_Cloud = userDataSQLite.ExecuteDataTable("CloudServerConnList", out exception);
+            //读取并合并外部数据
+            if (!File.Exists(appStartupPath + @"\DSTServerManager.xlsx")) return;
 
-                m_UI_DATA.ServerConsole = userDataSQLite.ExecuteDataTable("ServerConsole", out exception);
-                m_UI_DATA.ServerLeveled = userDataSQLite.ExecuteDataTable("ServerLeveled", out exception);
-            }
+            ExcelHelper userDataExcel = new ExcelHelper();
+            userDataExcel.OpenExcel(appStartupPath + @"\DSTServerManager.xlsx", ExcelEngines.ACE, ExcelVersion.Office2007, out exception);
+
+            m_UI_DATA.ServerFileListTable_Local.MergeExcelData(userDataExcel, "LocalServerList", out exception);
+            m_UI_DATA.ServerFileListTable_Cloud.MergeExcelData(userDataExcel, "CloudServerList", out exception);
+            m_UI_DATA.ServerConnectsTable_Cloud.MergeExcelData(userDataExcel, "CloudServerConnList", out exception);
+
+            m_UI_DATA.ServerConsole.MergeExcelData(userDataExcel, "ServerConsole", out exception);
+            m_UI_DATA.ServerLeveled.MergeExcelData(userDataExcel, "ServerLeveled", out exception);
         }
 
         #endregion
@@ -156,13 +155,13 @@ namespace DSTServerManager
     /// </summary>
     public class BoolConvert : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if ((bool)value) return 1;
             else return 0;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if ((int)value == 1) return true;
             else return false;

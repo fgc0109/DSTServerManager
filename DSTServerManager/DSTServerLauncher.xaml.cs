@@ -86,7 +86,50 @@ namespace DSTServerManager
         SftpClient sftpclient = null;
         private void button_Click(object sender, RoutedEventArgs e)
         {
-            textBox_Servers_Tab_Log.Text = sftpclient.WorkingDirectory;
+          //  textBox_Servers_Tab_Log.Text = sftpclient.WorkingDirectory;
+
+
+            string exception = string.Empty;
+
+            //读取外部数据
+            if (File.Exists(appStartupPath + @"\DSTServerManager.xlsx"))
+            {
+                ExcelHelper userDataExcel = new ExcelHelper();
+                userDataExcel.OpenExcel(appStartupPath + @"\DSTServerManager.xlsx", ExcelEngines.ACE, ExcelVersion.Office2007, out exception);
+
+                //m_UI_DATA.ServerFileListTable_Local.Merge(userDataExcel.ExecuteDataTable("LocalServerList", out exception));
+                //m_UI_DATA.ServerFileListTable_Cloud.Merge(userDataExcel.ExecuteDataTable("CloudServerList", out exception));
+                //m_UI_DATA.ServerConnectsTable_Cloud.Merge(userDataExcel.ExecuteDataTable("CloudServerConnList", out exception));
+
+                //Type excel = temp.Columns[0].DataType;
+                //Type sqlite = m_UI_DATA.ServerConsole.Columns[0].DataType;
+                //m_UI_DATA.ServerConsole.Merge(temp);
+                //temp.PrimaryKey = new DataColumn[1] { temp.Columns[0] };
+
+
+
+
+                //m_UI_DATA.ServerConsole.Rows[0].ItemArray
+
+
+
+                //m_UI_DATA.ServerConsole.PrimaryKey = new DataColumn[1] { m_UI_DATA.ServerConsole.Columns[0] };
+
+                //m_UI_DATA.ServerLeveled.Merge(userDataExcel.ExecuteDataTable("ServerLeveled", out exception));
+
+
+
+                //m_UI_DATA.ServerFileListTable_Local = userDataExcel.ExecuteDataTable("LocalServerList", out exception);
+                //m_UI_DATA.ServerFileListTable_Cloud = userDataExcel.ExecuteDataTable("CloudServerList", out exception);
+                //m_UI_DATA.ServerConnectsTable_Cloud = userDataExcel.ExecuteDataTable("CloudServerConnList", out exception);
+
+                //m_UI_DATA.ServerConsole = userDataExcel.ExecuteDataTable("ServerConsole", out exception);
+                //m_UI_DATA.ServerLeveled = userDataExcel.ExecuteDataTable("ServerLeveled", out exception);
+            }
+
+            //合并数据并去除重复项
+
+
         }
 
         /// <summary>
