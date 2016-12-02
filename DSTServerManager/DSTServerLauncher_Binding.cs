@@ -132,6 +132,9 @@ namespace DSTServerManager
 
             parameter = new string[4] { "ID integer primary key", "Explain text", "Command text", "Parameter text" };
             userDataSQLite.CreatDataTable("ServerConsole", parameter, out exception);
+
+            parameter = new string[8] { "ID integer primary key", "Name text", "English text", "Chinese text", "WorldType text", "Type text", "Enum text", "Current text" };
+            userDataSQLite.CreatDataTable("ServerLeveled", parameter, out exception);
         }
 
         #endregion
