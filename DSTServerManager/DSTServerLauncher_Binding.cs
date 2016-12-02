@@ -63,6 +63,10 @@ namespace DSTServerManager
 
             //远程服务器连接列表
             dataGrid_CloudServer_Connection.SetBinding(ItemsControl.ItemsSourceProperty, new Binding("ServerConnectionTable_Cloud") { Source = m_UI_DATA });
+
+            //服务器控制台命令列表
+            dataGrid_Server_Command.SetBinding(ItemsControl.ItemsSourceProperty, new Binding("ServerConsole") { Source = m_UI_DATA });
+            dataGrid_Server_Leveled.SetBinding(ItemsControl.ItemsSourceProperty, new Binding("ServerLeveled") { Source = m_UI_DATA });
         }
 
         #region 获取用户配置文件数据
@@ -80,7 +84,7 @@ namespace DSTServerManager
 
             SQLiteHelper userDataSQLite = new SQLiteHelper();
             userDataSQLite.OpenSQLite(appStartupPath + @"\DSTServerManager.db", out exception);
-            DatabaseManager.CreateDefaultTable(ref userDataSQLite, out exception);
+            CreateDefaultTable(ref userDataSQLite, out exception);
 
             if (File.Exists(appStartupPath + @"\DSTServerManager.xlsx"))
             {
@@ -89,14 +93,45 @@ namespace DSTServerManager
 
                 m_UI_DATA.ServerFileListTable_Local = userDataExcel.ExecuteDataTable("LocalServerList", out exception);
                 m_UI_DATA.ServerFileListTable_Cloud = userDataExcel.ExecuteDataTable("CloudServerList", out exception);
-                m_UI_DATA.ServerConnectionTable_Cloud = userDataExcel.ExecuteDataTable("CloudServerConnList", out exception);
+                m_UI_DATA.ServerConnectsTable_Cloud = userDataExcel.ExecuteDataTable("CloudServerConnList", out exception);
+
+                m_UI_DATA.ServerConsole = userDataExcel.ExecuteDataTable("ServerConsole", out exception);
+                m_UI_DATA.ServerLeveled = userDataExcel.ExecuteDataTable("ServerLeveled", out exception);
             }
             else
             {
                 m_UI_DATA.ServerFileListTable_Local = userDataSQLite.ExecuteDataTable("LocalServerList", out exception);
                 m_UI_DATA.ServerFileListTable_Cloud = userDataSQLite.ExecuteDataTable("CloudServerList", out exception);
-                m_UI_DATA.ServerConnectionTable_Cloud = userDataSQLite.ExecuteDataTable("CloudServerConnList", out exception);
+                m_UI_DATA.ServerConnectsTable_Cloud = userDataSQLite.ExecuteDataTable("CloudServerConnList", out exception);
+
+                m_UI_DATA.ServerConsole = userDataSQLite.ExecuteDataTable("ServerConsole", out exception);
+                m_UI_DATA.ServerLeveled = userDataSQLite.ExecuteDataTable("ServerLeveled", out exception);
             }
+        }
+
+        #endregion
+
+        #region 默认的数据库字段
+
+        /// <summary>
+        /// 创建默认的数据表
+        /// </summary>
+        /// <param name="userDataSQLite"></param>
+        /// <param name="exception"></param>
+        static private void CreateDefaultTable(ref SQLiteHelper userDataSQLite, out string exception)
+        {
+            exception = string.Empty;
+            //创建默认的数据表结构
+            string[] parameter = null;
+            parameter = new string[3] { "ID integer primary key", "Type text", "Path text" };
+            userDataSQLite.CreatDataTable("LocalServerList", parameter, out exception);
+            userDataSQLite.CreatDataTable("CloudServerList", parameter, out exception);
+
+            parameter = new string[5] { "ID integer primary key", "IP text", "UserName text", "Password text", "ServerID text" };
+            userDataSQLite.CreatDataTable("CloudServerConnList", parameter, out exception);
+
+            parameter = new string[4] { "ID integer primary key", "Explain text", "Command text", "Parameter text" };
+            userDataSQLite.CreatDataTable("ServerConsole", parameter, out exception);
         }
 
         #endregion

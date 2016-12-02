@@ -224,7 +224,7 @@
                         </Grid>
                     </GroupBox>
                     <GroupBox x:Name="groupBox_Cluster_SerInfo" Header="{DynamicResource GROUP_CLUSTER_SERINFO}" Margin="5" Grid.Row="2">
-                        <DataGrid x:Name="dataGrid_ServerLevel" Margin="5"  CanUserAddRows="False" Style="{DynamicResource DataGridStyleCenter}"/>
+                        <DataGrid x:Name="dataGrid_Server_Leveled" Margin="5"  CanUserAddRows="False" Style="{DynamicResource DataGridStyleCenter}"/>
                     </GroupBox>
                 </Grid>
             </TabItem>

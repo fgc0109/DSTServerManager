@@ -57,9 +57,6 @@ namespace DSTServerManager
             m_ServerScreens = new List<ServerScreens>();
             #endregion
 
-            //获取游戏数据表
-            dataGrid_Server_Command.ItemsSource = ServerConsole.GetServerConsoleCommandData().DefaultView;
-
             List<string> saveFolders_Local = SavesManager.GetSavesFolder();
             //没有要生成一个默认的.....待添加
 
@@ -90,7 +87,6 @@ namespace DSTServerManager
         private void button_Click(object sender, RoutedEventArgs e)
         {
             textBox_Servers_Tab_Log.Text = sftpclient.WorkingDirectory;
-
         }
 
         /// <summary>
@@ -191,11 +187,11 @@ namespace DSTServerManager
 
             if (indexServers != -1 && indexCluster_Local != -1)
             {
-                dataGrid_ServerLevel.ItemsSource = m_ClusterInfo_Local[indexCluster_Local].ClusterServers[indexServers].Level.ServerLevelTable.DefaultView;
+                dataGrid_Server_Leveled.ItemsSource = m_ClusterInfo_Local[indexCluster_Local].ClusterServers[indexServers].Level.ServerLevelTable.DefaultView;
             }
             if (indexServers != -1 && indexCluster_Cloud != -1)
             {
-                dataGrid_ServerLevel.ItemsSource = m_ClusterInfo_Cloud[indexCluster_Cloud].ClusterServers[indexServers].Level.ServerLevelTable.DefaultView;
+                dataGrid_Server_Leveled.ItemsSource = m_ClusterInfo_Cloud[indexCluster_Cloud].ClusterServers[indexServers].Level.ServerLevelTable.DefaultView;
             }
         }
 
@@ -306,8 +302,8 @@ namespace DSTServerManager
         /// </summary>
         private void button_CloudServer_AddConn_Click(object sender, RoutedEventArgs e)
         {
-            DataRow currentRow = m_UI_DATA.ServerConnectionTable_Cloud.NewRow();
-            int newIndex = m_UI_DATA.ServerConnectionTable_Cloud.Rows.Count + 1;
+            DataRow currentRow = m_UI_DATA.ServerConnectsTable_Cloud.NewRow();
+            int newIndex = m_UI_DATA.ServerConnectsTable_Cloud.Rows.Count + 1;
 
             if (m_DSTServerCloudSub == null) m_DSTServerCloudSub = new DSTServerCloudSub(currentRow, true, newIndex);
 
@@ -325,7 +321,7 @@ namespace DSTServerManager
             int indexConn = dataGrid_CloudServer_Connection.SelectedIndex;
             if (indexConn == -1) return;
 
-            DataRow currentRow = m_UI_DATA.ServerConnectionTable_Cloud.Rows[indexConn];
+            DataRow currentRow = m_UI_DATA.ServerConnectsTable_Cloud.Rows[indexConn];
             if (m_DSTServerCloudSub == null) m_DSTServerCloudSub = new DSTServerCloudSub(currentRow, false, 0);
 
             m_DSTServerCloudSub.PassValuesEvent += new DSTServerCloudSub.PassValuesHandler(window_ReceiveConnectionValues);
@@ -342,7 +338,7 @@ namespace DSTServerManager
             int indexConn = dataGrid_CloudServer_Connection.SelectedIndex;
             if (indexConn == -1) return;
 
-            m_UI_DATA.ServerConnectionTable_Cloud.Rows[indexConn].Delete();
+            m_UI_DATA.ServerConnectsTable_Cloud.Rows[indexConn].Delete();
         }
 
         /// <summary>
@@ -350,19 +346,11 @@ namespace DSTServerManager
         /// </summary>
         private void window_ReceiveConnectionValues(object sender, PassValuesEventArgs passValue)
         {
-            if (passValue.IsNewRow) m_UI_DATA.ServerConnectionTable_Cloud.Rows.Add(passValue.GetRow);
+            if (passValue.IsNewRow) m_UI_DATA.ServerConnectsTable_Cloud.Rows.Add(passValue.GetRow);
 
-            //DataRow effectDataRow = ea.GetRow;
-            //int rowID = int.Parse(effectDataRow[0].ToString());
-
-                //if (m_UserInterfaceData.ServerConnectionTable_Cloud.Select($"ServerConn_0 = {rowID}").Length > 0)
-                //    m_UserInterfaceData.ServerConnectionTable_Cloud.Rows[rowID - 1].ItemArray = effectDataRow.ItemArray;
-                //else m_UserInterfaceData.ServerConnectionTable_Cloud.Rows.Add(effectDataRow);
         }
 
-
-
-
+        
         //dataGrid和datatable之间数据直接赋值的示例 不应该使用这种方式
         //应该dataGrid绑定一个datatable,然后给datatable的数据进行改变
         // m_ClusterInfo_Local[indexCluster].ClusterServerTable = ((DataView)dataGrid_Cluster_Servers.ItemsSource).Table;

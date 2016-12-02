@@ -388,7 +388,9 @@ namespace DSTServerManager
 
         DataTable serverFileListTable_Local = new DataTable("serverFileListTable_Local");
         DataTable serverFileListTable_Cloud = new DataTable("serverFileListTable_Cloud");
-        DataTable serverConnectionTable_Cloud = new DataTable("serverConnectionTable_Cloud");
+        DataTable serverConnectsTable_Cloud = new DataTable("serverConnectsTable_Cloud");
+        DataTable serverConsole = new DataTable("serverConsole");
+        DataTable serverLeveled = new DataTable("serverLeveled");
 
         #endregion
 
@@ -412,13 +414,31 @@ namespace DSTServerManager
                 if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("ServerFileListTable_Cloud"));
             }
         }
-        public DataTable ServerConnectionTable_Cloud
+        public DataTable ServerConnectsTable_Cloud
         {
-            get { return serverConnectionTable_Cloud; }
+            get { return serverConnectsTable_Cloud; }
             set
             {
-                serverConnectionTable_Cloud = value.Copy();
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("ServerConnectionTable_Cloud"));
+                serverConnectsTable_Cloud = value.Copy();
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("ServerConnectsTable_Cloud"));
+            }
+        }
+        public DataTable ServerConsole
+        {
+            get { return serverConsole; }
+            set
+            {
+                serverConsole = value.Copy();
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("ServerConsole"));
+            }
+        }
+        public DataTable ServerLeveled
+        {
+            get { return serverLeveled; }
+            set
+            {
+                serverLeveled = value.Copy();
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("ServerLeveled"));
             }
         }
 

@@ -110,7 +110,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="DatabaseManager.cs" />
     <Compile Include="DataHelper\CopyHelper.cs" />
     <Compile Include="DataHelper\ConfigHelper.cs" />
     <Compile Include="DataHelper\ExcelHelper.cs" />
@@ -131,7 +130,6 @@
     <Compile Include="Saves\SavesManager.cs" />
     <Compile Include="Saves\Structure\ServerInfo.cs" />
     <Compile Include="DataHelper\IniHelper.cs" />
-    <Compile Include="Servers\Structure\ServerConsole.cs" />
     <Compile Include="Servers\ServersManager.cs" />
     <Compile Include="Servers\Structure\ServerProcess.cs" />
     <Compile Include="Servers\Structure\ServerScreens.cs" />
