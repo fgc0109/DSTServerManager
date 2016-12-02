@@ -399,17 +399,7 @@ namespace DSTServerManager
             get { return serverFileListTable_Local; }
             set
             {
-                serverFileListTable_Local.Clear();
-                DataTable temp = value as DataTable;
-                for (int i = 0; i < temp.Rows.Count; i++)
-                {
-                    DataRow local = serverFileListTable_Local.NewRow();
-                    local[0] = temp.Rows[i][0];
-                    local[1] = temp.Rows[i][1];
-                    local[2] = temp.Rows[i][2];
-
-                    serverFileListTable_Local.Rows.Add(local);
-                }
+                serverFileListTable_Local = value.Copy();
                 if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("ServerFileListTable_Local"));
             }
         }
@@ -418,17 +408,7 @@ namespace DSTServerManager
             get { return serverFileListTable_Cloud; }
             set
             {
-                serverFileListTable_Cloud.Clear();
-                DataTable temp = value as DataTable;
-                for (int i = 0; i < temp.Rows.Count; i++)
-                {
-                    DataRow local = serverFileListTable_Cloud.NewRow();
-                    local[0] = temp.Rows[i][0];
-                    local[1] = temp.Rows[i][1];
-                    local[2] = temp.Rows[i][2];
-
-                    serverFileListTable_Cloud.Rows.Add(local);
-                }
+                serverFileListTable_Cloud = value.Copy();
                 if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("ServerFileListTable_Cloud"));
             }
         }
@@ -437,21 +417,9 @@ namespace DSTServerManager
             get { return serverConnectionTable_Cloud; }
             set
             {
-                serverConnectionTable_Cloud.Clear();
-                DataTable temp = value as DataTable;
-                for (int i = 0; i < temp.Rows.Count; i++)
-                {
-                    DataRow local = serverConnectionTable_Cloud.NewRow();
-                    local[0] = temp.Rows[i][0];
-                    local[1] = temp.Rows[i][1];
-                    local[2] = temp.Rows[i][2];
-                    local[3] = temp.Rows[i][3];
-
-                    serverConnectionTable_Cloud.Rows.Add(local);
-                }
+                serverConnectionTable_Cloud = value.Copy();
                 if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("ServerConnectionTable_Cloud"));
             }
-
         }
 
         #endregion
@@ -461,17 +429,6 @@ namespace DSTServerManager
         {
             for (int i = 0; i < columns; i++)
                 clusterServersTable.Columns.Add("Column_" + i.ToString());
-
-            for (int i = 0; i < 3; i++)
-            {
-                serverFileListTable_Local.Columns.Add("ColumnLocal_" + i.ToString());
-                serverFileListTable_Cloud.Columns.Add("ColumnCloud_" + i.ToString());
-            }
-
-            for (int i = 0; i < 4; i++)
-            {
-                serverConnectionTable_Cloud.Columns.Add("ServerConn_" + i.ToString());
-            }
         }
 
         /// <summary>
