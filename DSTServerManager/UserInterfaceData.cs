@@ -23,6 +23,7 @@ namespace DSTServerManager
         private int gameplay_player;
         private bool gameplay_pvp;
         private bool gameplay_pause;
+        private bool gameplay_vote;
 
         private IntentionEnum network_intention;
         private bool network_lanOnly;
@@ -83,6 +84,16 @@ namespace DSTServerManager
             {
                 bool.TryParse(value.ToString(), out gameplay_pause);
                 if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Gameplay_Pause"));
+            }
+        }
+
+        public bool Gameplay_Vote
+        {
+            get { return gameplay_vote; }
+            set
+            {
+                bool.TryParse(value.ToString(), out gameplay_vote);
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Gameplay_Vote"));
             }
         }
 
