@@ -38,7 +38,7 @@ namespace DSTServerManager
 
         SQLiteHelper m_UserDataSQLite = null;
 
-        private DSTServerCloudSub m_DSTServerCloudSub = null;
+        private SubWindow_CloudConnection m_DSTServerCloudSub = null;
 
         List<ServerProcess> m_ServerProcess = null;
         List<ServerScreens> m_ServerScreens = null;
@@ -98,7 +98,7 @@ namespace DSTServerManager
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void button_Cluster_Start_Click(object sender, RoutedEventArgs e)
+        private void button_Cluster_Start_Local_Click(object sender, RoutedEventArgs e)
         {
             int indexCluster = listBox_Cluster_Local.SelectedIndex;
             int indexServerPath = dataGrid_LocalServer_ServerList.SelectedIndex;
@@ -309,9 +309,9 @@ namespace DSTServerManager
             DataRow currentRow = m_UI_DATA.ServerConnectsTable_Cloud.NewRow();
             int newIndex = m_UI_DATA.ServerConnectsTable_Cloud.Rows.Count + 1;
 
-            if (m_DSTServerCloudSub == null) m_DSTServerCloudSub = new DSTServerCloudSub(currentRow, true, newIndex);
+            if (m_DSTServerCloudSub == null) m_DSTServerCloudSub = new SubWindow_CloudConnection(currentRow, true, newIndex);
 
-            m_DSTServerCloudSub.PassValuesEvent += new DSTServerCloudSub.PassValuesHandler(window_ReceiveConnectionValues);
+            m_DSTServerCloudSub.PassValuesEvent += new SubWindow_CloudConnection.PassValuesHandler(window_ReceiveConnectionValues);
             m_DSTServerCloudSub.Show();
 
             m_DSTServerCloudSub.Closed += (object sender2, EventArgs e2) => { m_DSTServerCloudSub = null; };
@@ -326,9 +326,9 @@ namespace DSTServerManager
             if (indexConn == -1) return;
 
             DataRow currentRow = m_UI_DATA.ServerConnectsTable_Cloud.Rows[indexConn];
-            if (m_DSTServerCloudSub == null) m_DSTServerCloudSub = new DSTServerCloudSub(currentRow, false, 0);
+            if (m_DSTServerCloudSub == null) m_DSTServerCloudSub = new SubWindow_CloudConnection(currentRow, false, 0);
 
-            m_DSTServerCloudSub.PassValuesEvent += new DSTServerCloudSub.PassValuesHandler(window_ReceiveConnectionValues);
+            m_DSTServerCloudSub.PassValuesEvent += new SubWindow_CloudConnection.PassValuesHandler(window_ReceiveConnectionValues);
             m_DSTServerCloudSub.Show();
 
             m_DSTServerCloudSub.Closed += (object sender2, EventArgs e2) => { m_DSTServerCloudSub = null; };

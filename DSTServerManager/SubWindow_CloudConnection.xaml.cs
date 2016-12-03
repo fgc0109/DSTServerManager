@@ -19,7 +19,7 @@ namespace DSTServerManager
     /// <summary>
     /// DSTServerCloudSub.xaml 的交互逻辑
     /// </summary>
-    public partial class DSTServerCloudSub : Window
+    public partial class SubWindow_CloudConnection : Window
     {
         public delegate void PassValuesHandler(object sender, PassValuesEventArgs e);
         public event PassValuesHandler PassValuesEvent;
@@ -33,7 +33,7 @@ namespace DSTServerManager
         /// <param name="rowImport"></param>
         /// <param name="newRow"></param>
         /// <param name="newIndex"></param>
-        public DSTServerCloudSub(DataRow rowImport, bool newRow, int newIndex)
+        public SubWindow_CloudConnection(DataRow rowImport, bool newRow, int newIndex)
         {
             InitializeComponent();
             if (newRow) rowImport.ItemArray = new object[4] { newIndex, "127.0.0.1", "anonymous", "" };

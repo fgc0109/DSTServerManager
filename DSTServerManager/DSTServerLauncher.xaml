@@ -339,7 +339,7 @@
                                 <ColumnDefinition Width="100"/>
                             </Grid.ColumnDefinitions>
                             <ListBox x:Name="listBox_Cluster_Local" Margin="5" SelectionChanged="listBox_Cluster_Local_SelectionChanged" Grid.RowSpan="2" Grid.Row="2"/>
-                            <Button x:Name="button_Cluster_Start" Content="开启集群" Margin="5,10,5,0" Click="button_Cluster_Start_Click" HorizontalAlignment="Center" Width="90" Grid.Column="1" Height="20" VerticalAlignment="Top" Grid.Row="3"/>
+                            <Button x:Name="button_Cluster_Start" Content="开启集群" Margin="5,10,5,0" Click="button_Cluster_Start_Local_Click" HorizontalAlignment="Center" Width="90" Grid.Column="1" Height="20" VerticalAlignment="Top" Grid.Row="3"/>
                             <Button x:Name="button_Cluster_Refresh" Content="刷新信息" Margin="5" Grid.Column="1" HorizontalAlignment="Center" Width="90" Click="button_Cluster_Refresh_Click" Height="20" VerticalAlignment="Bottom" Grid.Row="2"/>
                             <ComboBox x:Name="comboBox_SavesFolder_Local" Margin="65,5,5,5" VerticalContentAlignment="Center" SelectionChanged="comboBox_SavesFolder_Local_SelectionChanged" Grid.ColumnSpan="2"/>
                             <Label Content="路径" Margin="5,5,159,5" HorizontalContentAlignment="Center" RenderTransformOrigin="2.308,0.409" VerticalContentAlignment="Center" Padding="4"/>
