@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace DSTServerManager.DataHelper
 {
     /// <summary> 
-    /// 说明：这是一个针对System.Data.SQLite的数据库常规操作封装的通用类。 
+    /// 操作SQLite数据库
     /// </summary> 
     class SQLiteHelper
     {
@@ -58,13 +58,21 @@ namespace DSTServerManager.DataHelper
             {
                 SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter($"select * from {tableName};", m_dbConnection);
                 dataAdapter.Fill(dataTable);
+
+                dataTable.AcceptChanges();
+                dataAdapter.Dispose();
             }
             catch (Exception ex) { exception = ex.ToString(); }
             return dataTable;
         }
 
-
-
+        /// <summary>
+        /// 如果表不存在则创建一个新表
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <param name="parameters"></param>
+        /// <param name="exception"></param>
+        /// <returns></returns>
         public bool CreatDataTable(string tableName, object[] parameters, out string exception)
         {
             StringBuilder commandBuilder = new StringBuilder();
@@ -80,6 +88,71 @@ namespace DSTServerManager.DataHelper
             {
                 SQLiteCommand cmdCreateTable = new SQLiteCommand(command, m_dbConnection);
                 cmdCreateTable.ExecuteNonQuery();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                exception = ex.ToString();
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 插入和更新datatable所有数据到数据库中
+        /// </summary>
+        /// <param name="dataTable"></param>
+        /// <param name="tableName"></param>
+        /// <param name="exception"></param>
+        /// <returns></returns>
+        public bool SaveDataTable(DataTable dataTable, string tableName, out string exception)
+        {
+            string command = $"delete from '{tableName}';";
+            exception = string.Empty;
+            try
+            {
+                SQLiteCommand cmdCreateTable = new SQLiteCommand(command, m_dbConnection);
+                cmdCreateTable.ExecuteNonQuery();
+
+                SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter($"select * from {tableName};", m_dbConnection);
+                SQLiteCommandBuilder commandBuilder = new SQLiteCommandBuilder(dataAdapter);
+
+                dataAdapter.InsertCommand = commandBuilder.GetInsertCommand();
+                //dataAdapter.UpdateCommand = commandBuilder.GetUpdateCommand();
+                //dataAdapter.DeleteCommand = commandBuilder.GetDeleteCommand();
+
+                dataAdapter.Update(dataTable);
+
+                dataTable.AcceptChanges();
+                dataAdapter.Dispose();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                exception = ex.ToString();
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 更新datatable所有数据到数据库中
+        /// </summary>
+        /// <param name="dataTable"></param>
+        /// <param name="tableName"></param>
+        /// <param name="exception"></param>
+        /// <returns></returns>
+        public bool UpdateDataTable(DataTable dataTable, string tableName, out string exception)
+        {
+            exception = string.Empty;
+            try
+            {
+                SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter($"select * from {tableName};", m_dbConnection);
+                SQLiteCommandBuilder commandBuilder = new SQLiteCommandBuilder(dataAdapter);
+
+                dataAdapter.InsertCommand = commandBuilder.GetInsertCommand();
+                dataAdapter.Update(dataTable);
+
+                dataTable.AcceptChanges();
+                dataAdapter.Dispose();
                 return true;
             }
             catch (Exception ex)

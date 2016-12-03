@@ -52,11 +52,11 @@ namespace DSTServerManager
         private void RefreshServersData(ClusterInfo clusterInfo, ref UserInterfaceData bindData)
         {
             //将当前选定的集群信息赋值给界面绑定的类实例
-            CopyHelper.CopyAllProperties(clusterInfo.ClusterSetting, bindData);
+            ExtendHelper.CopyAllProperties(clusterInfo.ClusterSetting, bindData);
 
             //更新当前选定的集群服务器DataGrid信息
             bindData.ClusterServersTable.Clear();
-            CopyHelper.CopyAllProperties(clusterInfo, bindData);
+            ExtendHelper.CopyAllProperties(clusterInfo, bindData);
         }
 
 

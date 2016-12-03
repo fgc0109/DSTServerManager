@@ -255,7 +255,7 @@
                                     </Grid>
                                 </TabItem>
                             </TabControl>
-                            <DataGrid x:Name="dataGrid_Server_Command" Margin="5" CanUserAddRows="False" Style="{DynamicResource DataGridStyleCenter}" MouseDoubleClick="dataGrid_MouseDoubleClick"/>
+                            <DataGrid x:Name="dataGrid_Server_Command" Margin="5" CanUserAddRows="False" Style="{DynamicResource DataGridStyleCenter}" MouseDoubleClick="dataGrid_Server_Command_MouseDoubleClick"/>
                         </Grid>
 
                     </GroupBox>
@@ -395,7 +395,7 @@
                                 <RowDefinition Height="80*"/>
                                 <RowDefinition Height="30"/>
                             </Grid.RowDefinitions>
-                            <DataGrid x:Name="dataGrid_CloudServer_Connection" Margin="5" CanUserAddRows="False" AutoGenerateColumns="False" Style="{DynamicResource DataGridStyleCenter}">
+                            <DataGrid x:Name="dataGrid_CloudServer_Connection" Margin="5" CanUserAddRows="False" AutoGenerateColumns="False" Style="{DynamicResource DataGridStyleCenter}" MouseDoubleClick="dataGrid_CloudServer_Connection_MouseDoubleClick">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn IsReadOnly="True" Header="{DynamicResource SAVESERVER_INDEXS}" Binding="{Binding ID}" Width ="40" MinWidth="40"/>
                                     <DataGridTextColumn IsReadOnly="True" Header="{DynamicResource SAVESERVER_SESSON}" Binding="{Binding IP}" Width ="100" MinWidth="100"/>

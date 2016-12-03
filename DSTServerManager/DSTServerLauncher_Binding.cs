@@ -62,7 +62,7 @@ namespace DSTServerManager
             dataGrid_CloudServer_ServerList.SetBinding(ItemsControl.ItemsSourceProperty, new Binding("ServerFileListTable_Cloud") { Source = m_UI_DATA });
 
             //远程服务器连接列表
-            dataGrid_CloudServer_Connection.SetBinding(ItemsControl.ItemsSourceProperty, new Binding("ServerConnectionTable_Cloud") { Source = m_UI_DATA });
+            dataGrid_CloudServer_Connection.SetBinding(ItemsControl.ItemsSourceProperty, new Binding("ServerConnectsTable_Cloud") { Source = m_UI_DATA });
 
             //服务器控制台命令列表
             dataGrid_Server_Command.SetBinding(ItemsControl.ItemsSourceProperty, new Binding("ServerConsole") { Source = m_UI_DATA });
@@ -74,7 +74,7 @@ namespace DSTServerManager
         /// <summary>
         /// 获取用户数据
         /// </summary>
-        private void GetUserData()
+        private void GetUserData(SQLiteHelper userDataSQLite)
         {
             textBox_BasicInfo_Key.Text = ConfigHelper.GetValue("textBox_BasicInfo_Key");
 
@@ -82,7 +82,6 @@ namespace DSTServerManager
             dataGrid_LocalServer_ServerList.FrozenColumnCount = 2;
             dataGrid_CloudServer_ServerList.FrozenColumnCount = 2;
 
-            SQLiteHelper userDataSQLite = new SQLiteHelper();
             userDataSQLite.OpenSQLite(appStartupPath + @"\DSTServerManager.db", out exception);
             CreateDefaultTable(ref userDataSQLite, out exception);
 
@@ -106,6 +105,14 @@ namespace DSTServerManager
 
             m_UI_DATA.ServerConsole.MergeExcelData(userDataExcel, "ServerConsole", out exception);
             m_UI_DATA.ServerLeveled.MergeExcelData(userDataExcel, "ServerLeveled", out exception);
+
+            //更新本地数据库数据
+            userDataSQLite.SaveDataTable(m_UI_DATA.ServerFileListTable_Local, "LocalServerList", out exception);
+            userDataSQLite.SaveDataTable(m_UI_DATA.ServerFileListTable_Cloud, "CloudServerList", out exception);
+            userDataSQLite.SaveDataTable(m_UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList", out exception);
+
+            userDataSQLite.SaveDataTable(m_UI_DATA.ServerConsole, "ServerConsole", out exception);
+            userDataSQLite.SaveDataTable(m_UI_DATA.ServerLeveled, "ServerLeveled", out exception);
         }
 
         #endregion

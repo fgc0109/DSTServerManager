@@ -36,6 +36,8 @@ namespace DSTServerManager
 
         private UserInterfaceData m_UI_DATA = null;
 
+        SQLiteHelper m_UserDataSQLite = null;
+
         private DSTServerCloudSub m_DSTServerCloudSub = null;
 
         List<ServerProcess> m_ServerProcess = null;
@@ -49,7 +51,9 @@ namespace DSTServerManager
             m_UI_DATA = new UserInterfaceData(dataGrid_Cluster_Servers.Columns.Count);
 
             BindingState();
-            GetUserData();
+
+            m_UserDataSQLite = new SQLiteHelper();
+            GetUserData(m_UserDataSQLite);
             #endregion
 
             #region 全局变量初始化
@@ -86,50 +90,7 @@ namespace DSTServerManager
         SftpClient sftpclient = null;
         private void button_Click(object sender, RoutedEventArgs e)
         {
-          //  textBox_Servers_Tab_Log.Text = sftpclient.WorkingDirectory;
-
-
-            string exception = string.Empty;
-
-            //读取外部数据
-            if (File.Exists(appStartupPath + @"\DSTServerManager.xlsx"))
-            {
-                ExcelHelper userDataExcel = new ExcelHelper();
-                userDataExcel.OpenExcel(appStartupPath + @"\DSTServerManager.xlsx", ExcelEngines.ACE, ExcelVersion.Office2007, out exception);
-
-                //m_UI_DATA.ServerFileListTable_Local.Merge(userDataExcel.ExecuteDataTable("LocalServerList", out exception));
-                //m_UI_DATA.ServerFileListTable_Cloud.Merge(userDataExcel.ExecuteDataTable("CloudServerList", out exception));
-                //m_UI_DATA.ServerConnectsTable_Cloud.Merge(userDataExcel.ExecuteDataTable("CloudServerConnList", out exception));
-
-                //Type excel = temp.Columns[0].DataType;
-                //Type sqlite = m_UI_DATA.ServerConsole.Columns[0].DataType;
-                //m_UI_DATA.ServerConsole.Merge(temp);
-                //temp.PrimaryKey = new DataColumn[1] { temp.Columns[0] };
-
-
-
-
-                //m_UI_DATA.ServerConsole.Rows[0].ItemArray
-
-
-
-                //m_UI_DATA.ServerConsole.PrimaryKey = new DataColumn[1] { m_UI_DATA.ServerConsole.Columns[0] };
-
-                //m_UI_DATA.ServerLeveled.Merge(userDataExcel.ExecuteDataTable("ServerLeveled", out exception));
-
-
-
-                //m_UI_DATA.ServerFileListTable_Local = userDataExcel.ExecuteDataTable("LocalServerList", out exception);
-                //m_UI_DATA.ServerFileListTable_Cloud = userDataExcel.ExecuteDataTable("CloudServerList", out exception);
-                //m_UI_DATA.ServerConnectsTable_Cloud = userDataExcel.ExecuteDataTable("CloudServerConnList", out exception);
-
-                //m_UI_DATA.ServerConsole = userDataExcel.ExecuteDataTable("ServerConsole", out exception);
-                //m_UI_DATA.ServerLeveled = userDataExcel.ExecuteDataTable("ServerLeveled", out exception);
-            }
-
-            //合并数据并去除重复项
-
-
+          
         }
 
         /// <summary>
@@ -144,7 +105,7 @@ namespace DSTServerManager
             if (indexCluster != -1 && indexServerPath != -1)
             {
                 //保存集群配置
-                CopyHelper.CopyAllProperties(m_UI_DATA, m_ClusterInfo_Local[indexCluster].ClusterSetting);
+                ExtendHelper.CopyAllProperties(m_UI_DATA, m_ClusterInfo_Local[indexCluster].ClusterSetting);
                 SavesManager.SetClusterInfo(comboBox_SavesFolder_Local.SelectedItem?.ToString(), m_ClusterInfo_Local[indexCluster]);
 
                 //服务器和标签页关键信息获取
@@ -193,7 +154,7 @@ namespace DSTServerManager
             int indexCluster = listBox_Cluster_Local.SelectedIndex;
             if (indexCluster != -1)
             {
-                CopyHelper.CopyAllProperties(m_UI_DATA, m_ClusterInfo_Local[indexCluster].ClusterSetting);
+                ExtendHelper.CopyAllProperties(m_UI_DATA, m_ClusterInfo_Local[indexCluster].ClusterSetting);
                 SavesManager.SetClusterInfo(comboBox_SavesFolder_Local.SelectedItem?.ToString(), m_ClusterInfo_Local[indexCluster]);
             }
         }
@@ -211,7 +172,7 @@ namespace DSTServerManager
             string nameCluster = listBox_Cluster_Local.SelectedItem?.ToString();
 
 
-            CopyHelper.CopyAllProperties(m_UI_DATA, m_ClusterInfo_Local[indexCluster]);
+            ExtendHelper.CopyAllProperties(m_UI_DATA, m_ClusterInfo_Local[indexCluster]);
 
             for (int i = 0; i < m_ClusterInfo_Local[indexCluster].ClusterServers.Count; i++)
                 SavesManager.SetServerInfo(nameSave, nameCluster, m_ClusterInfo_Local[indexCluster].ClusterServers[i]);
@@ -262,7 +223,7 @@ namespace DSTServerManager
             }
         }
 
-        private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void dataGrid_Server_Command_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             textBox_Server_Server_Input.Text = ((DataRowView)dataGrid_Server_Command.SelectedItem)[2].ToString();
             textBox_Server_Server_Input.Focus();
@@ -382,6 +343,12 @@ namespace DSTServerManager
             if (indexConn == -1) return;
 
             m_UI_DATA.ServerConnectsTable_Cloud.Rows[indexConn].Delete();
+            m_UI_DATA.ServerConnectsTable_Cloud.AcceptChanges();
+
+            string exception = string.Empty;
+
+            m_UI_DATA.ServerConnectsTable_Cloud.RefreshDataTable(out exception);
+            m_UserDataSQLite.SaveDataTable(m_UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList", out exception);
         }
 
         /// <summary>
@@ -389,11 +356,27 @@ namespace DSTServerManager
         /// </summary>
         private void window_ReceiveConnectionValues(object sender, PassValuesEventArgs passValue)
         {
-            if (passValue.IsNewRow) m_UI_DATA.ServerConnectsTable_Cloud.Rows.Add(passValue.GetRow);
+            string exception = string.Empty;
+            if (passValue.IsNewRow)
+            {
+                m_UI_DATA.ServerConnectsTable_Cloud.Rows.Add(passValue.GetRow);
+
+                m_UI_DATA.ServerConnectsTable_Cloud.RefreshDataTable(out exception);
+                m_UserDataSQLite.SaveDataTable(m_UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList", out exception);
+            }
+            else
+            {
+                m_UserDataSQLite.UpdateDataTable(m_UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList", out exception);
+            }
 
         }
 
-        
+        private void dataGrid_CloudServer_Connection_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+
         //dataGrid和datatable之间数据直接赋值的示例 不应该使用这种方式
         //应该dataGrid绑定一个datatable,然后给datatable的数据进行改变
         // m_ClusterInfo_Local[indexCluster].ClusterServerTable = ((DataView)dataGrid_Cluster_Servers.ItemsSource).Table;
