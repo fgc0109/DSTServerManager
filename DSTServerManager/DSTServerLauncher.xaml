@@ -373,6 +373,7 @@
                             </DataGrid>
                             <Button x:Name="button_CloudServer_AddServer" Content="{DynamicResource CloudServer_AddServer}" Margin="5,5,224,5" Grid.Row="1" Width="90" Height="20" Click="button_CloudServer_AddServer_Click"/>
                             <Button x:Name="button_CloudServer_DelServer" Content="{DynamicResource CloudServer_DelServer}" Margin="224,5,5,5" Grid.Row="1" Width="90" Height="20"/>
+                            <Button x:Name="button_CloudServer_GetServer" Content="{DynamicResource CloudServer_GetServer}" Margin="100,5,129,5" Grid.Row="1" Width="90" Height="20" Click="button_CloudServer_GetServer_Click"/>
                         </Grid>
                     </GroupBox>
 

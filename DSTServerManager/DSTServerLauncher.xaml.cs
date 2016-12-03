@@ -378,6 +378,11 @@ namespace DSTServerManager
             comboBox_SavesFolder_Cloud.SelectedIndex = 0;
         }
 
+        private void button_CloudServer_GetServer_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
 
         //dataGrid和datatable之间数据直接赋值的示例 不应该使用这种方式
         //应该dataGrid绑定一个datatable,然后给datatable的数据进行改变
