@@ -53,19 +53,19 @@
             </Grid>
         </GroupBox>
         <Menu x:Name="menu" Margin="5" Grid.ColumnSpan="2">
-            <MenuItem x:Name="menuItem_List" Header="菜单" HorizontalContentAlignment="Center" Height="26">
-
+            <MenuItem Header="{DynamicResource MenuItem_ApplicationMenu}" HorizontalContentAlignment="Center" Height="26">
+                <MenuItem Header="{DynamicResource ApplicationMenu_Close}" Command="ApplicationCommands.Close"/>
             </MenuItem>
-            <MenuItem Header="服务器">
-
+            <MenuItem Header="{DynamicResource MenuItem_ServerCtrlsMenu}" HorizontalContentAlignment="Center" Height="26">
+                <MenuItem Header="{DynamicResource ServerCtrlsMenu_Nothing}"/>
             </MenuItem>
-            <MenuItem Header="存档">
-
+            <MenuItem Header="{DynamicResource MenuItem_SaveControlMenu}" HorizontalContentAlignment="Center" Height="26">
+                <MenuItem Header="{DynamicResource SaveControlMenu_Nothing}"/>
             </MenuItem>
 
-            <MenuItem Header="{DynamicResource SELECT_LANG}">
-                <MenuItem Header="{DynamicResource CHINESE}" Click="MenuItem_SelectLanguage_Chinese_Click"/>
-                <MenuItem Header="{DynamicResource ENGLISH}" Click="MenuItem_SelectLanguage_English_Click"/>
+            <MenuItem Header="{DynamicResource MenuItem_SelectLanguages}" HorizontalContentAlignment="Center" Height="26">
+                <MenuItem Header="{DynamicResource SelectLanguages_Chinese}" Click="MenuItem_SelectLanguage_Chinese_Click"/>
+                <MenuItem Header="{DynamicResource SelectLanguages_English}" Click="MenuItem_SelectLanguage_English_Click"/>
             </MenuItem>
         </Menu>
         <TabControl x:Name="tabControl_Main" Margin="5,10,10,10" Grid.Row="1" Grid.RowSpan="2" Grid.Column="1">

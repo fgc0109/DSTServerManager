@@ -2,10 +2,23 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:DSTServerManager"
                     xmlns:s="clr-namespace:System;assembly=mscorlib">
-
-    <s:String x:Key="SELECT_LANG">Language</s:String>
-    <s:String x:Key="CHINESE">中文</s:String>
-    <s:String x:Key="ENGLISH">English</s:String>
+    <!--子窗口-->
+    <s:String x:Key="SubWin_ConnectionCheck">测试连接</s:String>
+    <s:String x:Key="SubWin_ConnectionSaved">保存连接</s:String>
+    
+    <!--程序菜单项目-->
+    <s:String x:Key="MenuItem_ApplicationMenu">Menu</s:String>
+    <s:String x:Key="ApplicationMenu_Close">Exit</s:String>
+    
+    <s:String x:Key="MenuItem_ServerCtrlsMenu">Server</s:String>
+    <s:String x:Key="ServerCtrlsMenu_Nothing">Nothing</s:String>
+    
+    <s:String x:Key="MenuItem_SaveControlMenu">Saves</s:String>
+    <s:String x:Key="SaveControlMenu_Nothing">Nothing</s:String>
+    
+    <s:String x:Key="MenuItem_SelectLanguages">Language</s:String>
+    <s:String x:Key="SelectLanguages_Chinese">中文</s:String>
+    <s:String x:Key="SelectLanguages_English">English</s:String>
 
     <s:String x:Key="GROUP_CLUSTER_SETTING">Cluster Setting</s:String>
     <s:String x:Key="GROUP_CLUSTER_SERVERS">Cluster Servers List</s:String>
