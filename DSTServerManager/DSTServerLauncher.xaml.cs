@@ -34,22 +34,23 @@ namespace DSTServerManager
         private List<ClusterInfo> m_ClusterInfo_Local = null;
         private List<ClusterInfo> m_ClusterInfo_Cloud = null;
 
-        private UserInterfaceData m_UI_DATA = null;
+        private UserInterfaceData UI_DATA = null;
 
-        SQLiteHelper m_UserDataSQLite = null;
+        private SQLiteHelper m_UserDataSQLite = null;
 
         private SubWindow_CloudConnection m_DSTServerCloudSub = null;
 
-        List<ServerProcess> m_ServerProcess = null;
-        List<ServerScreens> m_ServerScreens = null;
+        private List<ServerProcess> m_ServerProcess = null;
+        private List<ServerScreens> m_ServerScreens = null;
+
+        SftpClient sftpclient = null;
 
         public DSTServerLauncher()
         {
             InitializeComponent();
 
             #region 界面绑定数据初始化
-            m_UI_DATA = new UserInterfaceData(dataGrid_Cluster_Servers.Columns.Count);
-
+            UI_DATA = new UserInterfaceData(dataGrid_ClusterInfo_ServersList.Columns.Count);
             BindingState();
 
             m_UserDataSQLite = new SQLiteHelper();
@@ -61,13 +62,10 @@ namespace DSTServerManager
             m_ServerScreens = new List<ServerScreens>();
             #endregion
 
-            List<string> saveFolders_Local = SavesManager.GetSavesFolder();
-            //没有要生成一个默认的.....待添加
-
-
-            foreach (var item in saveFolders_Local) comboBox_SavesFolder_Local.Items.Add(item);
-            if (comboBox_SavesFolder_Local.Items.Count != 0) comboBox_SavesFolder_Local.SelectedIndex = 0;
+            application_LocalServer_Init();
         }
+
+        #region $$$ 菜单功能区
 
         private void MenuItem_SelectLanguage_Chinese_Click(object sender, RoutedEventArgs e)
         {
@@ -79,6 +77,10 @@ namespace DSTServerManager
             LoadLanguageFile("/Language/en-us.xaml");
         }
 
+        /// <summary>
+        /// 加载语言文件
+        /// </summary>
+        /// <param name="languagefileName"></param>
         void LoadLanguageFile(string languagefileName)
         {
             Application.Current.Resources.MergedDictionaries[0] = new ResourceDictionary()
@@ -87,60 +89,148 @@ namespace DSTServerManager
             };
         }
 
-        SftpClient sftpclient = null;
-        private void button_Click(object sender, RoutedEventArgs e)
+        #endregion
+
+        /// <summary>
+        /// 本地服务器-获取默认存档路径下的存档文件夹列表
+        /// </summary>
+        private void application_LocalServer_Init()
         {
-          
+            if (SavesManager.GetSavesFolder().Count == 0) SavesManager.CreatSavesFolder();
+
+            List<string> saveFolders_Local = SavesManager.GetSavesFolder();
+            foreach (var item in saveFolders_Local) comboBox_SavesFolder_Local.Items.Add(item);
+            comboBox_SavesFolder_Local.SelectedIndex = 0;
         }
 
         /// <summary>
-        /// 开启当前服务器集群
+        /// 远程服务器-获取默认存档路径下的存档文件夹列表
+        /// </summary>
+        private void dataGrid_CloudServer_Connection_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (SavesManager.GetSavesFolder(sftpclient).Count == 0) SavesManager.CreatSavesFolder(sftpclient);
+
+            List<string> saveFolders_Cloud = SavesManager.GetSavesFolder(sftpclient);
+            foreach (var item in saveFolders_Cloud) comboBox_SavesFolder_Cloud.Items.Add(item);
+            comboBox_SavesFolder_Cloud.SelectedIndex = 0;
+        }
+
+        /// <summary>
+        /// 本地服务器-存档文件夹选择变化
+        /// </summary>
+        private void comboBox_SavesFolder_Local_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //获取集群信息
+            string saveFolder = comboBox_SavesFolder_Local.SelectedItem?.ToString();
+            if (saveFolder == string.Empty) return;
+            RefreshClusterData(saveFolder, "Cluster", ref listBox_LocalServer_ClusterFile, null);
+            m_ClusterInfo_Local = SavesManager.GetClusterInfo(saveFolder, "Cluster");
+            if (listBox_LocalServer_ClusterFile.Items.Count != 0) listBox_LocalServer_ClusterFile.SelectedIndex = 0;
+        }
+
+        /// <summary>
+        /// 远程服务器-存档文件夹选择变化
+        /// </summary>
+        private void comboBox_SavesFolder_Cloud_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //获取集群信息
+            string saveFolder = comboBox_SavesFolder_Cloud.SelectedItem?.ToString();
+            if (saveFolder == string.Empty) return;
+            RefreshClusterData(saveFolder, "Cluster", ref listBox_CloudServer_ClusterFile, sftpclient);
+            m_ClusterInfo_Cloud = SavesManager.GetClusterInfo(saveFolder, "Cluster", sftpclient);
+            if (listBox_CloudServer_ClusterFile.Items.Count != 0) listBox_CloudServer_ClusterFile.SelectedIndex = 0;
+        }
+
+        /// <summary>
+        /// 本地服务器-集群存档文件夹选择变化
+        /// </summary>
+        private void listBox_LocalServer_ClusterFile_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int index = listBox_LocalServer_ClusterFile.SelectedIndex;
+            if (index == -1) return;
+            RefreshServersData(m_ClusterInfo_Local[index], ref UI_DATA);
+            if (m_ClusterInfo_Local[index].ClusterServers.Count != 0) dataGrid_ClusterInfo_ServersList.SelectedIndex = 0;
+        }
+
+        /// <summary>
+        /// 远程服务器-集群存档文件夹选择变化
+        /// </summary>
+        private void listBox_CloudServer_ClusterFile_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int index = listBox_CloudServer_ClusterFile.SelectedIndex;
+            if (index == -1) return;
+            RefreshServersData(m_ClusterInfo_Cloud[index], ref UI_DATA);
+            if (m_ClusterInfo_Cloud[index].ClusterServers.Count != 0) dataGrid_ClusterInfo_ServersList.SelectedIndex = 0;
+        }
+
+        /// <summary>
+        /// 集群信息-选择服务器
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void dataGrid_ClusterInfo_ServersList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int indexLocalServer_ClusterFile = listBox_LocalServer_ClusterFile.SelectedIndex;
+            int indexCloudServer_ClusterFile = listBox_CloudServer_ClusterFile.SelectedIndex;
+            int indexClusterInfo_ServersList = dataGrid_ClusterInfo_ServersList.SelectedIndex;
+
+            if (indexClusterInfo_ServersList != -1 && indexLocalServer_ClusterFile != -1)
+            {
+                dataGrid_ClusterInfo_ServerLevel.ItemsSource = m_ClusterInfo_Local[indexLocalServer_ClusterFile].ClusterServers[indexClusterInfo_ServersList].Level.ServerLevelTable.DefaultView;
+            }
+            if (indexClusterInfo_ServersList != -1 && indexCloudServer_ClusterFile != -1)
+            {
+                dataGrid_ClusterInfo_ServerLevel.ItemsSource = m_ClusterInfo_Cloud[indexCloudServer_ClusterFile].ClusterServers[indexClusterInfo_ServersList].Level.ServerLevelTable.DefaultView;
+            }
+        }
+
+        /// <summary>
+        /// 本地服务器-开启当前服务器集群
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void button_Cluster_Start_Local_Click(object sender, RoutedEventArgs e)
         {
-            int indexCluster = listBox_Cluster_Local.SelectedIndex;
-            int indexServerPath = dataGrid_LocalServer_ServerList.SelectedIndex;
-            if (indexCluster != -1 && indexServerPath != -1)
+            int indexLocalServer_ClusterFile = listBox_LocalServer_ClusterFile.SelectedIndex;
+            int indexLocalServer_ServersPath = dataGrid_LocalServer_ServersPath.SelectedIndex;
+
+            if (indexLocalServer_ClusterFile == -1 || indexLocalServer_ServersPath == -1) return;
+
+            //保存当前选中的集群配置
+            ExtendHelper.CopyAllProperties(UI_DATA, m_ClusterInfo_Local[indexLocalServer_ClusterFile].ClusterSetting);
+            SavesManager.SetClusterInfo(comboBox_SavesFolder_Local.SelectedItem?.ToString(), m_ClusterInfo_Local[indexLocalServer_ClusterFile]);
+
+            //服务器程序文件路径获取
+            string exeName = (dataGrid_LocalServer_ServersPath.SelectedItem as DataRowView)[2].ToString();
+            if (!File.Exists(exeName)) return;
+
+            //服务器状态列表检查
+            for (int i = 0; i < m_ServerProcess.Count; i++)
             {
-                //保存集群配置
-                ExtendHelper.CopyAllProperties(m_UI_DATA, m_ClusterInfo_Local[indexCluster].ClusterSetting);
-                SavesManager.SetClusterInfo(comboBox_SavesFolder_Local.SelectedItem?.ToString(), m_ClusterInfo_Local[indexCluster]);
-
-                //服务器和标签页关键信息获取
-                string exeName = (dataGrid_LocalServer_ServerList.SelectedItem as DataRowView)[2].ToString();
-                if (!File.Exists(exeName)) return;
-
-                //服务器状态列表检查
-                for (int i = 0; i < m_ServerProcess.Count; i++)
+                if (m_ServerProcess[i].IsProcessActive == false)
                 {
-                    if (m_ServerProcess[i].IsProcessActive == false)
-                    {
-                        m_ServerProcess[i] = null;
-                        m_ServerProcess.Remove(m_ServerProcess[i]);
-                    }
+                    m_ServerProcess[i] = null;
+                    m_ServerProcess.Remove(m_ServerProcess[i]);
                 }
-                string xaml = System.Windows.Markup.XamlWriter.Save(tabItemMain);
+            }
+            string xaml = System.Windows.Markup.XamlWriter.Save(tabItemMain);
 
-                //获取集群服务器
-                foreach (var server in m_ClusterInfo_Local[indexCluster].ClusterServers)
-                {
-                    StringBuilder cmdBuilder = new StringBuilder(256);
-                    //cmdBuilder.Append($" -console");
-                    cmdBuilder.Append($" -conf_dir {comboBox_SavesFolder_Local.SelectedItem.ToString()}");
-                    cmdBuilder.Append($" -cluster {listBox_Cluster_Local.SelectedItem.ToString()}");
-                    cmdBuilder.Append($" -shard {server.Folder}");
+            //获取集群服务器
+            foreach (var server in m_ClusterInfo_Local[indexLocalServer_ClusterFile].ClusterServers)
+            {
+                StringBuilder cmdBuilder = new StringBuilder(256);
+                cmdBuilder.Append($" -conf_dir {comboBox_SavesFolder_Local.SelectedItem.ToString()}");
+                cmdBuilder.Append($" -cluster {listBox_LocalServer_ClusterFile.SelectedItem.ToString()}");
+                cmdBuilder.Append($" -shard {server.Folder}");
 
-                    TabItem newProcessTab = new TabItem();
-                    newProcessTab = System.Windows.Markup.XamlReader.Parse(xaml) as TabItem;
-                    newProcessTab.Header = server.Folder;
-                    tabControl_ServerLog.Items.Add(newProcessTab);
+                TabItem newProcessTab = new TabItem();
+                newProcessTab = System.Windows.Markup.XamlReader.Parse(xaml) as TabItem;
+                newProcessTab.Header = server.Folder;
+                tabControl_ServerLog.Items.Add(newProcessTab);
 
-                    ServerProcess process = new ServerProcess(this, tabControl_ServerLog, newProcessTab, false, server.Session);
-                    process.StartProcess(exeName, cmdBuilder.ToString());
-                    m_ServerProcess.Add(process);
-                }
+                ServerProcess process = new ServerProcess(this, tabControl_ServerLog, newProcessTab, false, server.Session);
+                process.StartProcess(exeName, cmdBuilder.ToString());
+                m_ServerProcess.Add(process);
             }
         }
 
@@ -151,12 +241,13 @@ namespace DSTServerManager
         /// <param name="e"></param>
         private void button_Cluster_SaveIni_Click(object sender, RoutedEventArgs e)
         {
-            int indexCluster = listBox_Cluster_Local.SelectedIndex;
-            if (indexCluster != -1)
-            {
-                ExtendHelper.CopyAllProperties(m_UI_DATA, m_ClusterInfo_Local[indexCluster].ClusterSetting);
-                SavesManager.SetClusterInfo(comboBox_SavesFolder_Local.SelectedItem?.ToString(), m_ClusterInfo_Local[indexCluster]);
-            }
+            int indexLocalServer_ClusterFile = listBox_LocalServer_ClusterFile.SelectedIndex;
+
+            if (indexLocalServer_ClusterFile == -1) return;
+
+            //保存当前选中的集群配置
+            ExtendHelper.CopyAllProperties(UI_DATA, m_ClusterInfo_Local[indexLocalServer_ClusterFile].ClusterSetting);
+            SavesManager.SetClusterInfo(comboBox_SavesFolder_Local.SelectedItem?.ToString(), m_ClusterInfo_Local[indexLocalServer_ClusterFile]);
         }
 
         /// <summary>
@@ -166,37 +257,16 @@ namespace DSTServerManager
         /// <param name="e"></param>
         private void button_Server_SaveIni_Click(object sender, RoutedEventArgs e)
         {
-            int indexCluster = listBox_Cluster_Local.SelectedIndex;
+            int indexLocalServer_ClusterFile = listBox_LocalServer_ClusterFile.SelectedIndex;
 
             string nameSave = comboBox_SavesFolder_Local.SelectedItem?.ToString();
-            string nameCluster = listBox_Cluster_Local.SelectedItem?.ToString();
+            string nameCluster = listBox_LocalServer_ClusterFile.SelectedItem?.ToString();
 
 
-            ExtendHelper.CopyAllProperties(m_UI_DATA, m_ClusterInfo_Local[indexCluster]);
+            ExtendHelper.CopyAllProperties(UI_DATA, m_ClusterInfo_Local[indexLocalServer_ClusterFile]);
 
-            for (int i = 0; i < m_ClusterInfo_Local[indexCluster].ClusterServers.Count; i++)
-                SavesManager.SetServerInfo(nameSave, nameCluster, m_ClusterInfo_Local[indexCluster].ClusterServers[i]);
-        }
-
-        /// <summary>
-        /// 选择服务器
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void dataGrid_Save_Cluster_Servers_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            int indexCluster_Local = listBox_Cluster_Local.SelectedIndex;
-            int indexCluster_Cloud = listBox_Cluster_Cloud.SelectedIndex;
-            int indexServers = dataGrid_Cluster_Servers.SelectedIndex;
-
-            if (indexServers != -1 && indexCluster_Local != -1)
-            {
-                dataGrid_Server_Leveled.ItemsSource = m_ClusterInfo_Local[indexCluster_Local].ClusterServers[indexServers].Level.ServerLevelTable.DefaultView;
-            }
-            if (indexServers != -1 && indexCluster_Cloud != -1)
-            {
-                dataGrid_Server_Leveled.ItemsSource = m_ClusterInfo_Cloud[indexCluster_Cloud].ClusterServers[indexServers].Level.ServerLevelTable.DefaultView;
-            }
+            for (int i = 0; i < m_ClusterInfo_Local[indexLocalServer_ClusterFile].ClusterServers.Count; i++)
+                SavesManager.SetServerInfo(nameSave, nameCluster, m_ClusterInfo_Local[indexLocalServer_ClusterFile].ClusterServers[i]);
         }
 
         private void textBox_BasicInfo_TextChanged(object sender, TextChangedEventArgs e)
@@ -235,56 +305,14 @@ namespace DSTServerManager
             //获取集群信息
             string saveFolder = comboBox_SavesFolder_Local.SelectedItem?.ToString();
             if (saveFolder == "") return;
-            RefreshClusterData(saveFolder, "Cluster", ref listBox_Cluster_Local, null);
+            RefreshClusterData(saveFolder, "Cluster", ref listBox_LocalServer_ClusterFile, null);
             m_ClusterInfo_Local = SavesManager.GetClusterInfo("Cluster", saveFolder);
-            if (listBox_Cluster_Local.Items.Count != 0) listBox_Cluster_Local.SelectedIndex = 0;
+            if (listBox_LocalServer_ClusterFile.Items.Count != 0) listBox_LocalServer_ClusterFile.SelectedIndex = 0;
 
-            int index = listBox_Cluster_Local.SelectedIndex;
+            int index = listBox_LocalServer_ClusterFile.SelectedIndex;
             if (index == -1) return;
-            RefreshServersData(m_ClusterInfo_Local[index], ref m_UI_DATA);
-            if (m_ClusterInfo_Local[index].ClusterServers.Count != 0) dataGrid_Cluster_Servers.SelectedIndex = 0;
-        }
-
-        /// <summary>
-        /// 本地服务器存档文件夹选择变化回调函数
-        /// </summary>
-        private void comboBox_SavesFolder_Local_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            //获取集群信息
-            string saveFolder = comboBox_SavesFolder_Local.SelectedItem?.ToString();
-            if (saveFolder == "") return;
-            RefreshClusterData(saveFolder, "Cluster", ref listBox_Cluster_Local, null);
-            m_ClusterInfo_Local = SavesManager.GetClusterInfo(saveFolder, "Cluster");
-            if (listBox_Cluster_Local.Items.Count != 0) listBox_Cluster_Local.SelectedIndex = 0;
-        }
-
-        /// <summary>
-        /// 远程Linux服务器存档文件夹选择变化回调函数
-        /// </summary>
-        private void comboBox_SavesFolder_Cloud_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            //获取集群信息
-            string saveFolder = comboBox_SavesFolder_Cloud.SelectedItem?.ToString();
-            if (saveFolder == "") return;
-            RefreshClusterData(saveFolder, "Cluster", ref listBox_Cluster_Cloud, sftpclient);
-            m_ClusterInfo_Cloud = SavesManager.GetClusterInfo("DoNotStarveTogether", "Cluster", sftpclient);
-            if (listBox_Cluster_Cloud.Items.Count != 0) listBox_Cluster_Cloud.SelectedIndex = 0;
-        }
-
-        private void listBox_Cluster_Local_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            int index = listBox_Cluster_Local.SelectedIndex;
-            if (index == -1) return;
-            RefreshServersData(m_ClusterInfo_Local[index], ref m_UI_DATA);
-            if (m_ClusterInfo_Local[index].ClusterServers.Count != 0) dataGrid_Cluster_Servers.SelectedIndex = 0;
-        }
-
-        private void listBox_Cluster_Cloud_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            int index = listBox_Cluster_Cloud.SelectedIndex;
-            if (index == -1) return;
-            RefreshServersData(m_ClusterInfo_Cloud[index], ref m_UI_DATA);
-            if (m_ClusterInfo_Cloud[index].ClusterServers.Count != 0) dataGrid_Cluster_Servers.SelectedIndex = 0;
+            RefreshServersData(m_ClusterInfo_Local[index], ref UI_DATA);
+            if (m_ClusterInfo_Local[index].ClusterServers.Count != 0) dataGrid_ClusterInfo_ServersList.SelectedIndex = 0;
         }
 
         private void button_LocalServer_AddServer_Click(object sender, RoutedEventArgs e)
@@ -306,8 +334,8 @@ namespace DSTServerManager
         /// </summary>
         private void button_CloudServer_AddConn_Click(object sender, RoutedEventArgs e)
         {
-            DataRow currentRow = m_UI_DATA.ServerConnectsTable_Cloud.NewRow();
-            int newIndex = m_UI_DATA.ServerConnectsTable_Cloud.Rows.Count + 1;
+            DataRow currentRow = UI_DATA.ServerConnectsTable_Cloud.NewRow();
+            int newIndex = UI_DATA.ServerConnectsTable_Cloud.Rows.Count + 1;
 
             if (m_DSTServerCloudSub == null) m_DSTServerCloudSub = new SubWindow_CloudConnection(currentRow, true, newIndex);
 
@@ -325,7 +353,7 @@ namespace DSTServerManager
             int indexConn = dataGrid_CloudServer_Connection.SelectedIndex;
             if (indexConn == -1) return;
 
-            DataRow currentRow = m_UI_DATA.ServerConnectsTable_Cloud.Rows[indexConn];
+            DataRow currentRow = UI_DATA.ServerConnectsTable_Cloud.Rows[indexConn];
             if (m_DSTServerCloudSub == null) m_DSTServerCloudSub = new SubWindow_CloudConnection(currentRow, false, 0);
 
             m_DSTServerCloudSub.PassValuesEvent += new SubWindow_CloudConnection.PassValuesHandler(window_ReceiveConnectionValues);
@@ -342,13 +370,13 @@ namespace DSTServerManager
             int indexConn = dataGrid_CloudServer_Connection.SelectedIndex;
             if (indexConn == -1) return;
 
-            m_UI_DATA.ServerConnectsTable_Cloud.Rows[indexConn].Delete();
-            m_UI_DATA.ServerConnectsTable_Cloud.AcceptChanges();
+            UI_DATA.ServerConnectsTable_Cloud.Rows[indexConn].Delete();
+            UI_DATA.ServerConnectsTable_Cloud.AcceptChanges();
 
             string exception = string.Empty;
 
-            m_UI_DATA.ServerConnectsTable_Cloud.RefreshDataTable(out exception);
-            m_UserDataSQLite.SaveDataTable(m_UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList", out exception);
+            UI_DATA.ServerConnectsTable_Cloud.RefreshDataTable(out exception);
+            m_UserDataSQLite.SaveDataTable(UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList", out exception);
         }
 
         /// <summary>
@@ -359,24 +387,23 @@ namespace DSTServerManager
             string exception = string.Empty;
             if (passValue.IsNewRow)
             {
-                m_UI_DATA.ServerConnectsTable_Cloud.Rows.Add(passValue.GetRow);
+                UI_DATA.ServerConnectsTable_Cloud.Rows.Add(passValue.GetRow);
 
-                m_UI_DATA.ServerConnectsTable_Cloud.RefreshDataTable(out exception);
-                m_UserDataSQLite.SaveDataTable(m_UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList", out exception);
+                UI_DATA.ServerConnectsTable_Cloud.RefreshDataTable(out exception);
+                m_UserDataSQLite.SaveDataTable(UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList", out exception);
             }
             else
             {
-                m_UserDataSQLite.UpdateDataTable(m_UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList", out exception);
+                m_UserDataSQLite.UpdateDataTable(UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList", out exception);
             }
         }
 
-        private void dataGrid_CloudServer_Connection_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+
+        private void button_Click(object sender, RoutedEventArgs e)
         {
-            List<string> saveFolders_Cloud = SavesManager.GetSavesFolder(sftpclient);
-            foreach (var item in saveFolders_Cloud)
-                comboBox_SavesFolder_Cloud.Items.Add(item);
-            comboBox_SavesFolder_Cloud.SelectedIndex = 0;
+
         }
+
 
         private void button_CloudServer_GetServer_Click(object sender, RoutedEventArgs e)
         {

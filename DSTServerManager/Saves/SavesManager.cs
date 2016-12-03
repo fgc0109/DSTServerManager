@@ -26,11 +26,11 @@ namespace DSTServerManager.Saves
         /// 获取存档文件夹名称
         /// </summary>
         /// <returns></returns>
-        static internal List<string> GetSavesFolder()
+        internal static List<string> GetSavesFolder()
         {
             return GetFolder(m_DefaultPath_Local);
         }
-        static internal List<string> GetSavesFolder(SftpClient client)
+        internal static List<string> GetSavesFolder(SftpClient client)
         {
             List<string> folder = new List<string>();
             foreach (var item in client.ListDirectory(m_DefaultPath_Cloud))
@@ -44,14 +44,14 @@ namespace DSTServerManager.Saves
         /// <param name="saveName"></param>
         /// <param name="keyword"></param>
         /// <returns></returns>
-        static internal List<string> GetClusterFolder(string saveName, string keyword)
+        internal static List<string> GetClusterFolder(string saveName, string keyword)
         {
             List<string> cluster = new List<string>();
             foreach (var item in GetFolder($"{m_DefaultPath_Local}\\{saveName}"))
                 if (item.Contains(keyword)) cluster.Add(item);
             return cluster;
         }
-        static internal List<string> GetClusterFolder(string saveName, string keyword, SftpClient client)
+        internal static List<string> GetClusterFolder(string saveName, string keyword, SftpClient client)
         {
             List<string> cluster = new List<string>();
             foreach (var item in client.ListDirectory($"{m_DefaultPath_Cloud}/{saveName}"))
@@ -66,7 +66,7 @@ namespace DSTServerManager.Saves
         /// <param name="keyword"></param>
         /// <param name="serverTableColumns">服务器信息Table的列数</param>
         /// <returns></returns>
-        static internal List<ClusterInfo> GetClusterInfo(string saveName, string keyword)
+        internal static List<ClusterInfo> GetClusterInfo(string saveName, string keyword)
         {
             List<ClusterInfo> clusterList = new List<ClusterInfo>();
             List<string> clusterFolder = GetClusterFolder(saveName, keyword);
@@ -81,7 +81,7 @@ namespace DSTServerManager.Saves
             }
             return clusterList;
         }
-        static internal List<ClusterInfo> GetClusterInfo(string saveName, string keyword, SftpClient client)
+        internal static List<ClusterInfo> GetClusterInfo(string saveName, string keyword, SftpClient client)
         {
             List<ClusterInfo> clusterList = new List<ClusterInfo>();
             List<string> clusterFolder = GetClusterFolder(saveName, keyword, client);
@@ -103,14 +103,14 @@ namespace DSTServerManager.Saves
         /// <param name="saveName"></param>
         /// <param name="current"></param>
         /// <returns></returns>
-        static internal bool SetClusterInfo(string saveName, ClusterInfo current)
+        internal static bool SetClusterInfo(string saveName, ClusterInfo current)
         {
             current.ClusterSetting.WriteToFile($"{m_DefaultPath_Local}\\{saveName}\\{current.ClusterFolder}\\{m_ClusterIniName}");
             return true;
         }
-        static internal bool SetClusterInfo(string saveName, ClusterInfo current, SftpClient client)
+        internal static bool SetClusterInfo(string saveName, ClusterInfo current, SftpClient client)
         {
-            current.ClusterSetting.WriteToSSH($"{m_DefaultPath_Cloud}/{saveName}/{current.ClusterFolder}/{m_ClusterIniName}",client);
+            current.ClusterSetting.WriteToSSH($"{m_DefaultPath_Cloud}/{saveName}/{current.ClusterFolder}/{m_ClusterIniName}", client);
             return true;
         }
 
@@ -120,14 +120,14 @@ namespace DSTServerManager.Saves
         /// <param name="saveName"></param>
         /// <param name="clusterName"></param>
         /// <returns></returns>
-        static internal List<string> GetServerFolder(string saveName, string clusterName)
+        internal static List<string> GetServerFolder(string saveName, string clusterName)
         {
             List<string> server = new List<string>();
             foreach (var item in GetFolder($"{m_DefaultPath_Local}\\{saveName}\\{clusterName}"))
                 server.Add(item);
             return server;
         }
-        static internal List<string> GetServerFolder(string saveName, string clusterName, SftpClient client)
+        internal static List<string> GetServerFolder(string saveName, string clusterName, SftpClient client)
         {
             List<string> server = new List<string>();
             foreach (var item in client.ListDirectory($"{m_DefaultPath_Cloud}/{saveName}/{clusterName}"))
@@ -141,7 +141,7 @@ namespace DSTServerManager.Saves
         /// <param name="saveName"></param>
         /// <param name="clusterName"></param>
         /// <returns></returns>
-        static internal List<ServerInfo> GetServerInfo(string saveName, string clusterName)
+        internal static List<ServerInfo> GetServerInfo(string saveName, string clusterName)
         {
             List<ServerInfo> serverList = new List<ServerInfo>();
             List<string> serverFolder = GetServerFolder(saveName, clusterName);
@@ -159,7 +159,7 @@ namespace DSTServerManager.Saves
             }
             return serverList;
         }
-        static internal List<ServerInfo> GetServerInfo(string saveName, string clusterName, SftpClient client)
+        internal static List<ServerInfo> GetServerInfo(string saveName, string clusterName, SftpClient client)
         {
             List<ServerInfo> serverList = new List<ServerInfo>();
             List<string> serverFolder = GetServerFolder(saveName, clusterName, client);
@@ -184,10 +184,23 @@ namespace DSTServerManager.Saves
         /// <param name="saveName"></param>
         /// <param name="current"></param>
         /// <returns></returns>
-        static internal bool SetServerInfo(string saveName, string clusterName, ServerInfo current)
+        internal static bool SetServerInfo(string saveName, string clusterName, ServerInfo current)
         {
             current.Setting.WriteToFile($"{m_DefaultPath_Local}\\{saveName}\\{clusterName}\\{current.Folder}\\{m_ServerIniName}");
             return true;
+        }
+
+        /// <summary>
+        /// 创建一个默认的存档目录
+        /// </summary>
+        /// <param name="sftpclient"></param>
+        internal static void CreatSavesFolder()
+        {
+
+        }
+        internal static void CreatSavesFolder(SftpClient sftpclient)
+        {
+
         }
 
         /// <summary>
@@ -195,7 +208,7 @@ namespace DSTServerManager.Saves
         /// </summary>
         /// <param name="path">路径</param>
         /// <returns></returns>
-        static private List<string> GetFolder(string path)
+        private static List<string> GetFolder(string path)
         {
             List<string> folderList = new List<string>();
             if (!Directory.Exists(path))
@@ -210,5 +223,6 @@ namespace DSTServerManager.Saves
             }
             return folderList;
         }
+
     }
 }

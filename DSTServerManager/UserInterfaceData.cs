@@ -460,8 +460,6 @@ namespace DSTServerManager
         {
             for (int i = 0; i < columns; i++)
                 clusterServersTable.Columns.Add("Column_" + i.ToString());
-
-           // serverConsole.PrimaryKey = new DataColumn[1] { serverConsole.Columns[0] };
         }
 
         /// <summary>

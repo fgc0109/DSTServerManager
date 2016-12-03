@@ -118,8 +118,9 @@
     <Compile Include="DataHelper\ExcelHelper.cs" />
     <Compile Include="DataHelper\ShellHelper.cs" />
     <Compile Include="DataHelper\SQLiteHelper.cs" />
-    <Compile Include="DSTServerCloudSub.xaml.cs">
-      <DependentUpon>DSTServerCloudSub.xaml</DependentUpon>
+    <Compile Include="Servers\Structure\ServerConnect.cs" />
+    <Compile Include="SubWindow_CloudConnection.xaml.cs">
+      <DependentUpon>SubWindow_CloudConnection.xaml</DependentUpon>
     </Compile>
     <Compile Include="DSTServerLauncher_Widget.cs" />
     <Compile Include="DSTServerLauncher_Binding.cs" />
@@ -137,7 +138,7 @@
     <Compile Include="Servers\Structure\ServerProcess.cs" />
     <Compile Include="Servers\Structure\ServerScreens.cs" />
     <Compile Include="UserInterfaceData.cs" />
-    <Page Include="DSTServerCloudSub.xaml">
+    <Page Include="SubWindow_CloudConnection.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

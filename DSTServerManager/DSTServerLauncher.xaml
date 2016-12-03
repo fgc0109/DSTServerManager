@@ -211,7 +211,7 @@
                             </Grid.RowDefinitions>
                             <Button x:Name="button2" Content="生成命令行" Grid.Column="1" Margin="5,10,5,0" Grid.Row="1" IsEnabled="False"/>
                             <Button x:Name="button3" Content="删除服务器" Grid.Column="6" Margin="5"/>
-                            <DataGrid x:Name="dataGrid_Cluster_Servers" Margin="0,0,0,1" Grid.ColumnSpan="7" CanUserAddRows="False" AutoGenerateColumns="False" Style="{DynamicResource DataGridStyleCenter}" SelectionChanged="dataGrid_Save_Cluster_Servers_SelectionChanged">
+                            <DataGrid x:Name="dataGrid_ClusterInfo_ServersList" Margin="0,0,0,1" Grid.ColumnSpan="7" CanUserAddRows="False" AutoGenerateColumns="False" Style="{DynamicResource DataGridStyleCenter}" SelectionChanged="dataGrid_ClusterInfo_ServersList_SelectionChanged">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="{DynamicResource SAVESERVER_INDEXS}" Binding="{Binding Column_0}" Width ="80" MinWidth="80"/>
                                     <DataGridTextColumn Header="{DynamicResource SAVESERVER_FOLDER}" Binding="{Binding Column_1}" Width ="80" MinWidth="80"/>
@@ -229,7 +229,7 @@
                         </Grid>
                     </GroupBox>
                     <GroupBox x:Name="groupBox_Cluster_SerInfo" Header="{DynamicResource GROUP_CLUSTER_SERINFO}" Margin="5" Grid.Row="2">
-                        <DataGrid x:Name="dataGrid_Server_Leveled" Margin="5"  CanUserAddRows="False" Style="{DynamicResource DataGridStyleCenter}"/>
+                        <DataGrid x:Name="dataGrid_ClusterInfo_ServerLevel" Margin="5"  CanUserAddRows="False" Style="{DynamicResource DataGridStyleCenter}"/>
                     </GroupBox>
                 </Grid>
             </TabItem>
@@ -313,7 +313,7 @@
                                 <RowDefinition Height="80*"/>
                                 <RowDefinition Height="32"/>
                             </Grid.RowDefinitions>
-                            <DataGrid x:Name="dataGrid_LocalServer_ServerList" Margin="5" CanUserAddRows="False" AutoGenerateColumns="False" Style="{DynamicResource DataGridStyleCenter}">
+                            <DataGrid x:Name="dataGrid_LocalServer_ServersPath" Margin="5" CanUserAddRows="False" AutoGenerateColumns="False" Style="{DynamicResource DataGridStyleCenter}">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn IsReadOnly="True" Header="{DynamicResource LocalServer_ServerList_Index}" Binding="{Binding ID}" Width ="40" MinWidth="40"/>
                                     <DataGridTextColumn IsReadOnly="True" Header="{DynamicResource LocalServer_ServerList_Name}" Binding="{Binding Type}" Width ="60" MinWidth="60"/>
@@ -338,7 +338,7 @@
                                 <ColumnDefinition Width="176*"/>
                                 <ColumnDefinition Width="100"/>
                             </Grid.ColumnDefinitions>
-                            <ListBox x:Name="listBox_Cluster_Local" Margin="5" SelectionChanged="listBox_Cluster_Local_SelectionChanged" Grid.RowSpan="2" Grid.Row="2"/>
+                            <ListBox x:Name="listBox_LocalServer_ClusterFile" Margin="5" SelectionChanged="listBox_LocalServer_ClusterFile_SelectionChanged" Grid.RowSpan="2" Grid.Row="2"/>
                             <Button x:Name="button_Cluster_Start" Content="开启集群" Margin="5,10,5,0" Click="button_Cluster_Start_Local_Click" HorizontalAlignment="Center" Width="90" Grid.Column="1" Height="20" VerticalAlignment="Top" Grid.Row="3"/>
                             <Button x:Name="button_Cluster_Refresh" Content="刷新信息" Margin="5" Grid.Column="1" HorizontalAlignment="Center" Width="90" Click="button_Cluster_Refresh_Click" Height="20" VerticalAlignment="Bottom" Grid.Row="2"/>
                             <ComboBox x:Name="comboBox_SavesFolder_Local" Margin="65,5,5,5" VerticalContentAlignment="Center" SelectionChanged="comboBox_SavesFolder_Local_SelectionChanged" Grid.ColumnSpan="2"/>
@@ -364,7 +364,7 @@
                                 <RowDefinition Height="80*"/>
                                 <RowDefinition Height="30"/>
                             </Grid.RowDefinitions>
-                            <DataGrid x:Name="dataGrid_CloudServer_ServerList" Margin="5" CanUserAddRows="False" AutoGenerateColumns="False" Style="{DynamicResource DataGridStyleCenter}">
+                            <DataGrid x:Name="dataGrid_CloudServer_ServersPath" Margin="5" CanUserAddRows="False" AutoGenerateColumns="False" Style="{DynamicResource DataGridStyleCenter}">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn IsReadOnly="True" Header="{DynamicResource CloudServer_ServerList_Index}" Binding="{Binding ID}" Width ="40" MinWidth="40"/>
                                     <DataGridTextColumn IsReadOnly="True" Header="{DynamicResource CloudServer_ServerList_Name}" Binding="{Binding Type}" Width ="60" MinWidth="60"/>
@@ -388,7 +388,7 @@
                                 <RowDefinition Height="32"/>
                                 <RowDefinition Height="100*"/>
                             </Grid.RowDefinitions>
-                            <ListBox x:Name="listBox_Cluster_Cloud" Margin="5" SelectionChanged="listBox_Cluster_Cloud_SelectionChanged" Grid.Row="1"/>
+                            <ListBox x:Name="listBox_CloudServer_ClusterFile" Margin="5" SelectionChanged="listBox_CloudServer_ClusterFile_SelectionChanged" Grid.Row="1"/>
                             <ComboBox x:Name="comboBox_SavesFolder_Cloud" Margin="65,5,5,5" VerticalContentAlignment="Center" SelectionChanged="comboBox_SavesFolder_Cloud_SelectionChanged" Grid.ColumnSpan="2"/>
                             <Label Content="路径" Margin="5,4,159,4" HorizontalContentAlignment="Center" RenderTransformOrigin="2.308,0.409" VerticalContentAlignment="Center" Padding="4"/>
                         </Grid>
