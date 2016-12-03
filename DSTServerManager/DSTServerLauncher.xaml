@@ -106,6 +106,7 @@
                                 <Label Grid.Row="0" Grid.Column="2" Margin="4" Content="{DynamicResource GAMEPLAY_COUNTS}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                                 <Label Grid.Row="0" Grid.Column="4" Margin="4" Content="{DynamicResource GAMEPLAY_CANPVP}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                                 <Label Grid.Row="0" Grid.Column="6" Margin="4" Content="{DynamicResource GAMEPLAY_PAUSES}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                                <Label Grid.Row="0" Grid.Column="8" Margin="4" Content="开启投票" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                                 <TextBox Grid.Row="0" Grid.Column="1" Margin="5" x:Name="textBox_Cluster_Gameplay_Mode" TextWrapping="Wrap" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                                 <TextBox Grid.Row="0" Grid.Column="3" Margin="5" x:Name="textBox_Cluster_Gameplay_Player" TextWrapping="Wrap" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                                 <ComboBox Grid.Row="0" Grid.Column="5" x:Name="comboBox_Cluster_Gameplay_PVP" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
@@ -113,6 +114,10 @@
                                     <ComboBoxItem IsSelected="True" Content="true"/>
                                 </ComboBox>
                                 <ComboBox Grid.Row="0" Grid.Column="7" x:Name="comboBox_Cluster_Gameplay_Pause" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+                                    <ComboBoxItem Content="false"/>
+                                    <ComboBoxItem IsSelected="True" Content="true"/>
+                                </ComboBox>
+                                <ComboBox Grid.Row="0" Grid.Column="9" x:Name="comboBox_Cluster_Gameplay_Vote" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
                                     <ComboBoxItem Content="false"/>
                                     <ComboBoxItem IsSelected="True" Content="true"/>
                                 </ComboBox>

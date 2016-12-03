@@ -25,6 +25,7 @@ namespace DSTServerManager.Saves
         private int gameplay_player;
         private bool gameplay_pvp;
         private bool gameplay_pause;
+        private bool gameplay_vote;
 
         private IntentionEnum network_intention;
         private bool network_lanOnly;
@@ -70,6 +71,12 @@ namespace DSTServerManager.Saves
         {
             get { return gameplay_pause; }
             set { bool.TryParse(value.ToString(), out gameplay_pause); }
+        }
+
+        public bool Gameplay_Vote
+        {
+            get { return gameplay_vote; }
+            set { bool.TryParse(value.ToString(), out gameplay_vote); }
         }
 
         public IntentionEnum Network_Intention
@@ -193,6 +200,7 @@ namespace DSTServerManager.Saves
             gameplay_player = 6;
             gameplay_pvp = false;
             gameplay_pause = true;
+            gameplay_vote = false;
 
             network_intention = IntentionEnum.cooperative;
             network_lanOnly = false;
@@ -298,6 +306,7 @@ namespace DSTServerManager.Saves
             gameplay_player = int.Parse(m_Setting.ReadIniData("GAMEPLAY", "max_players", gameplay_player.ToString()));
             gameplay_pvp = bool.Parse(m_Setting.ReadIniData("GAMEPLAY", "pvp", gameplay_pvp.ToString()));
             gameplay_pause = bool.Parse(m_Setting.ReadIniData("GAMEPLAY", "pause_when_empty", gameplay_pause.ToString()));
+            gameplay_vote = bool.Parse(m_Setting.ReadIniData("GAMEPLAY", "vote_enabled", gameplay_vote.ToString()));
 
             network_intention = (IntentionEnum)Enum.Parse(typeof(IntentionEnum), m_Setting.ReadIniData("NETWORK", "cluster_intention", network_intention.ToString()));
             network_lanOnly = bool.Parse(m_Setting.ReadIniData("NETWORK", "lan_only_cluster", network_lanOnly.ToString()));
@@ -327,6 +336,7 @@ namespace DSTServerManager.Saves
             m_Setting.WriteIniData("GAMEPLAY", "max_players", gameplay_player.ToString());
             m_Setting.WriteIniData("GAMEPLAY", "pvp", gameplay_pvp.ToString());
             m_Setting.WriteIniData("GAMEPLAY", "pause_when_empty", gameplay_pause.ToString());
+            m_Setting.WriteIniData("GAMEPLAY", "vote_enabled", gameplay_vote.ToString());
 
             m_Setting.WriteIniData("NETWORK", "cluster_intention", network_intention.ToString());
             m_Setting.WriteIniData("NETWORK", "lan_only_cluster", network_lanOnly.ToString());
