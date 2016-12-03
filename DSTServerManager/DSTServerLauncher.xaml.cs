@@ -40,10 +40,11 @@ namespace DSTServerManager
 
         private SubWindow_CloudConnection m_DSTServerCloudSub = null;
 
+        private List<ServerConnect> m_ServerConnect = null;
         private List<ServerProcess> m_ServerProcess = null;
         private List<ServerScreens> m_ServerScreens = null;
 
-        SftpClient sftpclient = null;
+        SftpClient m_Current_SftpClient = null;
 
         public DSTServerLauncher()
         {
@@ -58,11 +59,13 @@ namespace DSTServerManager
             #endregion
 
             #region 全局变量初始化
+            m_ServerConnect = new List<ServerConnect>();
             m_ServerProcess = new List<ServerProcess>();
             m_ServerScreens = new List<ServerScreens>();
             #endregion
 
             application_LocalServer_Init();
+            application_CloudServer_Init();
         }
 
         #region $$$ 菜单功能区
@@ -92,6 +95,20 @@ namespace DSTServerManager
         #endregion
 
         /// <summary>
+        /// 远程连接列表初始化
+        /// </summary>
+        private void application_CloudServer_Init()
+        {
+            if (dataGrid_CloudServer_Connection.Items.Count == 0) return;
+
+            foreach (DataRowView item in dataGrid_CloudServer_Connection.Items)
+            {
+                ServerConnect serverConnect = new ServerConnect(item[1].ToString(), 22, item[2].ToString(), item[3].ToString());
+                m_ServerConnect.Add(serverConnect);
+            }
+        }
+
+        /// <summary>
         /// 本地服务器-获取默认存档路径下的存档文件夹列表
         /// </summary>
         private void application_LocalServer_Init()
@@ -108,9 +125,30 @@ namespace DSTServerManager
         /// </summary>
         private void dataGrid_CloudServer_Connection_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (SavesManager.GetSavesFolder(sftpclient).Count == 0) SavesManager.CreatSavesFolder(sftpclient);
+            int indexCloudServer_Connection = dataGrid_CloudServer_Connection.SelectedIndex;
+            DataGridRow dataRow = (DataGridRow)this.dataGrid_CloudServer_Connection.ItemContainerGenerator.ContainerFromIndex(indexCloudServer_Connection);
 
-            List<string> saveFolders_Cloud = SavesManager.GetSavesFolder(sftpclient);
+
+            m_Current_SftpClient = m_ServerConnect[indexCloudServer_Connection].GetSftpClient;
+            if (m_Current_SftpClient.IsConnected == false)
+                try
+                {
+                    m_Current_SftpClient.Connect();
+                    dataRow.Background = new SolidColorBrush(Colors.LightGreen);
+                }
+                catch (Exception ex)
+                {
+                    ex.ToString();
+                    dataRow.Background = new SolidColorBrush(Colors.OrangeRed);
+                    return;
+                }
+                finally
+                {
+                    dataGrid_CloudServer_Connection.SelectedIndex = -1;
+                }
+            if (SavesManager.GetSavesFolder(m_Current_SftpClient).Count == 0) SavesManager.CreatSavesFolder(m_Current_SftpClient);
+
+            List<string> saveFolders_Cloud = SavesManager.GetSavesFolder(m_Current_SftpClient);
             foreach (var item in saveFolders_Cloud) comboBox_SavesFolder_Cloud.Items.Add(item);
             comboBox_SavesFolder_Cloud.SelectedIndex = 0;
         }
@@ -136,8 +174,8 @@ namespace DSTServerManager
             //获取集群信息
             string saveFolder = comboBox_SavesFolder_Cloud.SelectedItem?.ToString();
             if (saveFolder == string.Empty) return;
-            RefreshClusterData(saveFolder, "Cluster", ref listBox_CloudServer_ClusterFile, sftpclient);
-            m_ClusterInfo_Cloud = SavesManager.GetClusterInfo(saveFolder, "Cluster", sftpclient);
+            RefreshClusterData(saveFolder, "Cluster", ref listBox_CloudServer_ClusterFile, m_Current_SftpClient);
+            m_ClusterInfo_Cloud = SavesManager.GetClusterInfo(saveFolder, "Cluster", m_Current_SftpClient);
             if (listBox_CloudServer_ClusterFile.Items.Count != 0) listBox_CloudServer_ClusterFile.SelectedIndex = 0;
         }
 
@@ -235,7 +273,7 @@ namespace DSTServerManager
         }
 
         /// <summary>
-        /// 保存集群当前配置
+        /// 本地服务器-保存集群当前配置
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
