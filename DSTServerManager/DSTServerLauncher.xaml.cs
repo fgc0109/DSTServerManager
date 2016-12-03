@@ -368,12 +368,14 @@ namespace DSTServerManager
             {
                 m_UserDataSQLite.UpdateDataTable(m_UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList", out exception);
             }
-
         }
 
         private void dataGrid_CloudServer_Connection_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-
+            List<string> saveFolders_Cloud = SavesManager.GetSavesFolder(sftpclient);
+            foreach (var item in saveFolders_Cloud)
+                comboBox_SavesFolder_Cloud.Items.Add(item);
+            comboBox_SavesFolder_Cloud.SelectedIndex = 0;
         }
 
 

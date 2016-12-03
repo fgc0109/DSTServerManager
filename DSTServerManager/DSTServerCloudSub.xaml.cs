@@ -62,16 +62,7 @@ namespace DSTServerManager
                 button_SubWin_ConnectionSaved.IsEnabled = false;
                 label_Logs.Text += ex.ToString();
             }
-            finally
-            {
-                label_Logs.Text += "\r\n";
-                sftpclient = null;
-            }
-
-            //List<string> saveFolders_Cloud = SavesManager.GetSavesFolder(sftpclient);
-            //foreach (var item in saveFolders_Cloud)
-            //    comboBox_SavesFolder_Cloud.Items.Add(item);
-            //comboBox_SavesFolder_Cloud.SelectedIndex = 0;
+            finally { sftpclient = null; }  
         }
 
         private void button_SubWin_ConnectionSaved_Click(object sender, RoutedEventArgs e)

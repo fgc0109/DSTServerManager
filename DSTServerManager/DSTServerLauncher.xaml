@@ -50,6 +50,7 @@
                 </Grid.ColumnDefinitions>
                 <Label Content="令牌" Margin="4" VerticalContentAlignment="Center" Padding="4" HorizontalContentAlignment="Center"/>
                 <TextBox x:Name="textBox_BasicInfo_Key" Margin="5" TextWrapping="Wrap" VerticalContentAlignment="Center" Grid.Column="1" Grid.ColumnSpan="2" TextChanged="textBox_BasicInfo_TextChanged"/>
+                <Button x:Name="button" Content="查看服务器" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="button_Click" Height="19" Margin="177,6,0,0" Grid.Column="1"/>
             </Grid>
         </GroupBox>
         <Menu x:Name="menu" Margin="5" Grid.ColumnSpan="2">
@@ -106,7 +107,7 @@
                                 <Label Grid.Row="0" Grid.Column="2" Margin="4" Content="{DynamicResource GAMEPLAY_COUNTS}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                                 <Label Grid.Row="0" Grid.Column="4" Margin="4" Content="{DynamicResource GAMEPLAY_CANPVP}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                                 <Label Grid.Row="0" Grid.Column="6" Margin="4" Content="{DynamicResource GAMEPLAY_PAUSES}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                                <Label Grid.Row="0" Grid.Column="8" Margin="4" Content="开启投票" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                                <Label Grid.Row="0" Grid.Column="8" Margin="4" Content="{DynamicResource GAMEPLAY_ISVOTE}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                                 <TextBox Grid.Row="0" Grid.Column="1" Margin="5" x:Name="textBox_Cluster_Gameplay_Mode" TextWrapping="Wrap" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                                 <TextBox Grid.Row="0" Grid.Column="3" Margin="5" x:Name="textBox_Cluster_Gameplay_Player" TextWrapping="Wrap" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                                 <ComboBox Grid.Row="0" Grid.Column="5" x:Name="comboBox_Cluster_Gameplay_PVP" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
@@ -174,7 +175,6 @@
                                 <TextBox Grid.Row="4" Grid.Column="5" Margin="5" x:Name="textBox_Cluster_Shard_MasterIP" TextWrapping="Wrap" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                                 <TextBox Grid.Row="4" Grid.Column="7" Margin="5" x:Name="textBox_Cluster_Shard_MasterPort" TextWrapping="Wrap" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                                 <TextBox Grid.Row="4" Grid.Column="9" Margin="5" x:Name="textBox_Cluster_Shard_MasterKey" TextWrapping="Wrap" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                                <Button x:Name="button" Content="查看服务器" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="button_Click" Height="19" Margin="10,5,0,0" Grid.ColumnSpan="2" Grid.Column="4" Grid.Row="3"/>
 
                             </Grid>
                             <Grid Margin="5" Grid.Row="1">

@@ -2,10 +2,12 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:DSTServerManager"
                     xmlns:s="clr-namespace:System;assembly=mscorlib">
+    <!--================================================================================-->
     <!--子窗口-->
     <s:String x:Key="SubWin_ConnectionCheck">测试连接</s:String>
     <s:String x:Key="SubWin_ConnectionSaved">保存连接</s:String>
-    
+
+    <!--================================================================================-->
     <!--程序菜单项目-->
     <s:String x:Key="MenuItem_ApplicationMenu">Menu</s:String>
     <s:String x:Key="ApplicationMenu_Close">Exit</s:String>
@@ -19,11 +21,30 @@
     <s:String x:Key="MenuItem_SelectLanguages">Language</s:String>
     <s:String x:Key="SelectLanguages_Chinese">中文</s:String>
     <s:String x:Key="SelectLanguages_English">English</s:String>
-
+    
+    <!--================================================================================-->
+    <!--右侧标签页-->
     <s:String x:Key="GROUP_CLUSTER_SETTING">Cluster Setting</s:String>
     <s:String x:Key="GROUP_CLUSTER_SERVERS">Cluster Servers List</s:String>
-    <s:String x:Key="GROUP_CLUSTER_SERINFO">Servers Information List</s:String>    
+    <s:String x:Key="GROUP_CLUSTER_SERINFO">Servers Information List</s:String>
     
+    <s:String x:Key="GAMEPLAY_GMMODE">Mode</s:String>
+    <s:String x:Key="GAMEPLAY_COUNTS">Player</s:String>
+    <s:String x:Key="GAMEPLAY_CANPVP">PVP</s:String>
+    <s:String x:Key="GAMEPLAY_PAUSES">Pause</s:String>
+    <s:String x:Key="GAMEPLAY_ISVOTE">Vote</s:String>
+
+    <s:String x:Key="SAVESERVER_INDEXS">ID</s:String>
+    <s:String x:Key="SAVESERVER_FOLDER">Folder</s:String>
+    <s:String x:Key="SAVESERVER_SRNAME">Name</s:String>
+    <s:String x:Key="SAVESERVER_MASTER">Master</s:String>
+    <s:String x:Key="SAVESERVER_PORT_1">Port</s:String>
+    <s:String x:Key="SAVESERVER_PORT_2">SteamPort</s:String>
+    <s:String x:Key="SAVESERVER_PORT_3">SteamPort</s:String>
+    <s:String x:Key="SAVESERVER_SESSON">Session</s:String>
+    <s:String x:Key="SAVESERVER_CONNEC">Connect</s:String>
+
+    <!--================================================================================-->
     <!--本地服务器 开启方式-->
     <s:String x:Key="LocalServer_OpenType">本地服务器开启方式</s:String>
     <s:String x:Key="LocalServer_OpenType_1">NormalWindow   *以Windows标准Shell窗口开启服务器</s:String>
@@ -40,6 +61,9 @@
     <!--本地服务器 集群存档文件列表-->
     <s:String x:Key="LocalServer_ClusterSaveList">本地服务器集群存档文件列表</s:String>
 
+    <!--远程服务器 远程连接列表-->
+    <s:String x:Key="CloudServer_ConnectionList">远程连接列表</s:String>
+    
     <!--远程服务器 服务器列表-->
     <s:String x:Key="CloudServer_ServerList">远程服务器列表</s:String>
     <s:String x:Key="CloudServer_ServerList_Index">ID</s:String>
@@ -48,26 +72,7 @@
     <s:String x:Key="CloudServer_AddServer">添加服务器</s:String>
     <s:String x:Key="CloudServer_DelServer">删除服务器</s:String>
 
-    <!--本地服务器 集群存档文件列表-->
+    <!--远程服务器 集群存档文件列表-->
     <s:String x:Key="CloudServer_ClusterSaveList">远程服务器集群存档文件列表</s:String>
-
-    <s:String x:Key="CloudServer_ConnectionList">远程连接列表</s:String>
-
-
-    <s:String x:Key="GAMEPLAY_GMMODE">Mode</s:String>
-    <s:String x:Key="GAMEPLAY_COUNTS">Player</s:String>
-    <s:String x:Key="GAMEPLAY_CANPVP">PVP</s:String>
-    <s:String x:Key="GAMEPLAY_PAUSES">Pause</s:String>
-
-
-    <s:String x:Key="SAVESERVER_INDEXS">ID</s:String>
-    <s:String x:Key="SAVESERVER_FOLDER">Folder</s:String>
-    <s:String x:Key="SAVESERVER_SRNAME">Name</s:String>
-    <s:String x:Key="SAVESERVER_MASTER">Master</s:String>
-    <s:String x:Key="SAVESERVER_PORT_1">Port</s:String>
-    <s:String x:Key="SAVESERVER_PORT_2">SteamPort</s:String>
-    <s:String x:Key="SAVESERVER_PORT_3">SteamPort</s:String>
-    <s:String x:Key="SAVESERVER_SESSON">Session</s:String>
-    <s:String x:Key="SAVESERVER_CONNEC">Connect</s:String>
-
+   
 </ResourceDictionary>  
