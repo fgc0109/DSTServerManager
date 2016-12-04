@@ -72,7 +72,8 @@ namespace DSTServerManager.Servers
                 return false;
             }
 
-            m_ShellStream = m_SshClient.CreateShellStream("putty-vt100", 80, 24, 800, 600, 4096);
+            m_ShellStream = m_SshClient.CreateShellStream("anything", 80, 24, 800, 600, 4096);
+            //m_ShellStream = m_SshClient.CreateShellStream("putty-vt100", 80, 24, 800, 600, 4096);
             byte[] buffer = new byte[4096];
 
             m_ShellStream.DataReceived += new EventHandler<ShellDataEventArgs>(connect_OutputDataReceived);
