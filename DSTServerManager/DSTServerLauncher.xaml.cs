@@ -21,6 +21,8 @@ using System.Diagnostics;
 using Renci.SshNet;
 using System.Data;
 using System.IO;
+using System.Threading;
+using System.ComponentModel;
 
 namespace DSTServerManager
 {
@@ -44,7 +46,7 @@ namespace DSTServerManager
         private List<ServerProcess> m_ServerProcess = null;
         private List<ServerScreens> m_ServerScreens = null;
 
-        SftpClient m_Current_SftpClient = null;
+        private string m_TabItemXaml = string.Empty;
 
         public DSTServerLauncher()
         {
@@ -62,6 +64,8 @@ namespace DSTServerManager
             m_ServerConnect = new List<ServerConnect>();
             m_ServerProcess = new List<ServerProcess>();
             m_ServerScreens = new List<ServerScreens>();
+
+            m_TabItemXaml = System.Windows.Markup.XamlWriter.Save(tabItemMain);
             #endregion
 
             application_LocalServer_Init();
@@ -125,30 +129,39 @@ namespace DSTServerManager
         /// </summary>
         private void dataGrid_CloudServer_Connection_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            int indexCloudServer_Connection = dataGrid_CloudServer_Connection.SelectedIndex;
-            DataGridRow dataRow = (DataGridRow)this.dataGrid_CloudServer_Connection.ItemContainerGenerator.ContainerFromIndex(indexCloudServer_Connection);
+            int indexConn = dataGrid_CloudServer_Connection.SelectedIndex;
 
+            //在后台线程开始打开远程连接
+            BackgroundWorker connectWorker = new BackgroundWorker();
+            connectWorker.DoWork += ConnectWorker_DoWork;
+            connectWorker.RunWorkerCompleted += ConnectWorker_RunWorkerCompleted;
+            connectWorker.RunWorkerAsync(indexConn);
+        }
+        private void ConnectWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            string exception = string.Empty;
+            m_ServerConnect[(int)e.Argument].StartConnect(out exception);
+        }
+        private void ConnectWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            int indexConn = dataGrid_CloudServer_Connection.SelectedIndex;
+            if (m_ServerConnect[indexConn].AllConnected == false) return;
 
-            m_Current_SftpClient = m_ServerConnect[indexCloudServer_Connection].GetSftpClient;
-            if (m_Current_SftpClient.IsConnected == false)
-                try
-                {
-                    m_Current_SftpClient.Connect();
-                    dataRow.Background = new SolidColorBrush(Colors.LightGreen);
-                }
-                catch (Exception ex)
-                {
-                    ex.ToString();
-                    dataRow.Background = new SolidColorBrush(Colors.OrangeRed);
-                    return;
-                }
-                finally
-                {
-                    dataGrid_CloudServer_Connection.SelectedIndex = -1;
-                }
-            if (SavesManager.GetSavesFolder(m_Current_SftpClient).Count == 0) SavesManager.CreatSavesFolder(m_Current_SftpClient);
+            TabItem connectTab = System.Windows.Markup.XamlReader.Parse(m_TabItemXaml) as TabItem;
+            tabControl_ServerLog.Items.Add(connectTab);
 
-            List<string> saveFolders_Cloud = SavesManager.GetSavesFolder(m_Current_SftpClient);
+            m_ServerConnect[indexConn].CreatTabWindow(this, tabControl_ServerLog, connectTab);
+
+            //控制DataGrid的颜色并取消选中
+            DataGridRow dataRow = (DataGridRow)dataGrid_CloudServer_Connection.ItemContainerGenerator.ContainerFromIndex(indexConn);
+            if (m_ServerConnect[indexConn].AllConnected) dataRow.Background = new SolidColorBrush(Colors.LightGreen);
+            else dataRow.Background = new SolidColorBrush(Colors.OrangeRed);
+        //    dataGrid_CloudServer_Connection.SelectedIndex = -1;
+
+            if (SavesManager.GetSavesFolder(m_ServerConnect[indexConn].GetSftpClient).Count == 0)
+                SavesManager.CreatSavesFolder(m_ServerConnect[indexConn].GetSftpClient);
+
+            List<string> saveFolders_Cloud = SavesManager.GetSavesFolder(m_ServerConnect[indexConn].GetSftpClient);
             foreach (var item in saveFolders_Cloud) comboBox_SavesFolder_Cloud.Items.Add(item);
             comboBox_SavesFolder_Cloud.SelectedIndex = 0;
         }
@@ -171,11 +184,13 @@ namespace DSTServerManager
         /// </summary>
         private void comboBox_SavesFolder_Cloud_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            int indexConn = dataGrid_CloudServer_Connection.SelectedIndex;
+
             //获取集群信息
             string saveFolder = comboBox_SavesFolder_Cloud.SelectedItem?.ToString();
             if (saveFolder == string.Empty) return;
-            RefreshClusterData(saveFolder, "Cluster", ref listBox_CloudServer_ClusterFile, m_Current_SftpClient);
-            m_ClusterInfo_Cloud = SavesManager.GetClusterInfo(saveFolder, "Cluster", m_Current_SftpClient);
+            RefreshClusterData(saveFolder, "Cluster", ref listBox_CloudServer_ClusterFile, m_ServerConnect[indexConn].GetSftpClient);
+            m_ClusterInfo_Cloud = SavesManager.GetClusterInfo(saveFolder, "Cluster", m_ServerConnect[indexConn].GetSftpClient);
             if (listBox_CloudServer_ClusterFile.Items.Count != 0) listBox_CloudServer_ClusterFile.SelectedIndex = 0;
         }
 
@@ -208,17 +223,17 @@ namespace DSTServerManager
         /// <param name="e"></param>
         private void dataGrid_ClusterInfo_ServersList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            int indexLocalServer_ClusterFile = listBox_LocalServer_ClusterFile.SelectedIndex;
-            int indexCloudServer_ClusterFile = listBox_CloudServer_ClusterFile.SelectedIndex;
-            int indexClusterInfo_ServersList = dataGrid_ClusterInfo_ServersList.SelectedIndex;
+            int indexLocalFile = listBox_LocalServer_ClusterFile.SelectedIndex;
+            int indexCloudFile = listBox_CloudServer_ClusterFile.SelectedIndex;
+            int indexServer = dataGrid_ClusterInfo_ServersList.SelectedIndex;
 
-            if (indexClusterInfo_ServersList != -1 && indexLocalServer_ClusterFile != -1)
+            if (indexServer != -1 && indexLocalFile != -1)
             {
-                dataGrid_ClusterInfo_ServerLevel.ItemsSource = m_ClusterInfo_Local[indexLocalServer_ClusterFile].ClusterServers[indexClusterInfo_ServersList].Level.ServerLevelTable.DefaultView;
+                dataGrid_ClusterInfo_ServerLevel.ItemsSource = m_ClusterInfo_Local[indexLocalFile].ClusterServers[indexServer].Level.ServerLevelTable.DefaultView;
             }
-            if (indexClusterInfo_ServersList != -1 && indexCloudServer_ClusterFile != -1)
+            if (indexServer != -1 && indexCloudFile != -1)
             {
-                dataGrid_ClusterInfo_ServerLevel.ItemsSource = m_ClusterInfo_Cloud[indexCloudServer_ClusterFile].ClusterServers[indexClusterInfo_ServersList].Level.ServerLevelTable.DefaultView;
+                dataGrid_ClusterInfo_ServerLevel.ItemsSource = m_ClusterInfo_Cloud[indexCloudFile].ClusterServers[indexServer].Level.ServerLevelTable.DefaultView;
             }
         }
 
@@ -229,14 +244,14 @@ namespace DSTServerManager
         /// <param name="e"></param>
         private void button_Cluster_Start_Local_Click(object sender, RoutedEventArgs e)
         {
-            int indexLocalServer_ClusterFile = listBox_LocalServer_ClusterFile.SelectedIndex;
-            int indexLocalServer_ServersPath = dataGrid_LocalServer_ServersPath.SelectedIndex;
+            int indexLocalFile = listBox_LocalServer_ClusterFile.SelectedIndex;
+            int indexLocalPath = dataGrid_LocalServer_ServersPath.SelectedIndex;
 
-            if (indexLocalServer_ClusterFile == -1 || indexLocalServer_ServersPath == -1) return;
+            if (indexLocalFile == -1 || indexLocalPath == -1) return;
 
             //保存当前选中的集群配置
-            ExtendHelper.CopyAllProperties(UI_DATA, m_ClusterInfo_Local[indexLocalServer_ClusterFile].ClusterSetting);
-            SavesManager.SetClusterInfo(comboBox_SavesFolder_Local.SelectedItem?.ToString(), m_ClusterInfo_Local[indexLocalServer_ClusterFile]);
+            ExtendHelper.CopyAllProperties(UI_DATA, m_ClusterInfo_Local[indexLocalFile].ClusterSetting);
+            SavesManager.SetClusterInfo(comboBox_SavesFolder_Local.SelectedItem?.ToString(), m_ClusterInfo_Local[indexLocalFile]);
 
             //服务器程序文件路径获取
             string exeName = (dataGrid_LocalServer_ServersPath.SelectedItem as DataRowView)[2].ToString();
@@ -251,18 +266,15 @@ namespace DSTServerManager
                     m_ServerProcess.Remove(m_ServerProcess[i]);
                 }
             }
-            string xaml = System.Windows.Markup.XamlWriter.Save(tabItemMain);
-
             //获取集群服务器
-            foreach (var server in m_ClusterInfo_Local[indexLocalServer_ClusterFile].ClusterServers)
+            foreach (var server in m_ClusterInfo_Local[indexLocalFile].ClusterServers)
             {
                 StringBuilder cmdBuilder = new StringBuilder(256);
                 cmdBuilder.Append($" -conf_dir {comboBox_SavesFolder_Local.SelectedItem.ToString()}");
                 cmdBuilder.Append($" -cluster {listBox_LocalServer_ClusterFile.SelectedItem.ToString()}");
                 cmdBuilder.Append($" -shard {server.Folder}");
 
-                TabItem newProcessTab = new TabItem();
-                newProcessTab = System.Windows.Markup.XamlReader.Parse(xaml) as TabItem;
+                TabItem newProcessTab = System.Windows.Markup.XamlReader.Parse(m_TabItemXaml) as TabItem;
                 newProcessTab.Header = server.Folder;
                 tabControl_ServerLog.Items.Add(newProcessTab);
 
@@ -312,22 +324,29 @@ namespace DSTServerManager
             ConfigHelper.SetValue("textBox_BasicInfo_Key", textBox_BasicInfo_Key.Text);
         }
 
-        private void textBox_Server_Server_Input_KeyDown(object sender, KeyEventArgs e)
+        private void textBox_Server_Server_Input_KeyDown(object sender, KeyEventArgs keyEventArgs)
         {
-            if (e.Key != Key.Enter)
-                return;
+            if (keyEventArgs.Key != Key.Enter) return;
+
             textBox_Servers_Tab_Log.Text += tabControl_ServerLog.SelectedIndex.ToString();
             textBox_Servers_Tab_Log.Text += sender.ToString() + "\r\n";
 
             foreach (var server in m_ServerProcess)
             {
-                if (server.ServerTab.Equals(tabControl_ServerLog.SelectedItem))
-                {
-                    textBox_Servers_Tab_Log.Text += server.ServerSession;
-                    server.SendCommand(textBox_Server_Server_Input.Text);
-                    //server.SendCommandNormal(textBox_Server_Server_Input.Text);
-                    //item.CurrentServerProcess.StandardInput.WriteLine(textBox_Server_Server_Input.Text);
-                }
+                if (!server.ServerTab.Equals(tabControl_ServerLog.SelectedItem)) continue;
+
+                textBox_Servers_Tab_Log.Text += server.ServerSession;
+                server.SendCommand(textBox_Server_Server_Input.Text);
+                //server.SendCommandNormal(textBox_Server_Server_Input.Text);
+                //item.CurrentServerProcess.StandardInput.WriteLine(textBox_Server_Server_Input.Text);
+            }
+
+            foreach (var connect in m_ServerConnect)
+            {
+                if (!connect.AllConnected) continue;
+                if (!connect.ServerTab.Equals(tabControl_ServerLog.SelectedItem)) continue;
+
+                connect.SendCommand(textBox_Server_Server_Input.Text);
             }
         }
 
@@ -445,7 +464,15 @@ namespace DSTServerManager
 
         private void button_CloudServer_GetServer_Click(object sender, RoutedEventArgs e)
         {
+            //  int indexConn = dataGrid_CloudServer_Connection.SelectedIndex;
 
+            //  m_ServerConnect[indexConn].GetSshClient.RunCommand("").Execute();
+
+            //textBox_Servers_Tab_Log.Text += m_Current_SshClient.RunCommand("top").Execute();
+            // m_ServerConnect[indexConn].GetSshClient.CreateShell()
+
+
+            //m_ServerConnect[1].SendCommand("top");
         }
 
 

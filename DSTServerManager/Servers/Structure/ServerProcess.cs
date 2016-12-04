@@ -27,17 +27,17 @@ namespace DSTServerManager.Servers
     /// </summary>
     class ServerProcess
     {
-        Process m_ServerProcess = null;
-        string m_ServerSession = string.Empty;
-        bool m_ProcessActive = false;
+        private Process m_ServerProcess = null;
+        private string m_ServerSession = string.Empty;
+        private bool m_ProcessActive = false;
 
         //用于重定向输出后的界面创建和显示
-        bool m_UserInterface = true;
-        Window m_MainWindow = null;
-        TabControl m_TabControl = null;
-        TabItem m_ServerTab = null;
-        TextBox m_ServerLog = null;
-        StreamWriter m_StreamWriter = null;
+        private bool m_UserInterface = true;
+        private Window m_MainWindow = null;
+        private TabControl m_TabControl = null;
+        private TabItem m_ServerTab = null;
+        private TextBox m_ServerLog = null;
+        private StreamWriter m_StreamWriter = null;
 
         /// <summary>
         /// 创建一个新的Process实例
@@ -61,14 +61,9 @@ namespace DSTServerManager.Servers
             m_ServerSession = session;
         }
 
-        public TabItem ServerTab
-        { get { return m_ServerTab; } }
-
-        public bool IsProcessActive
-        { get { return m_ProcessActive; } }
-
-        public string ServerSession
-        { get { return m_ServerSession; } }
+        public TabItem ServerTab { get { return m_ServerTab; } }
+        public bool IsProcessActive { get { return m_ProcessActive; } }
+        public string ServerSession { get { return m_ServerSession; } }
 
         /// <summary>
         /// 不使用windows外壳程序并且不显示窗口,所有信息输出到重定向的TextBox
@@ -132,7 +127,6 @@ namespace DSTServerManager.Servers
 
                 m_StreamWriter.WriteLine(command);
                 m_StreamWriter.Flush();
-
             }
             else
             {
