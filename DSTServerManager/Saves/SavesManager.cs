@@ -16,7 +16,8 @@ namespace DSTServerManager.Saves
     {
         //默认路径
         static string m_DefaultPath_Local = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Klei";
-        static string m_DefaultPath_Cloud = @"/root/.klei";
+        static string m_DefaultPath_CloudRoot = @"/root/.klei";
+        static string m_DefaultPath_CloudUser = @"/home/{0}/.klei";
 
         //集群默认配置文件名
         static string m_ClusterIniName = "cluster.ini";
@@ -32,8 +33,10 @@ namespace DSTServerManager.Saves
         }
         internal static List<string> GetSavesFolder(SftpClient client)
         {
+            string defaultUser = client.ConnectionInfo.Username;
+            string defaultPath = (defaultUser == "root") ? m_DefaultPath_CloudRoot : string.Format(m_DefaultPath_CloudUser, defaultUser);
             List<string> folder = new List<string>();
-            foreach (var item in client.ListDirectory(m_DefaultPath_Cloud))
+            foreach (var item in client.ListDirectory(defaultPath))
                 if (item.Name != "." && item.Name != "..") folder.Add(item.Name);
             return folder;
         }
@@ -53,8 +56,10 @@ namespace DSTServerManager.Saves
         }
         internal static List<string> GetClusterFolder(string saveName, string keyword, SftpClient client)
         {
+            string defaultUser = client.ConnectionInfo.Username;
+            string defaultPath = (defaultUser == "root") ? m_DefaultPath_CloudRoot : string.Format(m_DefaultPath_CloudUser, defaultUser);
             List<string> cluster = new List<string>();
-            foreach (var item in client.ListDirectory($"{m_DefaultPath_Cloud}/{saveName}"))
+            foreach (var item in client.ListDirectory($"{defaultPath}/{saveName}"))
                 if (item.Name.Contains(keyword)) cluster.Add(item.Name);
             return cluster;
         }
@@ -83,6 +88,8 @@ namespace DSTServerManager.Saves
         }
         internal static List<ClusterInfo> GetClusterInfo(string saveName, string keyword, SftpClient client)
         {
+            string defaultUser = client.ConnectionInfo.Username;
+            string defaultPath = (defaultUser == "root") ? m_DefaultPath_CloudRoot : string.Format(m_DefaultPath_CloudUser, defaultUser);
             List<ClusterInfo> clusterList = new List<ClusterInfo>();
             List<string> clusterFolder = GetClusterFolder(saveName, keyword, client);
 
@@ -90,7 +97,7 @@ namespace DSTServerManager.Saves
             {
                 ClusterInfo cluster = new ClusterInfo();
                 cluster.ClusterFolder = clusterName;
-                cluster.ClusterSetting.ReadFromSSH($"{m_DefaultPath_Cloud}/{saveName}/{clusterName}/{m_ClusterIniName}", client);
+                cluster.ClusterSetting.ReadFromSSH($"{defaultPath}/{saveName}/{clusterName}/{m_ClusterIniName}", client);
                 cluster.ClusterServers = GetServerInfo(saveName, clusterName, client);
                 clusterList.Add(cluster);
             }
@@ -110,7 +117,9 @@ namespace DSTServerManager.Saves
         }
         internal static bool SetClusterInfo(string saveName, ClusterInfo current, SftpClient client)
         {
-            current.ClusterSetting.WriteToSSH($"{m_DefaultPath_Cloud}/{saveName}/{current.ClusterFolder}/{m_ClusterIniName}", client);
+            string defaultUser = client.ConnectionInfo.Username;
+            string defaultPath = (defaultUser == "root") ? m_DefaultPath_CloudRoot : string.Format(m_DefaultPath_CloudUser, defaultUser);
+            current.ClusterSetting.WriteToSSH($"{defaultPath}/{saveName}/{current.ClusterFolder}/{m_ClusterIniName}", client);
             return true;
         }
 
@@ -129,8 +138,10 @@ namespace DSTServerManager.Saves
         }
         internal static List<string> GetServerFolder(string saveName, string clusterName, SftpClient client)
         {
+            string defaultUser = client.ConnectionInfo.Username;
+            string defaultPath = (defaultUser == "root") ? m_DefaultPath_CloudRoot : string.Format(m_DefaultPath_CloudUser, defaultUser);
             List<string> server = new List<string>();
-            foreach (var item in client.ListDirectory($"{m_DefaultPath_Cloud}/{saveName}/{clusterName}"))
+            foreach (var item in client.ListDirectory($"{defaultPath}/{saveName}/{clusterName}"))
                 if (item.Name != "." && item.Name != ".." && item.IsDirectory) server.Add(item.Name);
             return server;
         }
@@ -161,6 +172,8 @@ namespace DSTServerManager.Saves
         }
         internal static List<ServerInfo> GetServerInfo(string saveName, string clusterName, SftpClient client)
         {
+            string defaultUser = client.ConnectionInfo.Username;
+            string defaultPath = (defaultUser == "root") ? m_DefaultPath_CloudRoot : string.Format(m_DefaultPath_CloudUser, defaultUser);
             List<ServerInfo> serverList = new List<ServerInfo>();
             List<string> serverFolder = GetServerFolder(saveName, clusterName, client);
 
@@ -168,10 +181,10 @@ namespace DSTServerManager.Saves
             {
                 ServerInfo server = new ServerInfo();
                 server.Folder = serverName;
-                server.Setting.ReadFromSSH($"{m_DefaultPath_Cloud}/{saveName}/{clusterName}/{serverName}/{m_ServerIniName}", client);
-                if (GetFolder($"{m_DefaultPath_Cloud}/{saveName}/{clusterName}/{serverName}/save/session").Count > 0)
-                    server.Session = GetFolder($"{m_DefaultPath_Cloud}/{saveName}/{clusterName}/{serverName}/save/session")[0];
-                server.Level.ReadFromFile($"{m_DefaultPath_Cloud}/{saveName}/{clusterName}/{serverName}/leveldataoverride.lua");
+                server.Setting.ReadFromSSH($"{defaultPath}/{saveName}/{clusterName}/{serverName}/{m_ServerIniName}", client);
+                if (GetFolder($"{defaultPath}/{saveName}/{clusterName}/{serverName}/save/session").Count > 0)
+                    server.Session = GetFolder($"{defaultPath}/{saveName}/{clusterName}/{serverName}/save/session")[0];
+                server.Level.ReadFromFile($"{defaultPath}/{saveName}/{clusterName}/{serverName}/leveldataoverride.lua");
 
                 serverList.Add(server);
             }
