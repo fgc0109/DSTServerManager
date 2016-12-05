@@ -86,16 +86,16 @@ namespace DSTServerManager
             dataGrid_LocalServer_ServersPath.FrozenColumnCount = 2;
             dataGrid_CloudServer_ServersPath.FrozenColumnCount = 2;
 
-            userDataSQLite.OpenSQLite(appStartupPath + @"\DSTServerManager.db", out exception);
+            userDataSQLite.OpenSQLite(appStartupPath + @"\DSTServerManager.db");
             CreateDefaultTable(ref userDataSQLite, out exception);
 
             //读取数据库数据
-            UI_DATA.ServerFileListTable_Local = userDataSQLite.ExecuteDataTable("LocalServerList", out exception);
-            UI_DATA.ServerFileListTable_Cloud = userDataSQLite.ExecuteDataTable("CloudServerList", out exception);
-            UI_DATA.ServerConnectsTable_Cloud = userDataSQLite.ExecuteDataTable("CloudServerConnList", out exception);
+            UI_DATA.ServerFileListTable_Local = userDataSQLite.ExecuteDataTable("LocalServerList");
+            UI_DATA.ServerFileListTable_Cloud = userDataSQLite.ExecuteDataTable("CloudServerList");
+            UI_DATA.ServerConnectsTable_Cloud = userDataSQLite.ExecuteDataTable("CloudServerConnList");
 
-            UI_DATA.ServerConsole = userDataSQLite.ExecuteDataTable("ServerConsole", out exception);
-            UI_DATA.ServerLeveled = userDataSQLite.ExecuteDataTable("ServerLeveled", out exception);           
+            UI_DATA.ServerConsole = userDataSQLite.ExecuteDataTable("ServerConsole");
+            UI_DATA.ServerLeveled = userDataSQLite.ExecuteDataTable("ServerLeveled");
 
             //读取并合并外部数据
             if (!File.Exists(appStartupPath + @"\DSTServerManager.xlsx")) return;
@@ -111,12 +111,12 @@ namespace DSTServerManager
             UI_DATA.ServerLeveled.MergeExcelData(userDataExcel, "ServerLeveled", out exception);
 
             //更新本地数据库数据
-            userDataSQLite.SaveDataTable(UI_DATA.ServerFileListTable_Local, "LocalServerList", out exception);
-            userDataSQLite.SaveDataTable(UI_DATA.ServerFileListTable_Cloud, "CloudServerList", out exception);
-            userDataSQLite.SaveDataTable(UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList", out exception);
+            userDataSQLite.SaveDataTable(UI_DATA.ServerFileListTable_Local, "LocalServerList");
+            userDataSQLite.SaveDataTable(UI_DATA.ServerFileListTable_Cloud, "CloudServerList");
+            userDataSQLite.SaveDataTable(UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList");
 
-            userDataSQLite.SaveDataTable(UI_DATA.ServerConsole, "ServerConsole", out exception);
-            userDataSQLite.SaveDataTable(UI_DATA.ServerLeveled, "ServerLeveled", out exception);
+            userDataSQLite.SaveDataTable(UI_DATA.ServerConsole, "ServerConsole");
+            userDataSQLite.SaveDataTable(UI_DATA.ServerLeveled, "ServerLeveled");
         }
 
         #endregion
@@ -134,17 +134,17 @@ namespace DSTServerManager
             //创建默认的数据表结构
             string[] parameter = null;
             parameter = new string[3] { "ID integer primary key", "Type text", "Path text" };
-            userDataSQLite.CreatDataTable("LocalServerList", parameter, out exception);
-            userDataSQLite.CreatDataTable("CloudServerList", parameter, out exception);
+            userDataSQLite.CreatDataTable("LocalServerList", parameter);
+            userDataSQLite.CreatDataTable("CloudServerList", parameter);
 
             parameter = new string[5] { "ID integer primary key", "IP text", "UserName text", "Password text", "ServerID text" };
-            userDataSQLite.CreatDataTable("CloudServerConnList", parameter, out exception);
+            userDataSQLite.CreatDataTable("CloudServerConnList", parameter);
 
             parameter = new string[4] { "ID integer primary key", "Explain text", "Command text", "Parameter text" };
-            userDataSQLite.CreatDataTable("ServerConsole", parameter, out exception);
+            userDataSQLite.CreatDataTable("ServerConsole", parameter);
 
             parameter = new string[8] { "ID integer primary key", "Name text", "English text", "Chinese text", "WorldType text", "Type text", "Enum text", "Current text" };
-            userDataSQLite.CreatDataTable("ServerLeveled", parameter, out exception);
+            userDataSQLite.CreatDataTable("ServerLeveled", parameter);
         }
 
         #endregion

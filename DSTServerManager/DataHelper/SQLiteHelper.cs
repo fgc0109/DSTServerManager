@@ -25,35 +25,22 @@ namespace DSTServerManager.DataHelper
         /// 尝试打开SQLite连接
         /// </summary> 
         /// <param name="filePath">SQLite数据库文件路径</param>
-        /// <param name="exception">异常信息</param>
-        public bool OpenSQLite(string filePath, out string exception)
+        public void OpenSQLite(string filePath)
         {
             m_dbConnection = new SQLiteConnection("Data Source=" + filePath);
 
-            try
-            {
-                m_dbConnection.Open();
-                exception = string.Empty;
-                return true;
-            }
-            catch (Exception ex)
-            {
-                exception = ex.ToString();
-                return false;
-            }
+            try { m_dbConnection.Open(); }
+            catch (Exception) { throw; }
         }
 
         /// <summary> 
         /// 执行一个查询语句，返回一个包含查询结果的DataTable 
         /// </summary> 
         /// <param name="tableName"></param>
-        /// <param name="exception"></param>
         /// <returns></returns>
-        public DataTable ExecuteDataTable(string tableName, out string exception)
+        public DataTable ExecuteDataTable(string tableName)
         {
             DataTable dataTable = new DataTable(tableName);
-            exception = string.Empty;
-
             try
             {
                 SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter($"select * from {tableName};", m_dbConnection);
@@ -62,7 +49,7 @@ namespace DSTServerManager.DataHelper
                 dataTable.AcceptChanges();
                 dataAdapter.Dispose();
             }
-            catch (Exception ex) { exception = ex.ToString(); }
+            catch (Exception) { throw; }
             return dataTable;
         }
 
@@ -71,9 +58,8 @@ namespace DSTServerManager.DataHelper
         /// </summary>
         /// <param name="tableName"></param>
         /// <param name="parameters"></param>
-        /// <param name="exception"></param>
         /// <returns></returns>
-        public bool CreatDataTable(string tableName, object[] parameters, out string exception)
+        public void CreatDataTable(string tableName, object[] parameters)
         {
             StringBuilder commandBuilder = new StringBuilder();
             if (parameters != null)
@@ -82,19 +68,12 @@ namespace DSTServerManager.DataHelper
                 commandBuilder.Remove(commandBuilder.Length - 2, 2);
             }
             string command = $"create table if not exists '{tableName}'({commandBuilder.ToString()});";
-            exception = string.Empty;
-
             try
             {
                 SQLiteCommand cmdCreateTable = new SQLiteCommand(command, m_dbConnection);
                 cmdCreateTable.ExecuteNonQuery();
-                return true;
             }
-            catch (Exception ex)
-            {
-                exception = ex.ToString();
-                return false;
-            }
+            catch (Exception) { throw; }
         }
 
         /// <summary>
@@ -102,12 +81,10 @@ namespace DSTServerManager.DataHelper
         /// </summary>
         /// <param name="dataTable"></param>
         /// <param name="tableName"></param>
-        /// <param name="exception"></param>
         /// <returns></returns>
-        public bool SaveDataTable(DataTable dataTable, string tableName, out string exception)
+        public void SaveDataTable(DataTable dataTable, string tableName)
         {
             string command = $"delete from '{tableName}';";
-            exception = string.Empty;
             try
             {
                 SQLiteCommand cmdCreateTable = new SQLiteCommand(command, m_dbConnection);
@@ -117,20 +94,12 @@ namespace DSTServerManager.DataHelper
                 SQLiteCommandBuilder commandBuilder = new SQLiteCommandBuilder(dataAdapter);
 
                 dataAdapter.InsertCommand = commandBuilder.GetInsertCommand();
-                //dataAdapter.UpdateCommand = commandBuilder.GetUpdateCommand();
-                //dataAdapter.DeleteCommand = commandBuilder.GetDeleteCommand();
-
                 dataAdapter.Update(dataTable);
 
                 dataTable.AcceptChanges();
                 dataAdapter.Dispose();
-                return true;
             }
-            catch (Exception ex)
-            {
-                exception = ex.ToString();
-                return false;
-            }
+            catch (Exception) { throw; }
         }
 
         /// <summary>
@@ -138,11 +107,9 @@ namespace DSTServerManager.DataHelper
         /// </summary>
         /// <param name="dataTable"></param>
         /// <param name="tableName"></param>
-        /// <param name="exception"></param>
         /// <returns></returns>
-        public bool UpdateDataTable(DataTable dataTable, string tableName, out string exception)
+        public void UpdateDataTable(DataTable dataTable, string tableName)
         {
-            exception = string.Empty;
             try
             {
                 SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter($"select * from {tableName};", m_dbConnection);
@@ -153,13 +120,8 @@ namespace DSTServerManager.DataHelper
 
                 dataTable.AcceptChanges();
                 dataAdapter.Dispose();
-                return true;
             }
-            catch (Exception ex)
-            {
-                exception = ex.ToString();
-                return false;
-            }
+            catch (Exception) { throw; }
         }
     }
 }

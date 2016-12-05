@@ -152,16 +152,16 @@ namespace DSTServerManager
 
             m_ServerConnect[indexConn].CreatTabWindow(this, tabControl_ServerLog, connectTab);
 
-            //控制DataGrid的颜色并取消选中
+            //控制DataGrid的颜色
             DataGridRow dataRow = (DataGridRow)dataGrid_CloudServer_Connection.ItemContainerGenerator.ContainerFromIndex(indexConn);
             if (m_ServerConnect[indexConn].AllConnected) dataRow.Background = new SolidColorBrush(Colors.LightGreen);
             else dataRow.Background = new SolidColorBrush(Colors.OrangeRed);
-        //    dataGrid_CloudServer_Connection.SelectedIndex = -1;
 
-            if (SavesManager.GetSavesFolder(m_ServerConnect[indexConn].GetSftpClient).Count == 0)
-                SavesManager.CreatSavesFolder(m_ServerConnect[indexConn].GetSftpClient);
+            SftpClient client = m_ServerConnect[indexConn].GetSftpClient;
+            if (SavesManager.GetSavesFolder(client).Count == 0)
+                SavesManager.CreatSavesFolder(client);
 
-            List<string> saveFolders_Cloud = SavesManager.GetSavesFolder(m_ServerConnect[indexConn].GetSftpClient);
+            List<string> saveFolders_Cloud = SavesManager.GetSavesFolder(client);
             foreach (var item in saveFolders_Cloud) comboBox_SavesFolder_Cloud.Items.Add(item);
             comboBox_SavesFolder_Cloud.SelectedIndex = 0;
         }
@@ -433,7 +433,7 @@ namespace DSTServerManager
             string exception = string.Empty;
 
             UI_DATA.ServerConnectsTable_Cloud.RefreshDataTable(out exception);
-            m_UserDataSQLite.SaveDataTable(UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList", out exception);
+            m_UserDataSQLite.SaveDataTable(UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList");
         }
 
         /// <summary>
@@ -447,11 +447,11 @@ namespace DSTServerManager
                 UI_DATA.ServerConnectsTable_Cloud.Rows.Add(passValue.GetRow);
 
                 UI_DATA.ServerConnectsTable_Cloud.RefreshDataTable(out exception);
-                m_UserDataSQLite.SaveDataTable(UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList", out exception);
+                m_UserDataSQLite.SaveDataTable(UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList");
             }
             else
             {
-                m_UserDataSQLite.UpdateDataTable(UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList", out exception);
+                m_UserDataSQLite.UpdateDataTable(UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList");
             }
         }
 
