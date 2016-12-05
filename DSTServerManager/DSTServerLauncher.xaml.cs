@@ -352,7 +352,7 @@ namespace DSTServerManager
 
         private void dataGrid_Server_Command_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            textBox_Server_Server_Input.Text = ((DataRowView)dataGrid_Server_Command.SelectedItem)[2].ToString();
+            textBox_Server_Server_Input.Text = ((DataRowView)dataGrid_Server_Command.SelectedItem)[3].ToString();
             textBox_Server_Server_Input.Focus();
             textBox_Server_Server_Input.CaretIndex = textBox_Server_Server_Input.Text.Length - 1;
         }

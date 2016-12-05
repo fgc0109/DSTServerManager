@@ -37,14 +37,15 @@ namespace DSTServerManager.Saves
             string defaultUser = client.ConnectionInfo.Username;
             string defaultPath = (defaultUser == "root") ? m_DefaultPath_CloudRoot : string.Format(m_DefaultPath_CloudUser, defaultUser);
             List<string> folder = new List<string>();
-            try
+            try { client.ListDirectory(defaultPath); }
+            catch (SftpPathNotFoundException) { client.CreateDirectory(defaultPath); }
+            catch (SftpPermissionDeniedException) { throw; }
+            catch (Exception) { throw; }
+            finally
             {
                 foreach (var item in client.ListDirectory(defaultPath))
                     if (item.Name != "." && item.Name != "..") folder.Add(item.Name);
             }
-            catch (SftpPathNotFoundException) { client.CreateDirectory(defaultPath); }
-            catch (SftpPermissionDeniedException) { throw; }
-            catch (Exception) { throw; }
 
             return folder;
         }

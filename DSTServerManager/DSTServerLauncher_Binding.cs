@@ -140,7 +140,7 @@ namespace DSTServerManager
             parameter = new string[5] { "ID integer primary key", "IP text", "UserName text", "Password text", "ServerID text" };
             userDataSQLite.CreatDataTable("CloudServerConnList", parameter);
 
-            parameter = new string[4] { "ID integer primary key", "Explain text", "Command text", "Parameter text" };
+            parameter = new string[5] { "ID integer primary key", "Type text", "Explain text", "Command text", "Parameter text" };
             userDataSQLite.CreatDataTable("ServerConsole", parameter);
 
             parameter = new string[8] { "ID integer primary key", "Name text", "English text", "Chinese text", "WorldType text", "Type text", "Enum text", "Current text" };

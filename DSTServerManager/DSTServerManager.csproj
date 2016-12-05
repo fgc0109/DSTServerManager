@@ -124,7 +124,6 @@
     </Compile>
     <Compile Include="DSTServerLauncher_Widget.cs" />
     <Compile Include="DSTServerLauncher_Binding.cs" />
-    <Compile Include="DataHelper\SshHelper.cs" />
     <Compile Include="Saves\LicenseManager.cs" />
     <Compile Include="Saves\Structure\DefaultData.cs" />
     <Compile Include="Saves\Structure\ServerLevel.cs" />
