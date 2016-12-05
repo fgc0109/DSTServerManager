@@ -52,11 +52,10 @@ namespace DSTServerManager.DataHelper
         /// <param name="dataTable"></param>
         /// <param name="excelData"></param>
         /// <param name="tableName"></param>
-        /// <param name="exception"></param>
         /// <returns></returns>
-        public static void MergeExcelData(this DataTable dataTable, ExcelHelper excelData, string tableName, out string exception)
+        public static void MergeExcelData(this DataTable dataTable, ExcelHelper excelData, string tableName)
         {
-            DataTable localServerList = excelData.ExecuteDataTable(tableName, out exception);
+            DataTable localServerList = excelData.ExecuteDataTable(tableName);
             for (int i = 0; i < localServerList.Rows.Count; i++)
                 dataTable.Rows.Add(localServerList.Rows[i].ItemArray);
 
@@ -77,11 +76,8 @@ namespace DSTServerManager.DataHelper
         /// 合并和重新编号datatable
         /// </summary>
         /// <param name="dataTable"></param>
-        /// <param name="exception"></param>
-        public static void RefreshDataTable(this DataTable dataTable, out string exception)
+        public static void RefreshDataTable(this DataTable dataTable)
         {
-            exception = string.Empty;
-
             for (int i = 0; i < dataTable.Rows.Count; i++)
                 dataTable.Rows[i][0] = 0;
 

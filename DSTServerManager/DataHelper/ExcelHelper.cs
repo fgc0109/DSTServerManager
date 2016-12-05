@@ -61,14 +61,13 @@ namespace DSTServerManager.DataHelper
         /// <returns></returns>
         public DataTable ExecuteDataTable(string tableName)
         {
-            DataTable dataTable = new DataTable(tableName); 
+            DataTable dataTable = new DataTable(tableName);
             try
             {
                 OleDbDataAdapter dataAdapter = new OleDbDataAdapter($"select * from [{tableName}$];", m_dbConnection);
                 dataAdapter.Fill(dataTable);
             }
             catch (Exception) { throw; }
-
             return dataTable;
         }
     }

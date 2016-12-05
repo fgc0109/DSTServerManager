@@ -429,7 +429,7 @@ namespace DSTServerManager
 
             UI_DATA.ServerConnectsTable_Cloud.Rows[indexConn].Delete();
             UI_DATA.ServerConnectsTable_Cloud.AcceptChanges();
-            
+
             UI_DATA.ServerConnectsTable_Cloud.RefreshDataTable();
             m_UserDataSQLite.SaveDataTable(UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList");
         }
