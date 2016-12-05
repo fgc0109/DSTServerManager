@@ -31,9 +31,8 @@ namespace DSTServerManager.DataHelper
         /// <param name="filePath"></param>
         /// <param name="engines">Excel对象接口引擎</param>
         /// <param name="version">Excel对象文件版本</param>
-        /// <param name="exception">异常信息</param>
         /// <returns>文件打开状态</returns>
-        public bool OpenExcel(string filePath, ExcelEngines engines, ExcelVersion version, out string exception)
+        public void OpenExcel(string filePath, ExcelEngines engines, ExcelVersion version)
         {
             StringBuilder connectBuilder = new StringBuilder();
 
@@ -50,17 +49,8 @@ namespace DSTServerManager.DataHelper
                 connectBuilder.Append($"Extended Properties='Excel 12.0; HDR=Yes; IMEX=1;'");
 
             m_dbConnection = new OleDbConnection(connectBuilder.ToString());
-            try
-            {
-                m_dbConnection.Open();
-                exception = string.Empty;
-                return true;
-            }
-            catch (Exception ex)
-            {
-                exception = ex.ToString();
-                return false;
-            }
+            try { m_dbConnection.Open(); }
+            catch (Exception) { throw; }
         }
 
         /// <summary>
@@ -68,20 +58,17 @@ namespace DSTServerManager.DataHelper
         /// </summary>
         /// <param name="excelConn"></param>
         /// <param name="tableName"></param>
-        /// <param name="exception"></param>
         /// <returns></returns>
-        public DataTable ExecuteDataTable(string tableName, out string exception)
+        public DataTable ExecuteDataTable(string tableName)
         {
-            DataTable dataTable = new DataTable(tableName);
-            exception = string.Empty;
-
-            //if (m_dbConnection == null || m_dbConnection.State != ConnectionState.Open) return userData;
+            DataTable dataTable = new DataTable(tableName); 
             try
             {
                 OleDbDataAdapter dataAdapter = new OleDbDataAdapter($"select * from [{tableName}$];", m_dbConnection);
                 dataAdapter.Fill(dataTable);
             }
-            catch (Exception ex) { exception = ex.ToString(); }
+            catch (Exception) { throw; }
+
             return dataTable;
         }
     }

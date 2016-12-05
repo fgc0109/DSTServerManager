@@ -101,14 +101,14 @@ namespace DSTServerManager
             if (!File.Exists(appStartupPath + @"\DSTServerManager.xlsx")) return;
 
             ExcelHelper userDataExcel = new ExcelHelper();
-            userDataExcel.OpenExcel(appStartupPath + @"\DSTServerManager.xlsx", ExcelEngines.ACE, ExcelVersion.Office2007, out exception);
+            userDataExcel.OpenExcel(appStartupPath + @"\DSTServerManager.xlsx", ExcelEngines.ACE, ExcelVersion.Office2007);
 
-            UI_DATA.ServerFileListTable_Local.MergeExcelData(userDataExcel, "LocalServerList", out exception);
-            UI_DATA.ServerFileListTable_Cloud.MergeExcelData(userDataExcel, "CloudServerList", out exception);
-            UI_DATA.ServerConnectsTable_Cloud.MergeExcelData(userDataExcel, "CloudServerConnList", out exception);
+            UI_DATA.ServerFileListTable_Local.MergeExcelData(userDataExcel, "LocalServerList");
+            UI_DATA.ServerFileListTable_Cloud.MergeExcelData(userDataExcel, "CloudServerList");
+            UI_DATA.ServerConnectsTable_Cloud.MergeExcelData(userDataExcel, "CloudServerConnList");
 
-            UI_DATA.ServerConsole.MergeExcelData(userDataExcel, "ServerConsole", out exception);
-            UI_DATA.ServerLeveled.MergeExcelData(userDataExcel, "ServerLeveled", out exception);
+            UI_DATA.ServerConsole.MergeExcelData(userDataExcel, "ServerConsole");
+            UI_DATA.ServerLeveled.MergeExcelData(userDataExcel, "ServerLeveled");
 
             //更新本地数据库数据
             userDataSQLite.SaveDataTable(UI_DATA.ServerFileListTable_Local, "LocalServerList");

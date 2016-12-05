@@ -429,10 +429,8 @@ namespace DSTServerManager
 
             UI_DATA.ServerConnectsTable_Cloud.Rows[indexConn].Delete();
             UI_DATA.ServerConnectsTable_Cloud.AcceptChanges();
-
-            string exception = string.Empty;
-
-            UI_DATA.ServerConnectsTable_Cloud.RefreshDataTable(out exception);
+            
+            UI_DATA.ServerConnectsTable_Cloud.RefreshDataTable();
             m_UserDataSQLite.SaveDataTable(UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList");
         }
 
@@ -441,12 +439,11 @@ namespace DSTServerManager
         /// </summary>
         private void window_ReceiveConnectionValues(object sender, PassValuesEventArgs passValue)
         {
-            string exception = string.Empty;
             if (passValue.IsNewRow)
             {
                 UI_DATA.ServerConnectsTable_Cloud.Rows.Add(passValue.GetRow);
 
-                UI_DATA.ServerConnectsTable_Cloud.RefreshDataTable(out exception);
+                UI_DATA.ServerConnectsTable_Cloud.RefreshDataTable();
                 m_UserDataSQLite.SaveDataTable(UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList");
             }
             else
