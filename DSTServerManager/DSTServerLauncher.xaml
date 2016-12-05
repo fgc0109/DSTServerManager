@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DSTServerManager"
         mc:Ignorable="d"
-        Title="DedicatedServerLauncher" Height="800" Width="1302" MinWidth="1200" MinHeight="802">
+        Title="DedicatedServerLauncher" Height="800" Width="1300" MinWidth="1300" MinHeight="800">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -246,8 +246,8 @@
                                 <RowDefinition Height="32"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="389*"/>
-                                <ColumnDefinition Width="490*"/>
+                                <ColumnDefinition Width="300"/>
+                                <ColumnDefinition Width="100*"/>
                             </Grid.ColumnDefinitions>
                             <TextBox x:Name="textBox_Server_Server_Input" Margin="5" TextWrapping="Wrap" KeyDown="textBox_Server_Server_Input_KeyDown" Grid.Row="1"/>
                             <TabControl x:Name="tabControl_ServerLog" Grid.Column="1" Grid.RowSpan="2" Padding="5" Margin="5">
@@ -256,7 +256,7 @@
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="100*"/>
                                         </Grid.RowDefinitions>
-                                        <TextBox x:Name="textBox_Servers_Tab_Log" Margin="5" TextWrapping="Wrap" Background="#FF464646" Foreground="White" IsReadOnly="True" Grid.RowSpan="2"/>
+                                        <TextBox x:Name="textBox_Servers_Tab_Log" Margin="5" TextWrapping="Wrap" Background="#FF464646" Foreground="White" IsReadOnly="True" Grid.RowSpan="2" FontFamily="Courier New"/>
                                     </Grid>
                                 </TabItem>
                             </TabControl>
