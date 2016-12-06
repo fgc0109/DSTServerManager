@@ -245,6 +245,5 @@ namespace DSTServerManager.Saves
             }
             return folderList;
         }
-
     }
 }

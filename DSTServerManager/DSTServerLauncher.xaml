@@ -371,9 +371,9 @@
                                     <DataGridTextColumn IsReadOnly="True" Header="{DynamicResource CloudServer_ServerList_Path}" Binding="{Binding Path}" Width ="*"/>
                                 </DataGrid.Columns>
                             </DataGrid>
-                            <Button x:Name="button_CloudServer_AddServer" Content="{DynamicResource CloudServer_AddServer}" Margin="5,5,224,5" Grid.Row="1" Width="90" Height="20" Click="button_CloudServer_AddServer_Click"/>
-                            <Button x:Name="button_CloudServer_DelServer" Content="{DynamicResource CloudServer_DelServer}" Margin="224,5,5,5" Grid.Row="1" Width="90" Height="20"/>
-                            <Button x:Name="button_CloudServer_GetServer" Content="{DynamicResource CloudServer_GetServer}" Margin="100,5,129,5" Grid.Row="1" Width="90" Height="20" Click="button_CloudServer_GetServer_Click"/>
+                            <Button x:Name="button_CloudServer_AddServer" Content="{DynamicResource CloudServer_AddServer}" Margin="5,5,0,5" Grid.Row="1" Width="90" Height="20" Click="button_CloudServer_AddServer_Click" HorizontalAlignment="Left"/>
+                            <Button x:Name="button_CloudServer_DelServer" Content="{DynamicResource CloudServer_DelServer}" Margin="0,5,5,5" Grid.Row="1" Width="90" Height="20" HorizontalAlignment="Right"/>
+                            <Button x:Name="button_CloudServer_GetServer" Content="{DynamicResource CloudServer_GetServer}" Margin="100,5,0,5" Grid.Row="1" Width="90" Height="20" Click="button_CloudServer_GetServer_Click" HorizontalAlignment="Left"/>
                         </Grid>
                     </GroupBox>
 
@@ -401,7 +401,7 @@
                                 <RowDefinition Height="80*"/>
                                 <RowDefinition Height="30"/>
                             </Grid.RowDefinitions>
-                            <DataGrid x:Name="dataGrid_CloudServer_Connection" Margin="5" CanUserAddRows="False" AutoGenerateColumns="False" Style="{DynamicResource DataGridStyleCenter}" MouseDoubleClick="dataGrid_CloudServer_Connection_MouseDoubleClick">
+                            <DataGrid x:Name="dataGrid_CloudServer_Connection" Margin="5" CanUserAddRows="False" AutoGenerateColumns="False" Style="{DynamicResource DataGridStyleCenter}" MouseDoubleClick="dataGrid_CloudServer_Connection_MouseDoubleClick" SelectionChanged="dataGrid_CloudServer_Connection_SelectionChanged">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn IsReadOnly="True" Header="{DynamicResource SAVESERVER_INDEXS}" Binding="{Binding ID}" Width ="40" MinWidth="40"/>
                                     <DataGridTextColumn IsReadOnly="True" Header="{DynamicResource SAVESERVER_SESSON}" Binding="{Binding IP}" Width ="100" MinWidth="100"/>

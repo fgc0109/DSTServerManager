@@ -90,5 +90,14 @@ namespace DSTServerManager.DataHelper
             for (int i = 0; i < dataTable.Rows.Count; i++)
                 dataTable.Rows[i][0] = i + 1;
         }
+
+        public static DataTable CopyConfirmTable(this DataTable dataTable, int column, List<string> item)
+        {
+            DataTable current = dataTable.Clone();
+            foreach (DataRow row in dataTable.Rows)
+                if (item.Contains(row[column].ToString())) current.Rows.Add(row.ItemArray);
+            current.RefreshDataTable();
+            return current.Copy();
+        }
     }
 }

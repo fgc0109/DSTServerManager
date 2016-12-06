@@ -74,24 +74,22 @@ namespace DSTServerManager
         }
 
         #region 获取用户配置文件数据
+        DataTable ServerFileListTable_CloudOrigin = new DataTable("ServerFileListTable_CloudOrigin");
 
         /// <summary>
         /// 获取用户数据
         /// </summary>
         private void GetUserData(SQLiteHelper userDataSQLite)
         {
-            textBox_BasicInfo_Key.Text = ConfigHelper.GetValue("textBox_BasicInfo_Key");
 
-            string exception = string.Empty;
-            dataGrid_LocalServer_ServersPath.FrozenColumnCount = 2;
-            dataGrid_CloudServer_ServersPath.FrozenColumnCount = 2;
 
             userDataSQLite.OpenSQLite(appStartupPath + @"\DSTServerManager.db");
-            CreateDefaultTable(ref userDataSQLite, out exception);
+            CreateDefaultTable(ref userDataSQLite);
 
             //读取数据库数据
             UI_DATA.ServerFileListTable_Local = userDataSQLite.ExecuteDataTable("LocalServerList");
-            UI_DATA.ServerFileListTable_Cloud = userDataSQLite.ExecuteDataTable("CloudServerList");
+            //UI_DATA.ServerFileListTable_Cloud = userDataSQLite.ExecuteDataTable("CloudServerList");
+            ServerFileListTable_CloudOrigin = userDataSQLite.ExecuteDataTable("CloudServerList");
             UI_DATA.ServerConnectsTable_Cloud = userDataSQLite.ExecuteDataTable("CloudServerConnList");
 
             UI_DATA.ServerConsole = userDataSQLite.ExecuteDataTable("ServerConsole");
@@ -104,7 +102,8 @@ namespace DSTServerManager
             userDataExcel.OpenExcel(appStartupPath + @"\DSTServerManager.xlsx", ExcelEngines.ACE, ExcelVersion.Office2007);
 
             UI_DATA.ServerFileListTable_Local.MergeExcelData(userDataExcel, "LocalServerList");
-            UI_DATA.ServerFileListTable_Cloud.MergeExcelData(userDataExcel, "CloudServerList");
+            //UI_DATA.ServerFileListTable_Cloud.MergeExcelData(userDataExcel, "CloudServerList");
+            ServerFileListTable_CloudOrigin.MergeExcelData(userDataExcel, "CloudServerList");
             UI_DATA.ServerConnectsTable_Cloud.MergeExcelData(userDataExcel, "CloudServerConnList");
 
             UI_DATA.ServerConsole.MergeExcelData(userDataExcel, "ServerConsole");
@@ -112,7 +111,8 @@ namespace DSTServerManager
 
             //更新本地数据库数据
             userDataSQLite.SaveDataTable(UI_DATA.ServerFileListTable_Local, "LocalServerList");
-            userDataSQLite.SaveDataTable(UI_DATA.ServerFileListTable_Cloud, "CloudServerList");
+            //userDataSQLite.SaveDataTable(UI_DATA.ServerFileListTable_Cloud, "CloudServerList");
+            userDataSQLite.SaveDataTable(ServerFileListTable_CloudOrigin, "CloudServerList");
             userDataSQLite.SaveDataTable(UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList");
 
             userDataSQLite.SaveDataTable(UI_DATA.ServerConsole, "ServerConsole");
@@ -128,9 +128,8 @@ namespace DSTServerManager
         /// </summary>
         /// <param name="userDataSQLite"></param>
         /// <param name="exception"></param>
-        static private void CreateDefaultTable(ref SQLiteHelper userDataSQLite, out string exception)
+        static private void CreateDefaultTable(ref SQLiteHelper userDataSQLite)
         {
-            exception = string.Empty;
             //创建默认的数据表结构
             string[] parameter = null;
             parameter = new string[3] { "ID integer primary key", "Type text", "Path text" };

@@ -56,8 +56,14 @@ namespace DSTServerManager
             UI_DATA = new UserInterfaceData(dataGrid_ClusterInfo_ServersList.Columns.Count);
             BindingState();
 
-            m_UserDataSQLite = new SQLiteHelper();
-            GetUserData(m_UserDataSQLite);
+            textBox_BasicInfo_Key.Text = ConfigHelper.GetValue("textBox_BasicInfo_Key");
+            dataGrid_LocalServer_ServersPath.FrozenColumnCount = 2;
+            dataGrid_CloudServer_ServersPath.FrozenColumnCount = 2;
+
+            BackgroundWorker userdataWorker = new BackgroundWorker();
+            userdataWorker.DoWork += UserDataWorker_DoWork;
+            userdataWorker.RunWorkerAsync();
+          
             #endregion
 
             #region 全局变量初始化
@@ -70,6 +76,12 @@ namespace DSTServerManager
 
             application_LocalServer_Init();
             application_CloudServer_Init();
+        }
+
+        private void UserDataWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            m_UserDataSQLite = new SQLiteHelper();
+            GetUserData(m_UserDataSQLite);
         }
 
         #region $$$ 菜单功能区
@@ -166,6 +178,16 @@ namespace DSTServerManager
             comboBox_SavesFolder_Cloud.SelectedIndex = 0;
         }
 
+        private void dataGrid_CloudServer_Connection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int indexConn = dataGrid_CloudServer_Connection.SelectedIndex;
+            if (indexConn == -1) return;
+
+            List<string> serverID = new List<string>();
+            foreach (var server in UI_DATA.ServerConnectsTable_Cloud.DefaultView[indexConn][4].ToString().Split('|'))
+                serverID.Add(server.ToString());
+            UI_DATA.ServerFileListTable_Cloud = ServerFileListTable_CloudOrigin.CopyConfirmTable(0, serverID);
+        }
         /// <summary>
         /// 本地服务器-存档文件夹选择变化
         /// </summary>
@@ -471,6 +493,8 @@ namespace DSTServerManager
 
             //m_ServerConnect[1].SendCommand("top");
         }
+
+
 
 
         //dataGrid和datatable之间数据直接赋值的示例 不应该使用这种方式
