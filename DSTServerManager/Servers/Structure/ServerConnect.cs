@@ -53,11 +53,9 @@ namespace DSTServerManager.Servers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="exception"></param>
         /// <returns></returns>
-        public bool StartConnect(out string exception)
+        public void StartConnect()
         {
-            exception = string.Empty;
             try
             {
                 if (m_SftpClient.IsConnected == false) m_SftpClient.Connect();
@@ -66,20 +64,13 @@ namespace DSTServerManager.Servers
 
                 m_AllConnected = true;
             }
-            catch (Exception ex)
-            {
-                exception = ex.ToString();
-                return false;
-            }
+            catch { throw; }
 
             m_ShellStream = m_SshClient.CreateShellStream("anything", 80, 24, 800, 600, 4096);
-            //m_ShellStream = m_SshClient.CreateShellStream("putty-vt100", 80, 24, 800, 600, 4096);
             byte[] buffer = new byte[4096];
 
             m_ShellStream.DataReceived += new EventHandler<ShellDataEventArgs>(connect_OutputDataReceived);
             m_ShellStream.ReadAsync(buffer, 0, buffer.Length);
-
-            return true;
         }
 
         public void CreatTabWindow(Window window, TabControl tabControl, TabItem tabItem)

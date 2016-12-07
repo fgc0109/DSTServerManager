@@ -62,8 +62,9 @@ namespace DSTServerManager
 
             BackgroundWorker userdataWorker = new BackgroundWorker();
             userdataWorker.DoWork += UserDataWorker_DoWork;
+            userdataWorker.RunWorkerCompleted += UserdataWorker_RunWorkerCompleted;
             userdataWorker.RunWorkerAsync();
-          
+
             #endregion
 
             #region 全局变量初始化
@@ -73,15 +74,18 @@ namespace DSTServerManager
 
             m_TabItemXaml = System.Windows.Markup.XamlWriter.Save(tabItemMain);
             #endregion
-
-            application_LocalServer_Init();
-            application_CloudServer_Init();
         }
+
 
         private void UserDataWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             m_UserDataSQLite = new SQLiteHelper();
             GetUserData(m_UserDataSQLite);
+        }
+        private void UserdataWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            application_LocalServer_Init();
+            application_CloudServer_Init();
         }
 
         #region $$$ 菜单功能区
@@ -111,7 +115,7 @@ namespace DSTServerManager
         #endregion
 
         /// <summary>
-        /// 远程连接列表初始化
+        /// 远程服务器-远程连接列表初始化
         /// </summary>
         private void application_CloudServer_Init()
         {
@@ -151,12 +155,12 @@ namespace DSTServerManager
         }
         private void ConnectWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            string exception = string.Empty;
-            m_ServerConnect[(int)e.Argument].StartConnect(out exception);
+            m_ServerConnect[(int)e.Argument].StartConnect();
+            e.Result = (int)e.Argument;
         }
         private void ConnectWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            int indexConn = dataGrid_CloudServer_Connection.SelectedIndex;
+            int indexConn = (int)e.Result;
             if (m_ServerConnect[indexConn].AllConnected == false) return;
 
             TabItem connectTab = System.Windows.Markup.XamlReader.Parse(m_TabItemXaml) as TabItem;
