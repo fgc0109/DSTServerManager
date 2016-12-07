@@ -136,6 +136,9 @@
     <Compile Include="Servers\ServersManager.cs" />
     <Compile Include="Servers\Structure\ServerProcess.cs" />
     <Compile Include="Servers\Structure\ServerScreens.cs" />
+    <Compile Include="SubWindow_SteamCommand.xaml.cs">
+      <DependentUpon>SubWindow_SteamCommand.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserInterfaceData.cs" />
     <Page Include="SubWindow_CloudConnection.xaml">
       <SubType>Designer</SubType>
@@ -158,6 +161,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Language\zh-cn.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SubWindow_SteamCommand.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -36,7 +36,8 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="36"/>
             <RowDefinition Height="80"/>
-            <RowDefinition Height="100*"/>
+            <RowDefinition Height="610*"/>
+            <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
         <GroupBox x:Name="groupBox_BasicInformation" Header="关键信息设置" Margin="10,10,5,5" Grid.Row="1">
             <Grid Margin="5">
@@ -69,7 +70,7 @@
                 <MenuItem Header="{DynamicResource SelectLanguages_English}" Click="MenuItem_SelectLanguage_English_Click"/>
             </MenuItem>
         </Menu>
-        <TabControl x:Name="tabControl_Main" Margin="5,10,10,10" Grid.Row="1" Grid.RowSpan="2" Grid.Column="1">
+        <TabControl x:Name="tabControl_Main" Margin="5,10,10,10" Grid.Row="1" Grid.RowSpan="3" Grid.Column="1">
             <TabItem Header="集群信息总览">
                 <Grid Background="#FFE5E5E5">
                     <Grid.RowDefinitions>
@@ -284,13 +285,13 @@
                 <Grid Background="#FFE5E5E5"/>
             </TabItem>
         </TabControl>
-        <TabControl x:Name="tabControl" Margin="10,5,5,10" Grid.Row="2">
+        <TabControl x:Name="tabControl" Margin="10,5,5,5" Grid.Row="2">
             <TabItem Header="本地存档">
                 <Grid Background="#FFE5E5E5">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="100"/>
-                        <RowDefinition Height="200*"/>
-                        <RowDefinition Height="200*"/>
+                        <RowDefinition Height="55*"/>
+                        <RowDefinition Height="64*"/>
                     </Grid.RowDefinitions>
 
 
@@ -322,6 +323,7 @@
                             </DataGrid>
                             <Button x:Name="button_LocalServer_AddServer" Content="{DynamicResource LocalServer_AddServer}" Margin="5,0,0,6" Grid.Row="1" Height="20" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="90" Click="button_LocalServer_AddServer_Click"/>
                             <Button x:Name="button_LocalServer_DelServer" Content="{DynamicResource LocalServer_DelServer}" Margin="200,6,5,6" Grid.Row="1" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="90" Click="button_LocalServer_DelServer_Click"/>
+                            <Button x:Name="button_LocalServer_GetServer" Content="{DynamicResource CloudServer_GetServer}" Margin="100,6,0,6" Width="90" Height="20" Click="button_CloudServer_GetServer_Click" HorizontalAlignment="Left" Grid.Row="1"/>
                         </Grid>
                     </GroupBox>
 
@@ -417,6 +419,8 @@
                 </Grid>
             </TabItem>
         </TabControl>
+        <ProgressBar x:Name="progressBar_MainProgressBar" Margin="10,5,5,10" Grid.Row="3"/>
+        <Label x:Name="label_MainDebugLog" Content="" Margin="10,5,5,10" Grid.Row="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
 
     </Grid>
 </Window>
