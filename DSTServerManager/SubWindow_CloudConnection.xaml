@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DSTServerManager"
         mc:Ignorable="d"
-        Title="DSTServerCloudSub" Height="300" Width="360" WindowStartupLocation="CenterScreen" MinWidth="360" MinHeight="320">
+        Title="DSTServerCloudSub" Height="320" Width="360" WindowStartupLocation="CenterScreen" MinWidth="360" MinHeight="320">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="80"/>

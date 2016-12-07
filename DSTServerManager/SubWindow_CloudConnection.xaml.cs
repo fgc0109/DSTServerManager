@@ -21,8 +21,8 @@ namespace DSTServerManager
     /// </summary>
     public partial class SubWindow_CloudConnection : Window
     {
-        public delegate void PassValuesHandler(object sender, PassValuesEventArgs e);
-        public event PassValuesHandler PassValuesEvent;
+        public delegate void CloudConnectionHandler(object sender, CloudConnectionEventArgs e);
+        public event CloudConnectionHandler CloudConnectionEvent;
 
         private DataRow m_CurrentRow = null;
         private bool m_NewRow = false;
@@ -71,10 +71,10 @@ namespace DSTServerManager
             if (textBox_User.Text != "") m_CurrentRow[2] = textBox_User.Text;
             if (textBox_Pass.Text != "") m_CurrentRow[3] = textBox_Pass.Text;
 
-            PassValuesEventArgs args = new PassValuesEventArgs(m_CurrentRow, m_NewRow);
+            CloudConnectionEventArgs args = new CloudConnectionEventArgs(m_CurrentRow, m_NewRow);
 
-            if (PassValuesEvent == null) Close();
-            PassValuesEvent(this, args);
+            if (CloudConnectionEvent == null) Close();
+            CloudConnectionEvent(this, args);
             Close();
         }
     }
@@ -82,12 +82,12 @@ namespace DSTServerManager
     /// <summary>
     /// 容纳参数传递事件的附加信息
     /// </summary>
-    public class PassValuesEventArgs : EventArgs
+    public class CloudConnectionEventArgs : EventArgs
     {
         private readonly DataRow m_DataRow;
         private readonly bool m_NewRow;
 
-        public PassValuesEventArgs(DataRow dataRow, bool newRow)
+        public CloudConnectionEventArgs(DataRow dataRow, bool newRow)
         {
             m_NewRow = newRow;
             m_DataRow = dataRow;

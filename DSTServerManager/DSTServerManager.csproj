@@ -116,6 +116,7 @@
     <Compile Include="DataHelper\ExtendHelper.cs" />
     <Compile Include="DataHelper\ConfigHelper.cs" />
     <Compile Include="DataHelper\ExcelHelper.cs" />
+    <Compile Include="DataHelper\HttpHelper.cs" />
     <Compile Include="DataHelper\ShellHelper.cs" />
     <Compile Include="DataHelper\SQLiteHelper.cs" />
     <Compile Include="Servers\Structure\ServerConnect.cs" />
@@ -216,6 +217,11 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="DSTServerManager.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="steamcmd.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.103\build\net451\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.103\build\net451\System.Data.SQLite.Core.targets')" />
