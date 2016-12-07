@@ -398,12 +398,41 @@ namespace DSTServerManager
             if (m_ClusterInfo_Local[index].ClusterServers.Count != 0) dataGrid_ClusterInfo_ServersList.SelectedIndex = 0;
         }
 
+        #region [本地服务器 服务器列表功能区]----------------------------------------------------------------------------------------------------
+
+        private void dataGrid_LocalServer_ServersPath_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (dataGrid_LocalServer_ServersPath.SelectedIndex == -1 && dataGrid_LocalServer_ServersPath.Items.Count != 0)
+                dataGrid_LocalServer_ServersPath.SelectedIndex = 0;
+        }
+
         private void button_LocalServer_AddServer_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Forms.OpenFileDialog openFile = new System.Windows.Forms.OpenFileDialog();
-            openFile.Filter = "EXE - File(*.exe) | *.exe| 所有文件(*.*) | *.*";
+            openFile.Filter = "Server - File(*.exe) | dontstarve_dedicated_server_nullrenderer.exe| 所有文件(*.*) | *.*";
             openFile.ShowDialog();
+
+            if (openFile.SafeFileName.Contains("dontstarve_dedicated_server_nullrenderer"))
+            {
+                DataRow newPath = UI_DATA.ServerFileListTable_Local.NewRow();
+                newPath.ItemArray = new object[3] { 0, "Steam", openFile.FileName };
+                UI_DATA.ServerFileListTable_Local.Rows.Add(newPath);
+                UI_DATA.ServerFileListTable_Local.RefreshDataTable();
+                m_UserDataSQLite.SaveDataTable(UI_DATA.ServerFileListTable_Local, "LocalServerList");
+            }
         }
+
+        private void button_LocalServer_DelServer_Click(object sender, RoutedEventArgs e)
+        {
+            int indexPath = dataGrid_LocalServer_ServersPath.SelectedIndex;
+            if (indexPath == -1) return;
+            UI_DATA.ServerFileListTable_Local.Rows[indexPath].Delete();
+            UI_DATA.ServerFileListTable_Local.Rows[indexPath].AcceptChanges();
+            UI_DATA.ServerFileListTable_Local.RefreshDataTable();
+            m_UserDataSQLite.SaveDataTable(UI_DATA.ServerFileListTable_Local, "LocalServerList");
+        }
+
+        #endregion
 
         private void button_CloudServer_AddServer_Click(object sender, RoutedEventArgs e)
         {
@@ -497,6 +526,9 @@ namespace DSTServerManager
 
             //m_ServerConnect[1].SendCommand("top");
         }
+
+
+
 
 
 

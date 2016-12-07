@@ -313,7 +313,7 @@
                                 <RowDefinition Height="80*"/>
                                 <RowDefinition Height="32"/>
                             </Grid.RowDefinitions>
-                            <DataGrid x:Name="dataGrid_LocalServer_ServersPath" Margin="5" CanUserAddRows="False" AutoGenerateColumns="False" Style="{DynamicResource DataGridStyleCenter}">
+                            <DataGrid x:Name="dataGrid_LocalServer_ServersPath" Margin="5" CanUserAddRows="False" AutoGenerateColumns="False" Style="{DynamicResource DataGridStyleCenter}" SelectionChanged="dataGrid_LocalServer_ServersPath_SelectionChanged">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn IsReadOnly="True" Header="{DynamicResource LocalServer_ServerList_Index}" Binding="{Binding ID}" Width ="40" MinWidth="40"/>
                                     <DataGridTextColumn IsReadOnly="True" Header="{DynamicResource LocalServer_ServerList_Name}" Binding="{Binding Type}" Width ="60" MinWidth="60"/>
@@ -321,7 +321,7 @@
                                 </DataGrid.Columns>
                             </DataGrid>
                             <Button x:Name="button_LocalServer_AddServer" Content="{DynamicResource LocalServer_AddServer}" Margin="5,0,0,6" Grid.Row="1" Height="20" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="90" Click="button_LocalServer_AddServer_Click"/>
-                            <Button x:Name="button_LocalServer_DelServer" Content="{DynamicResource LocalServer_DelServer}" Margin="200,6,5,6" Grid.Row="1" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="90"/>
+                            <Button x:Name="button_LocalServer_DelServer" Content="{DynamicResource LocalServer_DelServer}" Margin="200,6,5,6" Grid.Row="1" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="90" Click="button_LocalServer_DelServer_Click"/>
                         </Grid>
                     </GroupBox>
 
