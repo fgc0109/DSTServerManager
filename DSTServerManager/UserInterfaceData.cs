@@ -53,7 +53,7 @@ namespace DSTServerManager
             set
             {
                 Enum.TryParse(value.ToString(), out gameplay_mode);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Gameplay_Mode"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Gameplay_Mode)));
             }
         }
 
@@ -63,7 +63,7 @@ namespace DSTServerManager
             set
             {
                 int.TryParse(value.ToString(), out gameplay_player);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Gameplay_Player"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Gameplay_Player)));
             }
         }
 
@@ -73,7 +73,7 @@ namespace DSTServerManager
             set
             {
                 bool.TryParse(value.ToString(), out gameplay_pvp);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Gameplay_PVP"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Gameplay_PVP)));
             }
         }
 
@@ -83,7 +83,7 @@ namespace DSTServerManager
             set
             {
                 bool.TryParse(value.ToString(), out gameplay_pause);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Gameplay_Pause"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Gameplay_Pause)));
             }
         }
 
@@ -93,7 +93,7 @@ namespace DSTServerManager
             set
             {
                 bool.TryParse(value.ToString(), out gameplay_vote);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Gameplay_Vote"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Gameplay_Vote)));
             }
         }
 
@@ -103,7 +103,7 @@ namespace DSTServerManager
             set
             {
                 Enum.TryParse(value.ToString(), out network_intention);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Network_Intention"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Network_Intention)));
             }
         }
 
@@ -113,7 +113,7 @@ namespace DSTServerManager
             set
             {
                 bool.TryParse(value.ToString(), out network_lanOnly);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Network_LanOnly"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Network_LanOnly)));
             }
         }
 
@@ -123,7 +123,7 @@ namespace DSTServerManager
             set
             {
                 bool.TryParse(value.ToString(), out network_offline);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Network_Offline"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Network_Offline)));
             }
         }
 
@@ -133,7 +133,7 @@ namespace DSTServerManager
             set
             {
                 network_disc = value;
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Network_Disc"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Network_Disc)));
             }
         }
 
@@ -143,7 +143,7 @@ namespace DSTServerManager
             set
             {
                 network_name = value;
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Network_Name"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Network_Name)));
             }
         }
 
@@ -153,7 +153,7 @@ namespace DSTServerManager
             set
             {
                 network_pass = value;
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Network_Pass"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Network_Pass)));
             }
         }
 
@@ -163,7 +163,7 @@ namespace DSTServerManager
             set
             {
                 int.TryParse(value.ToString(), out network_tickRate);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Network_TickRate"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Network_TickRate)));
             }
         }
 
@@ -173,7 +173,7 @@ namespace DSTServerManager
             set
             {
                 int.TryParse(value.ToString(), out network_timeout);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Network_Timeout"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Network_Timeout)));
             }
         }
 
@@ -183,7 +183,7 @@ namespace DSTServerManager
             set
             {
                 bool.TryParse(value.ToString(), out misc_console);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Misc_Console"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Misc_Console)));
             }
         }
 
@@ -193,7 +193,7 @@ namespace DSTServerManager
             set
             {
                 bool.TryParse(value.ToString(), out misc_mods);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Misc_Mods"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Misc_Mods)));
             }
         }
 
@@ -206,7 +206,7 @@ namespace DSTServerManager
             set
             {
                 bool.TryParse(value.ToString(), out shard_enabled);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Shard_Enabled"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Shard_Enabled)));
             }
         }
 
@@ -221,7 +221,7 @@ namespace DSTServerManager
             set
             {
                 shard_bindIP = value;
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Shard_BindIP"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Shard_BindIP)));
             }
         }
 
@@ -236,7 +236,7 @@ namespace DSTServerManager
             set
             {
                 shard_masterIP = value;
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Shard_MasterIP"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Shard_MasterIP)));
             }
         }
 
@@ -249,7 +249,7 @@ namespace DSTServerManager
             set
             {
                 int.TryParse(value.ToString(), out shard_masterPort);
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Shard_MasterPort"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Shard_MasterPort)));
             }
         }
 
@@ -263,7 +263,7 @@ namespace DSTServerManager
             set
             {
                 shard_masterKey = value;
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Shard_MasterKey"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Shard_MasterKey)));
             }
         }
 
@@ -290,7 +290,7 @@ namespace DSTServerManager
             set
             {
                 network_serverPort = value;
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Network_ServerPort"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Network_ServerPort)));
             }
         }
 
@@ -300,7 +300,7 @@ namespace DSTServerManager
             set
             {
                 shard_master = value;
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Shard_Master"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Shard_Master)));
             }
         }
 
@@ -310,7 +310,7 @@ namespace DSTServerManager
             set
             {
                 shard_name = value;
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Shard_Name"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Shard_Name)));
             }
         }
 
@@ -320,7 +320,7 @@ namespace DSTServerManager
             set
             {
                 shard_id = value;
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Shard_ID"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Shard_ID)));
             }
         }
 
@@ -333,7 +333,7 @@ namespace DSTServerManager
             set
             {
                 steam_masterPort = value;
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Steam_MasterPort"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Steam_MasterPort)));
             }
         }
 
@@ -346,7 +346,7 @@ namespace DSTServerManager
             set
             {
                 steam_authPort = value;
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Steam_AuthPort"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Steam_AuthPort)));
             }
         }
 
@@ -374,7 +374,7 @@ namespace DSTServerManager
             {
                 clusterServers = value;
                 FieldsToGrid();
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("ClusterServers"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ClusterServers)));
             }
         }
 
@@ -389,7 +389,7 @@ namespace DSTServerManager
             {
                 clusterServersTable = value;
                 GridToFields();
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("ClusterServersTable"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ClusterServersTable)));
             }
         }
 
@@ -413,7 +413,7 @@ namespace DSTServerManager
             set
             {
                 serverFileListTable_Local = value.Copy();
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("ServerFileListTable_Local"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ServerFileListTable_Local)));
             }
         }
         public DataTable ServerFileListTable_Cloud
@@ -422,7 +422,7 @@ namespace DSTServerManager
             set
             {
                 serverFileListTable_Cloud = value.Copy();
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("ServerFileListTable_Cloud"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ServerFileListTable_Cloud)));
             }
         }
         public DataTable ServerConnectsTable_Cloud
@@ -431,7 +431,7 @@ namespace DSTServerManager
             set
             {
                 serverConnectsTable_Cloud = value.Copy();
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("ServerConnectsTable_Cloud"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ServerConnectsTable_Cloud)));
             }
         }
         public DataTable ServerConsole
@@ -440,7 +440,7 @@ namespace DSTServerManager
             set
             {
                 serverConsole = value.Copy();
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("ServerConsole"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ServerConsole)));
             }
         }
         public DataTable ServerLeveled
@@ -449,7 +449,7 @@ namespace DSTServerManager
             set
             {
                 serverLeveled = value.Copy();
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs("ServerLeveled"));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ServerLeveled)));
             }
         }
 
