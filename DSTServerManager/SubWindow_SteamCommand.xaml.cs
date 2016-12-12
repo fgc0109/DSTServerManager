@@ -85,6 +85,8 @@ namespace DSTServerManager
 
             SteamCommandEventArgs args = new SteamCommandEventArgs(path);
             SteamCommandEvent(this, args);
+
+            m_SteamProcess = null;
         }
 
         public void SendCommand(string command)
@@ -111,7 +113,7 @@ namespace DSTServerManager
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             if (m_SteamProcess == null) return;
-           m_SteamProcess.CloseMainWindow();
+            m_SteamProcess.CloseMainWindow();
             m_SteamProcess.Close();
         }
 
