@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace DSTServerManager.Servers
 {
@@ -21,7 +22,8 @@ namespace DSTServerManager.Servers
         private ScpClient m_ScpClient;
 
         private bool m_AllConnected = false;
-        private string m_LogInfo = string.Empty;
+        private string m_LogInfos = string.Empty;
+        private string m_UserName = string.Empty;
         private ShellStream m_ShellStream = null;
 
         private Window m_MainWindow = null;
@@ -49,6 +51,7 @@ namespace DSTServerManager.Servers
         public TabItem ServerTab { get { return m_ServerTab; } }
 
         public bool AllConnected { get { return m_AllConnected; } }
+        public string UserName { get { return m_UserName; } }
 
         /// <summary>
         /// 
@@ -67,6 +70,8 @@ namespace DSTServerManager.Servers
             catch { throw; }
 
             m_ShellStream = m_SshClient.CreateShellStream("anything", 80, 24, 800, 600, 4096);
+            //m_ShellStream = m_SshClient.CreateShellStream("xterm", 80, 24, 800, 600, 4096);
+            //m_ShellStream = m_SshClient.CreateShellStream("putty-vt100", 80, 24, 800, 600, 4096);
             byte[] buffer = new byte[4096];
 
             m_ShellStream.DataReceived += new EventHandler<ShellDataEventArgs>(connect_OutputDataReceived);
@@ -80,7 +85,7 @@ namespace DSTServerManager.Servers
             m_TabControl = tabControl;
             foreach (var item in (tabItem.Content as Grid).Children) m_ServerLog = (TextBox)item;
 
-            if (m_LogInfo != string.Empty) m_MainWindow.Dispatcher.Invoke(new Action(WriteTextLogs));
+            if (m_LogInfos != string.Empty) m_MainWindow.Dispatcher.Invoke(new Action(WriteTextLogs));
         }
 
         public void SendCommand(string command)
@@ -91,12 +96,21 @@ namespace DSTServerManager.Servers
             m_ShellStream.WriteLine(command);
         }
 
+        Regex color = new Regex("\\[[^ ]*?m", RegexOptions.Compiled);
+        Regex lines = new Regex("%[ ]*?\\r", RegexOptions.Compiled);
+        Regex test1 = new Regex("\\r", RegexOptions.Compiled);
+
         private void connect_OutputDataReceived(object sender, ShellDataEventArgs received)
         {
-            m_LogInfo += Encoding.UTF8.GetString(received.Data);
-            if (m_ServerLog == null) return;
+            m_LogInfos += Encoding.UTF8.GetString(received.Data);
 
+            m_LogInfos = color.Replace(m_LogInfos, "");
+            m_LogInfos = lines.Replace(m_LogInfos, "");
+            m_LogInfos = test1.Replace(m_LogInfos, "");
+
+            if (m_ServerLog == null) return;
             m_MainWindow.Dispatcher.Invoke(new Action(WriteTextLogs));
+            m_LogInfos = string.Empty;
         }
 
         /// <summary>
@@ -105,8 +119,7 @@ namespace DSTServerManager.Servers
         /// <param name="logInfo"></param>
         private void WriteTextLogs()
         {
-            m_ServerLog.Text += m_LogInfo + "\r\n";
-            m_LogInfo = string.Empty;
+            m_ServerLog.Text += m_LogInfos;
             m_ServerLog.CaretIndex = m_ServerLog.Text.Length;
             m_ServerLog.ScrollToEnd();
         }
