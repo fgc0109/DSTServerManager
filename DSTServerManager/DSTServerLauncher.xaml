@@ -322,7 +322,7 @@
                                 </DataGrid.Columns>
                             </DataGrid>
                             <Button x:Name="button_LocalServer_AddServer" Content="{DynamicResource LocalServer_AddServer}" Margin="5,0,0,6" Grid.Row="1" Height="20" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="90" Click="button_LocalServer_AddServer_Click"/>
-                            <Button x:Name="button_LocalServer_DelServer" Content="{DynamicResource LocalServer_DelServer}" Margin="200,6,5,6" Grid.Row="1" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="90" Click="button_LocalServer_DelServer_Click"/>
+                            <Button x:Name="button_LocalServer_DelServer" Content="{DynamicResource LocalServer_DelServer}" Margin="200,6,5,6" Grid.Row="1" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="90" Click="button_LocalServer_DelServer_Click" IsEnabled="False"/>
                             <Button x:Name="button_LocalServer_GetServer" Content="{DynamicResource CloudServer_GetServer}" Margin="100,6,0,6" Width="90" Height="20" Click="button_LocalServer_GetServer_Click" HorizontalAlignment="Left" Grid.Row="1"/>
                         </Grid>
                     </GroupBox>
@@ -341,12 +341,12 @@
                                 <ColumnDefinition Width="100"/>
                             </Grid.ColumnDefinitions>
                             <ListBox x:Name="listBox_LocalServer_ClusterFile" Margin="5" SelectionChanged="listBox_LocalServer_ClusterFile_SelectionChanged" Grid.RowSpan="2" Grid.Row="2"/>
-                            <Button x:Name="button_Cluster_Start" Content="开启集群" Margin="5,10,5,0" Click="button_Cluster_Start_Local_Click" HorizontalAlignment="Center" Width="90" Grid.Column="1" Height="20" VerticalAlignment="Top" Grid.Row="3"/>
-                            <Button x:Name="button_Cluster_Refresh" Content="刷新信息" Margin="5" Grid.Column="1" HorizontalAlignment="Center" Width="90" Click="button_Cluster_Refresh_Click" Height="20" VerticalAlignment="Bottom" Grid.Row="2"/>
+                            <Button x:Name="button_LocalServer_StartCluster" Content="开启集群" Margin="5,10,5,0" Click="button_LocalServer_StartCluster_Click" HorizontalAlignment="Center" Width="90" Grid.Column="1" Height="20" VerticalAlignment="Top" Grid.Row="3" IsEnabled="False"/>
+                            <Button x:Name="button_LocalServer_RefreshCluster" Content="刷新信息" Margin="5" Grid.Column="1" HorizontalAlignment="Center" Width="90" Click="button_LocalServer_RefreshCluster_Click" Height="20" VerticalAlignment="Bottom" Grid.Row="2"/>
                             <ComboBox x:Name="comboBox_SavesFolder_Local" Margin="65,5,5,5" VerticalContentAlignment="Center" SelectionChanged="comboBox_SavesFolder_Local_SelectionChanged" Grid.ColumnSpan="2"/>
                             <Label Content="路径" Margin="5,5,159,5" HorizontalContentAlignment="Center" RenderTransformOrigin="2.308,0.409" VerticalContentAlignment="Center" Padding="4"/>
                             <TextBox x:Name="textBox_LocalServer_ClusterSaveList_AddPath" Margin="5" TextWrapping="Wrap" VerticalContentAlignment="Center" Grid.Row="1"/>
-                            <Button x:Name="button_LocalServer_ClusterSaveList_AddPath" Content="添加文件夹" Margin="5" Grid.Column="1" Width="90" Click="button_Cluster_Refresh_Click" Height="20" Grid.Row="1"/>
+                            <Button x:Name="button_LocalServer_AddCluster" Content="添加文件夹" Margin="5" Grid.Column="1" Width="90" Height="20" Grid.Row="1" Click="button_LocalServer_AddCluster_Click"/>
                         </Grid>
                     </GroupBox>
                 </Grid>

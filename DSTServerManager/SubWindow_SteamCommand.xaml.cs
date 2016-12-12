@@ -28,14 +28,13 @@ namespace DSTServerManager
         public event SteamCommandHandler SteamCommandEvent;
 
         private StreamWriter m_StreamWriter = null;
-        private Process m_ServerProcess = null;
+        private Process m_SteamProcess = null;
 
         public SubWindow_SteamCommand()
         {
             InitializeComponent();
-            textBox_Path.Text = appStartupPath;
-            //textBox_Path.Text = @"D:\Data\dst";
-            m_ServerProcess = new Process();
+            //textBox_Path.Text = appStartupPath;
+            textBox_Path.Text = @"D:\Data\dst";
 
             textBox_CMDLog.Text += "SteamCMD没有立刻将输出缓存写入数据流\r\n";
             textBox_CMDLog.Text += "暂时不使用内置窗口\r\n";
@@ -52,10 +51,12 @@ namespace DSTServerManager
             command.Append($" +quit");
 
             StartProcess(command.ToString());
+
         }
 
         public void StartProcess(params string[] argument)
         {
+            m_SteamProcess = new Process();
             //获取工作目录
             string directory = string.Empty;
             string[] folder = appStartupPath.Split('\\');
@@ -66,25 +67,29 @@ namespace DSTServerManager
             foreach (var argue in argument) command += argue;
 
             //设置启动参数
-            m_ServerProcess.StartInfo.WorkingDirectory = directory;
-            m_ServerProcess.StartInfo.FileName = appStartupPath + "\\steamcmd.exe";
-            m_ServerProcess.StartInfo.Arguments = command;
-            m_ServerProcess.EnableRaisingEvents = true;
-            m_ServerProcess.Exited += new EventHandler(process_Exited);
+            m_SteamProcess.StartInfo.WorkingDirectory = directory;
+            m_SteamProcess.StartInfo.FileName = appStartupPath + "\\steamcmd.exe";
+            m_SteamProcess.StartInfo.Arguments = command;
+            m_SteamProcess.EnableRaisingEvents = true;
+            m_SteamProcess.Exited += new EventHandler(process_Exited);
 
-            m_ServerProcess.Start();
+            m_SteamProcess.Start();
         }
 
         private void process_Exited(object sender, EventArgs e)
         {
-            SteamCommandEventArgs args = new SteamCommandEventArgs(textBox_Path.Text.Replace(@"\", @"\\"));
+            if (SteamCommandEvent == null) Close();
+            string path = string.Empty;
+            Dispatcher.Invoke(new Action(() => { path = textBox_Path.Text; }));
+            path += @"\steamapps\common\Don't Starve Together Dedicated Server\dontstarve_dedicated_server_nullrenderer.exe";
 
+            SteamCommandEventArgs args = new SteamCommandEventArgs(path);
             SteamCommandEvent(this, args);
         }
 
         public void SendCommand(string command)
         {
-            m_StreamWriter = m_ServerProcess.StandardInput;
+            m_StreamWriter = m_SteamProcess.StandardInput;
 
             m_StreamWriter.WriteLine(command);
             m_StreamWriter.Flush();
@@ -103,6 +108,13 @@ namespace DSTServerManager
             if (openFolder.SelectedPath != string.Empty) textBox_Path.Text = openFolder.SelectedPath;
         }
 
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            if (m_SteamProcess == null) return;
+           m_SteamProcess.CloseMainWindow();
+            m_SteamProcess.Close();
+        }
+
         //https://developer.valvesoftware.com/wiki/Dedicated_Servers_List
     }
 
@@ -117,6 +129,6 @@ namespace DSTServerManager
         {
             m_NewServerPath = NewServerPath;
         }
-        public bool IsNewRow { get { return m_NewServerPath; } }
+        public string NewServerPath { get { return m_NewServerPath; } }
     }
 }

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DSTServerManager"
         mc:Ignorable="d"
-        Title="SubWindow_SteamCommand" Height="320" Width="500">
+        Title="SubWindow_SteamCommand" Height="320" Width="500" MinWidth="500" MinHeight="320" Closing="Window_Closing">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100*"/>
