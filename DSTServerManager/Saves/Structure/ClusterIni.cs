@@ -225,31 +225,27 @@ namespace DSTServerManager.Saves
         /// 从文件读取配置文件
         /// </summary>
         /// <param name="clusterIniFullPath">集群配置文件完整路径</param>
-        /// <returns></returns>
-        public bool ReadFromFile(string clusterIniFullPath)
+        public void ReadFromFile(string clusterIniFullPath)
         {
-            if (!File.Exists(clusterIniFullPath))
-                return false;
+            if (!File.Exists(clusterIniFullPath)) return;
 
             MemoryStream clusterDataStream = new MemoryStream(File.ReadAllBytes(clusterIniFullPath));
             m_Setting = new IniHelper(clusterDataStream, false);
             clusterDataStream.Close();
 
             try { SettingToFields(); }
-            catch { return false; }
-            return true;
+            catch (Exception) { throw; }
         }
 
         /// <summary>
         /// 写入位于本地的Cluster配置文件
         /// </summary>
-        /// <returns></returns>
-        public bool WriteToFile(string clusterIniFullPath)
+        /// <param name="clusterIniFullPath">集群配置文件完整路径</param>
+        public void WriteToFile(string clusterIniFullPath)
         {
-            if (null == m_Setting)
-                return false;
+            if (null == m_Setting) return;
             try { FieldsToSetting(); }
-            catch { return false; }
+            catch (Exception) { throw; }
 
             MemoryStream clusterDataStream = m_Setting.GetIniStream();
             FileStream clusterFileStream = new FileStream(clusterIniFullPath, FileMode.Create);
@@ -257,44 +253,35 @@ namespace DSTServerManager.Saves
             write.Write(clusterDataStream.ToArray());
             clusterFileStream.Close();
             clusterDataStream.Close();
-
-            return true;
         }
 
         /// <summary>
         /// 读取位于SSH服务器的Cluster配置文件
         /// </summary>
         /// <param name="serverIniFullPath"></param>
-        /// <returns></returns>
-        public bool ReadFromSSH(string clusterIniFullPath, SftpClient client)
+        public void ReadFromSSH(string clusterIniFullPath, SftpClient client)
         {
             MemoryStream stream = new MemoryStream();
             client.OpenRead(clusterIniFullPath).CopyTo(stream);
 
             m_Setting = new IniHelper(stream, false);
             try { SettingToFields(); }
-            catch { return false; }
-
-            return true;
+            catch (Exception) { throw; }
         }
 
         /// <summary>
         /// 写入位于SSH服务器的Cluster配置文件
         /// </summary>
         /// <param name="clusterIniFullPath"></param>
-        /// <returns></returns>
-        public bool WriteToSSH(string clusterIniFullPath, SftpClient client)
+        public void WriteToSSH(string clusterIniFullPath, SftpClient client)
         {
-            if (null == m_Setting)
-                return false;
+            if (null == m_Setting) return;
             try { FieldsToSetting(); }
-            catch { return false; }
+            catch (Exception) { throw; }
 
             MemoryStream clusterDataStream = m_Setting.GetIniStream();
             client.WriteAllBytes(clusterIniFullPath, clusterDataStream.ToArray());
             clusterDataStream.Close();
-
-            return true;
         }
 
         /// <summary>

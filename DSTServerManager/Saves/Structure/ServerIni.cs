@@ -98,18 +98,16 @@ namespace DSTServerManager.Saves
         /// </summary>
         /// <param name="serverIniFullPath"></param>
         /// <returns></returns>
-        public bool ReadFromFile(string serverIniFullPath)
+        public void ReadFromFile(string serverIniFullPath)
         {
-            if (!File.Exists(serverIniFullPath))
-                return false;
+            if (!File.Exists(serverIniFullPath)) return;
 
             MemoryStream serverDataStream = new MemoryStream(File.ReadAllBytes(serverIniFullPath));
             m_Setting = new IniHelper(serverDataStream, false);
             serverDataStream.Close();
 
             try { SettingToFields(); }
-            catch { return false; }
-            return true;
+            catch (Exception) { throw; }
         }
 
         /// <summary>
@@ -117,12 +115,11 @@ namespace DSTServerManager.Saves
         /// </summary>
         /// <param name="serverIniFullPath"></param>
         /// <returns></returns>
-        public bool WriteToFile(string serverIniFullPath)
+        public void WriteToFile(string serverIniFullPath)
         {
-            if (null == m_Setting)
-                return false;
+            if (null == m_Setting) return;
             try { FieldsToSetting(); }
-            catch { return false; }
+            catch (Exception) { throw; }
 
             MemoryStream serverDataStream = m_Setting.GetIniStream();
             FileStream clusterFileStream = new FileStream(serverIniFullPath, FileMode.Create);
@@ -130,8 +127,6 @@ namespace DSTServerManager.Saves
             w.Write(serverDataStream.ToArray());
             clusterFileStream.Close();
             serverDataStream.Close();
-
-            return true;
         }
 
         /// <summary>
@@ -139,16 +134,14 @@ namespace DSTServerManager.Saves
         /// </summary>
         /// <param name="serverIniFullPath"></param>
         /// <returns></returns>
-        public bool ReadFromSSH(string serverIniFullPath, SftpClient client)
+        public void ReadFromSSH(string serverIniFullPath, SftpClient client)
         {
             MemoryStream stream = new MemoryStream();
             client.OpenRead(serverIniFullPath).CopyTo(stream);
 
             m_Setting = new IniHelper(stream, false);
             try { SettingToFields(); }
-            catch { return false; }
-
-            return true;
+            catch (Exception) { throw; }
         }
 
         /// <summary>
