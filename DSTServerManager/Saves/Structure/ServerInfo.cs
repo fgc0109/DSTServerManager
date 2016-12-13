@@ -15,6 +15,7 @@ namespace DSTServerManager.Saves
         private string session = string.Empty;
         private ServerIni setting = new ServerIni();
         private ServerLevel level = new ServerLevel();
+        private ServerShard shard = new ServerShard();
 
         public string Folder
         {

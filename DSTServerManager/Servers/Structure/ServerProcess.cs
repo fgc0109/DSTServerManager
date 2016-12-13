@@ -33,6 +33,7 @@ namespace DSTServerManager.Servers
 
         //用于重定向输出后的界面创建和显示
         private bool m_UserInterface = true;
+
         private Window m_MainWindow = null;
         private TabControl m_TabControl = null;
         private TabItem m_ServerTab = null;
@@ -54,8 +55,7 @@ namespace DSTServerManager.Servers
             m_ServerTab = tabItem;
             m_MainWindow = window;
             m_TabControl = tabControl;
-            foreach (var item in (tabItem.Content as Grid).Children)
-                m_ServerLog = (TextBox)item;
+            foreach (var item in (tabItem.Content as Grid).Children) m_ServerLog = (TextBox)item;
 
             m_ServerProcess = new Process();
             m_ServerSession = session;
@@ -136,7 +136,6 @@ namespace DSTServerManager.Servers
                 System.Windows.Forms.SendKeys.SendWait(command);
             }
         }
-
 
         private void process_Exited(object sender, EventArgs e)
         {

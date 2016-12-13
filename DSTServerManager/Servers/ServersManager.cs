@@ -11,5 +11,17 @@ namespace DSTServerManager.Servers
     /// </summary>
     class ServersManager
     {
+
+        public void GetExistProcess()
+        {
+
+        }
+
+        public void GetExistScreens()
+        {
+
+        }
+
+
     }
 }

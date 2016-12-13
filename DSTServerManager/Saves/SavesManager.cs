@@ -16,9 +16,9 @@ namespace DSTServerManager.Saves
     static class SavesManager
     {
         //默认路径
-        static string m_DefaultPath_Local = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Klei";
-        static string m_DefaultPath_CloudRoot = @"/root/.klei";
-        static string m_DefaultPath_CloudUser = @"/home/{0}/.klei";
+        private static string m_DefaultPath_Local = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Klei";
+        private static string m_DefaultPath_CloudRoot = @"/root/.klei";
+        private static string m_DefaultPath_CloudUser = @"/home/{0}/.klei";
 
         //集群默认配置文件名
         static string m_ClusterIniName = "cluster.ini";

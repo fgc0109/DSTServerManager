@@ -27,7 +27,7 @@ namespace DSTServerManager.Saves
         }
 
         /// <summary>
-        /// 
+        /// 从文件读取世界配置信息
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>

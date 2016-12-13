@@ -53,6 +53,14 @@ namespace DSTServerManager
         {
             InitializeComponent();
 
+            #region 全局变量初始化
+            m_ServerConnect = new List<ServerConnect>();
+            m_ServerProcess = new List<ServerProcess>();
+            m_ServerScreens = new List<ServerScreens>();
+
+            m_TabItemXaml = System.Windows.Markup.XamlWriter.Save(tabItemMain);
+            #endregion
+
             #region 界面绑定数据初始化
             UI_DATA = new UserInterfaceData(dataGrid_ClusterInfo_ServersList.Columns.Count);
             BindingState();
@@ -66,14 +74,6 @@ namespace DSTServerManager
             userdataWorker.RunWorkerCompleted += UserdataWorker_RunWorkerCompleted;
             userdataWorker.RunWorkerAsync();
 
-            #endregion
-
-            #region 全局变量初始化
-            m_ServerConnect = new List<ServerConnect>();
-            m_ServerProcess = new List<ServerProcess>();
-            m_ServerScreens = new List<ServerScreens>();
-
-            m_TabItemXaml = System.Windows.Markup.XamlWriter.Save(tabItemMain);
             #endregion
         }
 
@@ -120,11 +120,12 @@ namespace DSTServerManager
         /// </summary>
         private void application_CloudServer_Init()
         {
-            if (dataGrid_CloudServer_Connection.Items.Count == 0) return;
+            if (UI_DATA.ServerConnectsTable_Cloud.Rows.Count == 0) return;
 
-            foreach (DataRowView item in dataGrid_CloudServer_Connection.Items)
+            foreach (DataRow item in UI_DATA.ServerConnectsTable_Cloud.Rows)
             {
-                ServerConnect serverConnect = new ServerConnect(item[1].ToString(), 22, item[2].ToString(), item[3].ToString());
+                object[] data = item.ItemArray;
+                ServerConnect serverConnect = new ServerConnect(data[1].ToString(), 22, data[2].ToString(), data[3].ToString());
                 m_ServerConnect.Add(serverConnect);
             }
         }
@@ -369,7 +370,7 @@ namespace DSTServerManager
             m_UserDataSQLite.SaveDataTable(UI_DATA.ServerFileListTable_Local, "LocalServerList");
         }
 
-        #endregion
+        #endregion ----------------------------------------------------------------------------------------------------
 
 
         #region [本地服务器 集群存档功能区]----------------------------------------------------------------------------------------------------
@@ -554,6 +555,11 @@ namespace DSTServerManager
 
 
             //m_ServerConnect[1].SendCommand("top");
+        }
+
+        private void button_CloudServer_StartCluster_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
 

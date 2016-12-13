@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System;
+using System.Windows;
+using System.Windows.Controls;
 using System.Threading.Tasks;
 using Renci.SshNet;
 
@@ -12,36 +15,46 @@ namespace DSTServerManager.Servers
     /// </summary>
     class ServerScreens
     {
-        private SshClient m_SshClient;
-        private SftpClient m_SftpClient;
-        private ScpClient m_ScpClient;
+        ServerConnect m_ServerConnect = null;
+        private string m_DefaultPathRoot = @"/root";
+        private string m_DefaultPathUser = @"/home/{0}";
 
-        public ServerScreens(string ip, string port, string user, string password)
+        private string m_LogInfos = string.Empty;
+        private string m_ScreenName = string.Empty;
+
+        private Window m_MainWindow = null;
+        private TabControl m_TabControl = null;
+        private TabItem m_ServerTab = null;
+        private TextBox m_ServerLog = null;
+
+        public ServerScreens(ServerConnect connect)
         {
-            m_SftpClient = new SftpClient(ip, Int32.Parse(port), user, password);
-            m_SshClient = new SshClient(ip, user, password);
-            m_ScpClient = new ScpClient(ip, user, password);
+            m_ServerConnect = connect;
+            m_DefaultPathUser = string.Format(m_DefaultPathUser, m_ServerConnect.UserName);
         }
 
-        public bool Connected { get { return m_SftpClient.IsConnected; } }
-
-        public bool Connect()
+        public void CreatTabWindow(Window window, TabControl tabControl, TabItem tabItem)
         {
-            try
-            {
-                if (!Connected)
-                {
-                    m_SftpClient.Connect();
-                }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(string.Format("连接SFTP失败，原因：{0}", ex.Message));
-            }
+            m_ServerTab = tabItem;
+            m_MainWindow = window;
+            m_TabControl = tabControl;
+            foreach (var item in (tabItem.Content as Grid).Children) m_ServerLog = (TextBox)item;
 
-            // m_SftpClient.
-            //m_SshClient.
+            if (m_LogInfos != string.Empty) m_MainWindow.Dispatcher.Invoke(new Action(WriteTextLogs));
+        }
+
+
+
+        /// <summary>
+        /// 向TextBox控件写入Log信息
+        /// </summary>
+        /// <param name="logInfo"></param>
+        private void WriteTextLogs()
+        {
+            m_ServerLog.Text += m_LogInfos + "\r\n";
+            m_LogInfos = string.Empty;
+            m_ServerLog.CaretIndex = m_ServerLog.Text.Length;
+            m_ServerLog.ScrollToEnd();
         }
     }
 }
