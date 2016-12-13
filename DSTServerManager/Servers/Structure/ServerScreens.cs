@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Threading.Tasks;
@@ -30,13 +29,15 @@ namespace DSTServerManager.Servers
         public ServerScreens(ServerConnect connect)
         {
             m_ServerConnect = new ServerConnect(connect.IPAddres, connect.UserName, connect.Password);
-            if (!m_ServerConnect.AllConnected) return;
-
             m_DefaultPathUser = string.Format(m_DefaultPathUser, m_ServerConnect.UserName);
         }
 
         public void CreatTabWindow(Window window, TabControl tabControl, TabItem tabItem)
         {
+            if (!m_ServerConnect.AllConnected) return;
+
+            m_ServerConnect.StartConnect();
+
             m_ServerTab = tabItem;
             m_MainWindow = window;
             m_TabControl = tabControl;
@@ -47,7 +48,8 @@ namespace DSTServerManager.Servers
 
         public void AttachScreen(string screenName)
         {
-            //复制一个链接
+            if (!m_ServerConnect.AllConnected) return;
+
 
             //发送命令恢复窗口
         }

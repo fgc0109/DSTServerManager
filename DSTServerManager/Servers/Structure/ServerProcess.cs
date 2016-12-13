@@ -32,7 +32,7 @@ namespace DSTServerManager.Servers
         private bool m_ProcessActive = false;
 
         //用于重定向输出后的界面创建和显示
-        private bool m_IsShellWin = true;
+        private bool m_UserInterface = true;
 
         private Window m_MainWindow = null;
         private TabControl m_TabControl = null;
@@ -46,12 +46,12 @@ namespace DSTServerManager.Servers
         /// <param name="window">重定向输出的窗口进程</param>
         /// <param name="tabControl"></param>
         /// <param name="tabItem">包含TextBox子控件的TabItem控件</param>
-        /// <param name="isShell"></param>
+        /// <param name="ui"></param>
         /// <param name="session"></param>
-        public ServerProcess(Window window, TabControl tabControl, TabItem tabItem, bool isShell, string session)
+        public ServerProcess(Window window, TabControl tabControl, TabItem tabItem, bool ui, string session)
         {
             //获取重定向后的窗口和输出控件
-            m_IsShellWin = isShell;
+            m_UserInterface = ui;
             m_ServerTab = tabItem;
             m_MainWindow = window;
             m_TabControl = tabControl;
@@ -87,7 +87,7 @@ namespace DSTServerManager.Servers
             m_ServerProcess.StartInfo.WorkingDirectory = directory;
             m_ServerProcess.StartInfo.FileName = fullpath;
             m_ServerProcess.StartInfo.Arguments = command;
-            if (!m_IsShellWin)
+            if (!m_UserInterface)
             {
                 m_ServerProcess.StartInfo.UseShellExecute = false;
                 m_ServerProcess.StartInfo.RedirectStandardInput = true;
@@ -101,7 +101,7 @@ namespace DSTServerManager.Servers
             m_ServerProcess.Exited += new EventHandler(process_Exited);
 
             m_ServerProcess.Start();
-            if (!m_IsShellWin)
+            if (!m_UserInterface)
             {
                 m_ServerProcess.BeginOutputReadLine();
 
@@ -121,7 +121,7 @@ namespace DSTServerManager.Servers
         /// <param name="command"></param>
         public void SendCommand(string command)
         {
-            if (!m_IsShellWin)
+            if (!m_UserInterface)
             {
                 m_StreamWriter = m_ServerProcess.StandardInput;
 

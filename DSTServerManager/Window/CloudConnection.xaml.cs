@@ -19,7 +19,7 @@ namespace DSTServerManager
     /// <summary>
     /// DSTServerCloudSub.xaml 的交互逻辑
     /// </summary>
-    public partial class SubWindow_CloudConnection : Window
+    public partial class CloudConnection : Window
     {
         public delegate void CloudConnectionHandler(object sender, CloudConnectionEventArgs e);
         public event CloudConnectionHandler CloudConnectionEvent;
@@ -33,7 +33,7 @@ namespace DSTServerManager
         /// <param name="rowImport"></param>
         /// <param name="newRow"></param>
         /// <param name="newIndex"></param>
-        public SubWindow_CloudConnection(DataRow rowImport, bool newRow, int newIndex)
+        public CloudConnection(DataRow rowImport, bool newRow, int newIndex)
         {
             InitializeComponent();
             if (newRow) rowImport.ItemArray = new object[4] { newIndex, "127.0.0.1", "anonymous", "" };
@@ -46,7 +46,7 @@ namespace DSTServerManager
             if (rowImport[3] != null) textBox_Pass.Text = rowImport[3].ToString();
         }
 
-        private void button_SubWin_ConnectionCheck_Click(object sender, RoutedEventArgs e)
+        private void button_ConnectionCheck_Click(object sender, RoutedEventArgs e)
         {
             label_Logs.Text = string.Empty;
             SftpClient sftpclient = new SftpClient(textBox_Addr.Text, textBox_User.Text, textBox_Pass.Text);
@@ -65,7 +65,7 @@ namespace DSTServerManager
             finally { sftpclient = null; }  
         }
 
-        private void button_SubWin_ConnectionSaved_Click(object sender, RoutedEventArgs e)
+        private void button_ConnectionSaved_Click(object sender, RoutedEventArgs e)
         {
             if (textBox_Addr.Text != "") m_CurrentRow[1] = textBox_Addr.Text;
             if (textBox_User.Text != "") m_CurrentRow[2] = textBox_User.Text;
@@ -77,22 +77,5 @@ namespace DSTServerManager
             CloudConnectionEvent(this, args);
             Close();
         }
-    }
-
-    /// <summary>
-    /// 容纳参数传递事件的附加信息
-    /// </summary>
-    public class CloudConnectionEventArgs : EventArgs
-    {
-        private readonly DataRow m_DataRow;
-        private readonly bool m_NewRow;
-
-        public CloudConnectionEventArgs(DataRow dataRow, bool newRow)
-        {
-            m_NewRow = newRow;
-            m_DataRow = dataRow;
-        }
-        public DataRow GetRow { get { return m_DataRow; } }
-        public bool IsNewRow { get { return m_NewRow; } }
     }
 }

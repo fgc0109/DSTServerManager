@@ -20,7 +20,7 @@ namespace DSTServerManager
     /// <summary>
     /// SubWindow_SteamCommandLine.xaml 的交互逻辑
     /// </summary>
-    public partial class SubWindow_SteamCommand : Window
+    public partial class SteamCommand : Window
     {
         string appStartupPath = System.IO.Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
 
@@ -30,7 +30,7 @@ namespace DSTServerManager
         private StreamWriter m_StreamWriter = null;
         private Process m_SteamProcess = null;
 
-        public SubWindow_SteamCommand()
+        public SteamCommand()
         {
             InitializeComponent();
             //textBox_Path.Text = appStartupPath;
@@ -118,19 +118,5 @@ namespace DSTServerManager
         }
 
         //https://developer.valvesoftware.com/wiki/Dedicated_Servers_List
-    }
-
-    /// <summary>
-    /// 容纳参数传递事件的附加信息
-    /// </summary>
-    public class SteamCommandEventArgs : EventArgs
-    {
-        private readonly string m_NewServerPath;
-
-        public SteamCommandEventArgs(string NewServerPath)
-        {
-            m_NewServerPath = NewServerPath;
-        }
-        public string NewServerPath { get { return m_NewServerPath; } }
     }
 }

@@ -16,29 +16,46 @@ namespace DSTServerManager.Servers
     class ServersManager
     {
         ServerConnect m_ServerConnect = null;
-        string defaultPath = string.Empty;
+        private static string m_DefaultPath_CloudUser = string.Empty;
+        private static string m_DefaultPath_CloudRoot = $"/var/run/screen/S-root";
 
-        public void GetExistProcess()
+
+        public string CreatParameter()
         {
-
+            return string.Empty;
         }
 
+        /// <summary>
+        /// 获取已经存在的Process
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetExistProcess()
+        {
+            List<string> process = new List<string>();
+            return process;
+        }
+
+        /// <summary>
+        /// 获取已经存在的Screens
+        /// </summary>
+        /// <param name="connect"></param>
+        /// <returns></returns>
         public List<string> GetExistScreens(ServerConnect connect)
         {
-            defaultPath = $"/var/run/screen/S-{connect.UserName}";
+            m_DefaultPath_CloudUser = $"/var/run/screen/S-{connect.UserName}";
 
-            List<string> screen = new List<string>();
+            List<string> screens = new List<string>();
             m_ServerConnect = connect;
 
             IEnumerable<SftpFile> sftpFile = null;
-            try { sftpFile = m_ServerConnect.GetSftpClient.ListDirectory(defaultPath); }
-            catch (SftpPathNotFoundException) { return screen; }
+            try { sftpFile = m_ServerConnect.GetSftpClient.ListDirectory(m_DefaultPath_CloudUser); }
+            catch (SftpPathNotFoundException) { return screens; }
             catch (SftpPermissionDeniedException) { throw; }
             catch (Exception) { throw; }
 
             foreach (var item in sftpFile)
-                if (item.Name != "." && item.Name != "..") screen.Add(item.Name);
-            return screen;
+                if (item.Name != "." && item.Name != "..") screens.Add(item.Name);
+            return screens;
         }
     }
 }

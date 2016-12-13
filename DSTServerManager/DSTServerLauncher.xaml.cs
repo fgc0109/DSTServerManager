@@ -40,8 +40,8 @@ namespace DSTServerManager
 
         private SQLiteHelper m_UserDataSQLite = null;
 
-        private SubWindow_CloudConnection m_Win_CloudConnection = null;
-        private SubWindow_SteamCommand m_Win_SteamCommand = null;
+        private CloudConnection m_Win_CloudConnection = null;
+        private SteamCommand m_Win_SteamCommand = null;
 
         private List<ServerConnect> m_ServerConnect = null;
         private List<ServerProcess> m_ServerProcess = null;
@@ -125,7 +125,7 @@ namespace DSTServerManager
             foreach (DataRow item in UI_DATA.ServerConnectsTable_Cloud.Rows)
             {
                 object[] data = item.ItemArray;
-                ServerConnect serverConnect = new ServerConnect(data[1].ToString(), 22, data[2].ToString(), data[3].ToString());
+                ServerConnect serverConnect = new ServerConnect(data[1].ToString(), data[2].ToString(), data[3].ToString());
                 m_ServerConnect.Add(serverConnect);
             }
         }
@@ -187,7 +187,6 @@ namespace DSTServerManager
             foreach (var item in serversManager.GetExistScreens(m_ServerConnect[indexConn]))
             {
                 textBox_Servers_Tab_Log.Text += item + "\r\n";
-
             }
         }
 
@@ -358,9 +357,9 @@ namespace DSTServerManager
 
         private void button_LocalServer_GetServer_Click(object sender, RoutedEventArgs e)
         {
-            if (m_Win_SteamCommand == null) m_Win_SteamCommand = new SubWindow_SteamCommand();
+            if (m_Win_SteamCommand == null) m_Win_SteamCommand = new SteamCommand();
 
-            m_Win_SteamCommand.SteamCommandEvent += new SubWindow_SteamCommand.SteamCommandHandler(window_ReceiveSteamCommandValues);
+            m_Win_SteamCommand.SteamCommandEvent += new SteamCommand.SteamCommandHandler(window_ReceiveSteamCommandValues);
             m_Win_SteamCommand.Show();
 
             m_Win_SteamCommand.Closed += (object sender2, EventArgs e2) => { m_Win_SteamCommand = null; };
@@ -480,9 +479,9 @@ namespace DSTServerManager
             DataRow currentRow = UI_DATA.ServerConnectsTable_Cloud.NewRow();
             int newIndex = UI_DATA.ServerConnectsTable_Cloud.Rows.Count + 1;
 
-            if (m_Win_CloudConnection == null) m_Win_CloudConnection = new SubWindow_CloudConnection(currentRow, true, newIndex);
+            if (m_Win_CloudConnection == null) m_Win_CloudConnection = new CloudConnection(currentRow, true, newIndex);
 
-            m_Win_CloudConnection.CloudConnectionEvent += new SubWindow_CloudConnection.CloudConnectionHandler(window_ReceiveConnectionValues);
+            m_Win_CloudConnection.CloudConnectionEvent += new CloudConnection.CloudConnectionHandler(window_ReceiveConnectionValues);
             m_Win_CloudConnection.Show();
 
             m_Win_CloudConnection.Closed += (object sender2, EventArgs e2) => { m_Win_CloudConnection = null; };
@@ -497,9 +496,9 @@ namespace DSTServerManager
             if (indexConn == -1) return;
 
             DataRow currentRow = UI_DATA.ServerConnectsTable_Cloud.Rows[indexConn];
-            if (m_Win_CloudConnection == null) m_Win_CloudConnection = new SubWindow_CloudConnection(currentRow, false, 0);
+            if (m_Win_CloudConnection == null) m_Win_CloudConnection = new CloudConnection(currentRow, false, 0);
 
-            m_Win_CloudConnection.CloudConnectionEvent += new SubWindow_CloudConnection.CloudConnectionHandler(window_ReceiveConnectionValues);
+            m_Win_CloudConnection.CloudConnectionEvent += new CloudConnection.CloudConnectionHandler(window_ReceiveConnectionValues);
             m_Win_CloudConnection.Show();
 
             m_Win_CloudConnection.Closed += (object sender2, EventArgs e2) => { m_Win_CloudConnection = null; };

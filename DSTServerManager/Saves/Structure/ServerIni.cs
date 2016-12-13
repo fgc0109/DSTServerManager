@@ -97,7 +97,6 @@ namespace DSTServerManager.Saves
         /// 从文件读取配置文件
         /// </summary>
         /// <param name="serverIniFullPath"></param>
-        /// <returns></returns>
         public void ReadFromFile(string serverIniFullPath)
         {
             if (!File.Exists(serverIniFullPath)) return;
@@ -114,7 +113,6 @@ namespace DSTServerManager.Saves
         /// 写入位于本地配置文件
         /// </summary>
         /// <param name="serverIniFullPath"></param>
-        /// <returns></returns>
         public void WriteToFile(string serverIniFullPath)
         {
             if (null == m_Setting) return;
@@ -133,7 +131,6 @@ namespace DSTServerManager.Saves
         /// 写入位于SSH服务器配置文件
         /// </summary>
         /// <param name="serverIniFullPath"></param>
-        /// <returns></returns>
         public void ReadFromSSH(string serverIniFullPath, SftpClient client)
         {
             MemoryStream stream = new MemoryStream();
