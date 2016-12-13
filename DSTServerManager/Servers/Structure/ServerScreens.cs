@@ -29,7 +29,9 @@ namespace DSTServerManager.Servers
 
         public ServerScreens(ServerConnect connect)
         {
-            m_ServerConnect = connect;
+            m_ServerConnect = new ServerConnect(connect.IPAddres, connect.UserName, connect.Password);
+            if (!m_ServerConnect.AllConnected) return;
+
             m_DefaultPathUser = string.Format(m_DefaultPathUser, m_ServerConnect.UserName);
         }
 
@@ -43,7 +45,12 @@ namespace DSTServerManager.Servers
             if (m_LogInfos != string.Empty) m_MainWindow.Dispatcher.Invoke(new Action(WriteTextLogs));
         }
 
+        public void AttachScreen(string screenName)
+        {
+            //复制一个链接
 
+            //发送命令恢复窗口
+        }
 
         /// <summary>
         /// 向TextBox控件写入Log信息

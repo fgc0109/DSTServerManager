@@ -182,6 +182,13 @@ namespace DSTServerManager
             List<string> saveFolders_Cloud = SavesManager.GetSavesFolder(client);
             foreach (var item in saveFolders_Cloud) comboBox_SavesFolder_Cloud.Items.Add(item);
             comboBox_SavesFolder_Cloud.SelectedIndex = 0;
+
+            ServersManager serversManager = new ServersManager();
+            foreach (var item in serversManager.GetExistScreens(m_ServerConnect[indexConn]))
+            {
+                textBox_Servers_Tab_Log.Text += item + "\r\n";
+
+            }
         }
 
         private void dataGrid_CloudServer_Connection_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -372,7 +379,6 @@ namespace DSTServerManager
 
         #endregion ----------------------------------------------------------------------------------------------------
 
-
         #region [本地服务器 集群存档功能区]----------------------------------------------------------------------------------------------------
 
         /// <summary>
@@ -457,7 +463,7 @@ namespace DSTServerManager
             }
         }
 
-        #endregion
+        #endregion ----------------------------------------------------------------------------------------------------
 
         private void button_CloudServer_AddServer_Click(object sender, RoutedEventArgs e)
         {

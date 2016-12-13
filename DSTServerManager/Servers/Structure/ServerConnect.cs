@@ -23,7 +23,6 @@ namespace DSTServerManager.Servers
 
         private bool m_AllConnected = false;
         private string m_LogInfos = string.Empty;
-        private string m_UserName = string.Empty;
         private ShellStream m_ShellStream = null;
 
         private Window m_MainWindow = null;
@@ -31,18 +30,25 @@ namespace DSTServerManager.Servers
         private TabItem m_ServerTab = null;
         private TextBox m_ServerLog = null;
 
+        private string m_UserName = string.Empty;
+        private string m_Password = string.Empty;
+        private string m_IPAddres = string.Empty;
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="ip"></param>
-        /// <param name="port"></param>
         /// <param name="user"></param>
         /// <param name="password"></param>
-        public ServerConnect(string ip, int port, string user, string password)
+        public ServerConnect(string ip, string userName, string password)
         {
-            m_SftpClient = new SftpClient(ip, port, user, password);
-            m_SshClient = new SshClient(ip, user, password);
-            m_ScpClient = new ScpClient(ip, user, password);
+            m_SftpClient = new SftpClient(ip, 22, userName, password);
+            m_SshClient = new SshClient(ip, userName, password);
+            m_ScpClient = new ScpClient(ip, userName, password);
+
+            m_UserName = userName;
+            m_Password = password;
+            m_IPAddres = ip;
         }
 
         public SftpClient GetSftpClient { get { return m_SftpClient; } }
@@ -51,7 +57,10 @@ namespace DSTServerManager.Servers
         public TabItem ServerTab { get { return m_ServerTab; } }
 
         public bool AllConnected { get { return m_AllConnected; } }
+
         public string UserName { get { return m_UserName; } }
+        public string Password { get { return m_Password; } }
+        public string IPAddres { get { return m_IPAddres; } }
 
         /// <summary>
         /// 
