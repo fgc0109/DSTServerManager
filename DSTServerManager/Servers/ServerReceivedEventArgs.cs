@@ -4,9 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DSTServerManager.Servers
+namespace DSTServerManager
 {
-    class ServerReceivedEventArgs
+    class ServerReceivedEventArgs : EventArgs
     {
+        private readonly string m_ReceivedData;
+
+        public ServerReceivedEventArgs(string receivedData)
+        {
+            m_ReceivedData = receivedData;
+        }
+        public string ReceivedData { get { return m_ReceivedData; } }
     }
 }

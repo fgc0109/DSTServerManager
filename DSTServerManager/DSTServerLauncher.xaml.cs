@@ -54,14 +54,21 @@ namespace DSTServerManager
             InitializeComponent();
 
             #region 全局变量初始化
+
             m_ServerConnect = new List<ServerConnect>();
             m_ServerProcess = new List<ServerProcess>();
             m_ServerScreens = new List<ServerScreens>();
 
             m_TabItemXaml = System.Windows.Markup.XamlWriter.Save(tabItemMain);
+
+            ServersManager.TabItemXaml = m_TabItemXaml;
+            ServersManager.MainWindows = this;
+            ServersManager.TabCtrl = tabControl_ServerLog;
+
             #endregion
 
             #region 界面绑定数据初始化
+
             UI_DATA = new UserInterfaceData(dataGrid_ClusterInfo_ServersList.Columns.Count);
             BindingState();
 
@@ -183,8 +190,8 @@ namespace DSTServerManager
             foreach (var item in saveFolders_Cloud) comboBox_SavesFolder_Cloud.Items.Add(item);
             comboBox_SavesFolder_Cloud.SelectedIndex = 0;
 
-            ServersManager serversManager = new ServersManager();
-            foreach (var item in serversManager.GetExistScreens(m_ServerConnect[indexConn]))
+
+            foreach (var item in ServersManager.GetExistScreens(m_ServerConnect[indexConn]))
             {
                 textBox_Servers_Tab_Log.Text += item + "\r\n";
             }
@@ -459,6 +466,16 @@ namespace DSTServerManager
                 ServerProcess process = new ServerProcess(this, tabControl_ServerLog, newProcessTab, false, server.Session);
                 process.StartProcess(exeName, cmdBuilder.ToString());
                 m_ServerProcess.Add(process);
+                //string confdir = comboBox_SavesFolder_Local.SelectedItem.ToString();
+                //string cluster = listBox_LocalServer_ClusterFile.SelectedItem.ToString();
+                //string folders = server.Folder;
+
+                //string serverExe = (dataGrid_LocalServer_ServersPath.SelectedItem as DataRowView)[2].ToString();
+                //string parameter = ServersManager.CreatParameter(confdir, cluster, folders);
+                //ServersManager.CreatNewProcess(serverExe, parameter, server.Session);
+
+
+                //m_ServerProcess.Add(process);
             }
         }
 
