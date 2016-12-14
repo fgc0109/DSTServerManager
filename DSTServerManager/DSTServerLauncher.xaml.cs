@@ -305,17 +305,7 @@ namespace DSTServerManager
             textBox_Servers_Tab_Log.Text += tabControl_ServerLog.SelectedIndex.ToString();
             textBox_Servers_Tab_Log.Text += sender.ToString() + "\r\n";
 
-
             ServersManager.SendCommand(textBox_Server_Server_Input.Text);
-            //foreach (var server in m_ServerProcess)
-            //{
-            //    if (!server.ServerTab.Equals(tabControl_ServerLog.SelectedItem)) continue;
-
-            //    textBox_Servers_Tab_Log.Text += server.ServerSession;
-            //    server.SendCommand(textBox_Server_Server_Input.Text);
-            //    //server.SendCommandNormal(textBox_Server_Server_Input.Text);
-            //    //item.CurrentServerProcess.StandardInput.WriteLine(textBox_Server_Server_Input.Text);
-            //}
 
             foreach (var connect in m_ServerConnect)
             {
@@ -338,8 +328,6 @@ namespace DSTServerManager
         /// <summary>
         /// 本地服务器-服务器文件选择变化
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void dataGrid_LocalServer_ServersPath_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (dataGrid_LocalServer_ServersPath.SelectedIndex == -1)

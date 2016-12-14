@@ -57,7 +57,7 @@ namespace DSTServerManager.Servers
         {
             foreach (var server in m_ServerProcess)
             {
-                if (server.ServerTab.Equals(m_TabCtrl.SelectedItem)) continue;
+                if (!server.ServerTab.Equals(m_TabCtrl.SelectedItem)) continue;
 
                 server.SendCommand(command);
             }

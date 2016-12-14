@@ -87,7 +87,6 @@ namespace DSTServerManager
 
             //读取数据库数据
             UI_DATA.ServerFileListTable_Local = userDataSQLite.ExecuteDataTable("LocalServerList");
-            //UI_DATA.ServerFileListTable_Cloud = userDataSQLite.ExecuteDataTable("CloudServerList");
             ServerFileListTable_CloudOrigin = userDataSQLite.ExecuteDataTable("CloudServerList");
             UI_DATA.ServerConnectsTable_Cloud = userDataSQLite.ExecuteDataTable("CloudServerConnList");
 
@@ -101,7 +100,6 @@ namespace DSTServerManager
             userDataExcel.OpenExcel(appStartupPath + @"\DSTServerManager.xlsx", ExcelEngines.ACE, ExcelVersion.Office2007);
 
             UI_DATA.ServerFileListTable_Local.MergeExcelData(userDataExcel, "LocalServerList");
-            //UI_DATA.ServerFileListTable_Cloud.MergeExcelData(userDataExcel, "CloudServerList");
             ServerFileListTable_CloudOrigin.MergeExcelData(userDataExcel, "CloudServerList");
             UI_DATA.ServerConnectsTable_Cloud.MergeExcelData(userDataExcel, "CloudServerConnList");
 
@@ -110,7 +108,6 @@ namespace DSTServerManager
 
             //更新本地数据库数据
             userDataSQLite.SaveDataTable(UI_DATA.ServerFileListTable_Local, "LocalServerList");
-            //userDataSQLite.SaveDataTable(UI_DATA.ServerFileListTable_Cloud, "CloudServerList");
             userDataSQLite.SaveDataTable(ServerFileListTable_CloudOrigin, "CloudServerList");
             userDataSQLite.SaveDataTable(UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList");
 
