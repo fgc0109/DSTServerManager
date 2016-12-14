@@ -154,7 +154,7 @@ namespace DSTServerManager
         /// </summary>
         private void dataGrid_CloudServer_Connection_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            int indexConn = dataGrid_CloudServer_Connection.SelectedIndex;
+            int indexConn = dataGrid_CloudServer_Connections.SelectedIndex;
 
             //在后台线程开始打开远程连接
             BackgroundWorker connectWorker = new BackgroundWorker();
@@ -178,7 +178,7 @@ namespace DSTServerManager
             m_ServerConnect[indexConn].CreatTabWindow(this, tabControl_ServerLog, connectTab);
 
             //控制DataGrid的颜色
-            DataGridRow dataRow = (DataGridRow)dataGrid_CloudServer_Connection.ItemContainerGenerator.ContainerFromIndex(indexConn);
+            DataGridRow dataRow = (DataGridRow)dataGrid_CloudServer_Connections.ItemContainerGenerator.ContainerFromIndex(indexConn);
             if (m_ServerConnect[indexConn].AllConnected) dataRow.Background = new SolidColorBrush(Colors.LightGreen);
             else dataRow.Background = new SolidColorBrush(Colors.OrangeRed);
 
@@ -199,7 +199,7 @@ namespace DSTServerManager
 
         private void dataGrid_CloudServer_Connection_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            int indexConn = dataGrid_CloudServer_Connection.SelectedIndex;
+            int indexConn = dataGrid_CloudServer_Connections.SelectedIndex;
             if (indexConn == -1) return;
 
             List<string> serverID = new List<string>();
@@ -225,7 +225,7 @@ namespace DSTServerManager
         /// </summary>
         private void comboBox_SavesFolder_Cloud_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            int indexConn = dataGrid_CloudServer_Connection.SelectedIndex;
+            int indexConn = dataGrid_CloudServer_Connections.SelectedIndex;
 
             //获取集群信息
             string saveFolder = comboBox_SavesFolder_Cloud.SelectedItem?.ToString();
@@ -329,7 +329,7 @@ namespace DSTServerManager
 
         private void dataGrid_Server_Command_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            textBox_Server_Server_Input.Text = ((DataRowView)dataGrid_Server_Command.SelectedItem)[3].ToString();
+            textBox_Server_Server_Input.Text = ((DataRowView)dataGrid_ServersInfo_CommandLine.SelectedItem)[3].ToString();
             textBox_Server_Server_Input.Focus();
             textBox_Server_Server_Input.CaretIndex = textBox_Server_Server_Input.Text.Length - 1;
         }
@@ -509,7 +509,7 @@ namespace DSTServerManager
         /// </summary>
         private void button_CloudServer_EditConn_Click(object sender, RoutedEventArgs e)
         {
-            int indexConn = dataGrid_CloudServer_Connection.SelectedIndex;
+            int indexConn = dataGrid_CloudServer_Connections.SelectedIndex;
             if (indexConn == -1) return;
 
             DataRow currentRow = UI_DATA.ServerConnectsTable_Cloud.Rows[indexConn];
@@ -526,7 +526,7 @@ namespace DSTServerManager
         /// </summary>
         private void button_CloudServer_DeleteConn_Click(object sender, RoutedEventArgs e)
         {
-            int indexConn = dataGrid_CloudServer_Connection.SelectedIndex;
+            int indexConn = dataGrid_CloudServer_Connections.SelectedIndex;
             if (indexConn == -1) return;
 
             UI_DATA.ServerConnectsTable_Cloud.Rows[indexConn].Delete();

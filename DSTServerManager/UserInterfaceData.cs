@@ -443,13 +443,13 @@ namespace DSTServerManager
                 if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ServerConsole)));
             }
         }
-        public DataTable ServerLeveled
+        public DataTable ClusterServersLevel
         {
             get { return serverLeveled; }
             set
             {
                 serverLeveled = value.Copy();
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ServerLeveled)));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ClusterServersLevel)));
             }
         }
 
