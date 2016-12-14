@@ -34,34 +34,31 @@ namespace DSTServerManager.Servers
         //用于重定向输出后的界面创建和显示
         private bool m_IsShellWin = true;
 
-        private Window m_MainWindow = null;
         private TabControl m_TabControl = null;
-        private TabItem m_ServerTab = null;
-        private TextBox m_ServerLog = null;
+        private TabItem m_ServersTab = null;
+        private TextBox m_ServersLog = null;
         private StreamWriter m_StreamWriter = null;
 
         /// <summary>
         /// 创建一个新的Process实例
         /// </summary>
-        /// <param name="window">重定向输出的窗口进程</param>
         /// <param name="tabControl"></param>
         /// <param name="tabItem">包含TextBox子控件的TabItem控件</param>
         /// <param name="isShell"></param>
         /// <param name="session"></param>
-        public ServerProcess(Window window, TabControl tabControl, TabItem tabItem, bool isShell, string session)
+        public ServerProcess(TabControl tabControl, TabItem tabItem, bool isShell, string session)
         {
             //获取重定向后的窗口和输出控件
             m_IsShellWin = isShell;
-            m_ServerTab = tabItem;
-            m_MainWindow = window;
+            m_ServersTab = tabItem;
             m_TabControl = tabControl;
-            foreach (var item in (tabItem.Content as Grid).Children) m_ServerLog = (TextBox)item;
+            foreach (var item in (tabItem.Content as Grid).Children) m_ServersLog = (TextBox)item;
 
             m_ServerProcess = new Process();
             m_ServerSession = session;
         }
 
-        public TabItem ServerTab { get { return m_ServerTab; } }
+        public TabItem ServerTab { get { return m_ServersTab; } }
         public bool IsProcessActive { get { return m_ProcessActive; } }
         public string ServerSession { get { return m_ServerSession; } }
 
@@ -140,19 +137,19 @@ namespace DSTServerManager.Servers
         private void process_Exited(object sender, EventArgs e)
         {
             m_ServerProcess = null;
-            if (m_ServerTab != null)
-                m_MainWindow.Dispatcher.Invoke(new Action(() => { m_TabControl.Items.Remove(m_ServerTab); }));
+            if (m_ServersTab != null)
+                m_TabControl.Dispatcher.Invoke(new Action(() => { m_TabControl.Items.Remove(m_ServersTab); }));
 
             m_ProcessActive = false;
         }
 
         private void process_OutputDataReceived(object sender, DataReceivedEventArgs received)
         {
-            m_MainWindow.Dispatcher.Invoke(new Action(() =>
+            m_TabControl.Dispatcher.Invoke(new Action(() =>
             {
-                m_ServerLog.Text += received.Data + "\r\n";
-                m_ServerLog.CaretIndex = m_ServerLog.Text.Length;
-                m_ServerLog.ScrollToEnd();
+                m_ServersLog.Text += received.Data + "\r\n";
+                m_ServersLog.CaretIndex = m_ServersLog.Text.Length;
+                m_ServersLog.ScrollToEnd();
             }));
         }
     }

@@ -44,7 +44,6 @@ namespace DSTServerManager
         private SteamCommand m_Win_SteamCommand = null;
 
         private List<ServerConnect> m_ServerConnect = null;
-        private List<ServerProcess> m_ServerProcess = null;
         private List<ServerScreens> m_ServerScreens = null;
 
         private string m_TabItemXaml = string.Empty;
@@ -56,13 +55,11 @@ namespace DSTServerManager
             #region 全局变量初始化
 
             m_ServerConnect = new List<ServerConnect>();
-            m_ServerProcess = new List<ServerProcess>();
             m_ServerScreens = new List<ServerScreens>();
 
             m_TabItemXaml = System.Windows.Markup.XamlWriter.Save(tabItemMain);
 
             ServersManager.TabItemXaml = m_TabItemXaml;
-            ServersManager.MainWindows = this;
             ServersManager.TabCtrl = tabControl_ServerLog;
 
             #endregion
@@ -308,15 +305,17 @@ namespace DSTServerManager
             textBox_Servers_Tab_Log.Text += tabControl_ServerLog.SelectedIndex.ToString();
             textBox_Servers_Tab_Log.Text += sender.ToString() + "\r\n";
 
-            foreach (var server in m_ServerProcess)
-            {
-                if (!server.ServerTab.Equals(tabControl_ServerLog.SelectedItem)) continue;
 
-                textBox_Servers_Tab_Log.Text += server.ServerSession;
-                server.SendCommand(textBox_Server_Server_Input.Text);
-                //server.SendCommandNormal(textBox_Server_Server_Input.Text);
-                //item.CurrentServerProcess.StandardInput.WriteLine(textBox_Server_Server_Input.Text);
-            }
+            ServersManager.SendCommand(textBox_Server_Server_Input.Text);
+            //foreach (var server in m_ServerProcess)
+            //{
+            //    if (!server.ServerTab.Equals(tabControl_ServerLog.SelectedItem)) continue;
+
+            //    textBox_Servers_Tab_Log.Text += server.ServerSession;
+            //    server.SendCommand(textBox_Server_Server_Input.Text);
+            //    //server.SendCommandNormal(textBox_Server_Server_Input.Text);
+            //    //item.CurrentServerProcess.StandardInput.WriteLine(textBox_Server_Server_Input.Text);
+            //}
 
             foreach (var connect in m_ServerConnect)
             {
@@ -336,6 +335,11 @@ namespace DSTServerManager
 
         #region [本地服务器 服务器列表功能区]----------------------------------------------------------------------------------------------------
 
+        /// <summary>
+        /// 本地服务器-服务器文件选择变化
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void dataGrid_LocalServer_ServersPath_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (dataGrid_LocalServer_ServersPath.SelectedIndex == -1)
@@ -346,6 +350,11 @@ namespace DSTServerManager
             button_LocalServer_DelServer.IsEnabled = true;
         }
 
+        /// <summary>
+        /// 本地服务器-添加现有的服务器
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button_LocalServer_AddServer_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Forms.OpenFileDialog openFile = new System.Windows.Forms.OpenFileDialog();
@@ -362,6 +371,9 @@ namespace DSTServerManager
             }
         }
 
+        /// <summary>
+        /// 本地服务器-获取新的的服务器
+        /// </summary>
         private void button_LocalServer_GetServer_Click(object sender, RoutedEventArgs e)
         {
             if (m_Win_SteamCommand == null) m_Win_SteamCommand = new SteamCommand();
@@ -372,11 +384,14 @@ namespace DSTServerManager
             m_Win_SteamCommand.Closed += (object sender2, EventArgs e2) => { m_Win_SteamCommand = null; };
         }
 
-
+        /// <summary>
+        /// 本地服务器-删除指定的服务器
+        /// </summary>
         private void button_LocalServer_DelServer_Click(object sender, RoutedEventArgs e)
         {
             int indexPath = dataGrid_LocalServer_ServersPath.SelectedIndex;
             if (indexPath == -1) return;
+
             UI_DATA.ServerFileListTable_Local.Rows[indexPath].Delete();
             UI_DATA.ServerFileListTable_Local.Rows[indexPath].AcceptChanges();
             UI_DATA.ServerFileListTable_Local.RefreshDataTable();
@@ -404,22 +419,30 @@ namespace DSTServerManager
             if (m_ClusterInfo_Local[index].ClusterServers.Count != 0) dataGrid_ClusterInfo_ServersList.SelectedIndex = 0;
         }
 
+        /// <summary>
+        /// 本地服务器-添加服务器集群
+        /// </summary>       
         private void button_LocalServer_AddCluster_Click(object sender, RoutedEventArgs e)
         {
 
         }
 
+        /// <summary>
+        /// 本地服务器-刷新当前服务器集群
+        /// </summary>
         private void button_LocalServer_RefreshCluster_Click(object sender, RoutedEventArgs e)
         {
             //获取集群信息
             string saveFolder = comboBox_SavesFolder_Local.SelectedItem?.ToString();
             if (saveFolder == "") return;
+
             RefreshClusterData(saveFolder, "Cluster", ref listBox_LocalServer_ClusterFile, null);
             m_ClusterInfo_Local = SavesManager.GetClusterInfo("Cluster", saveFolder);
             if (listBox_LocalServer_ClusterFile.Items.Count != 0) listBox_LocalServer_ClusterFile.SelectedIndex = 0;
 
             int index = listBox_LocalServer_ClusterFile.SelectedIndex;
             if (index == -1) return;
+
             RefreshServersData(m_ClusterInfo_Local[index], ref UI_DATA);
             if (m_ClusterInfo_Local[index].ClusterServers.Count != 0) dataGrid_ClusterInfo_ServersList.SelectedIndex = 0;
         }
@@ -438,44 +461,15 @@ namespace DSTServerManager
             ExtendHelper.CopyAllProperties(UI_DATA, m_ClusterInfo_Local[indexLocalFile].ClusterSetting);
             SavesManager.SetClusterInfo(comboBox_SavesFolder_Local.SelectedItem?.ToString(), m_ClusterInfo_Local[indexLocalFile]);
 
-            //服务器程序文件路径获取
-            string exeName = (dataGrid_LocalServer_ServersPath.SelectedItem as DataRowView)[2].ToString();
-            if (!File.Exists(exeName)) return;
+            string confdir = comboBox_SavesFolder_Local.SelectedItem.ToString();
+            string cluster = listBox_LocalServer_ClusterFile.SelectedItem.ToString();
+            string exefile = (dataGrid_LocalServer_ServersPath.SelectedItem as DataRowView)[2].ToString();
 
-            //服务器状态列表检查
-            for (int i = 0; i < m_ServerProcess.Count; i++)
-            {
-                if (m_ServerProcess[i].IsProcessActive == false)
-                {
-                    m_ServerProcess[i] = null;
-                    m_ServerProcess.Remove(m_ServerProcess[i]);
-                }
-            }
-            //获取集群服务器
+            //依次开启集群服务器
             foreach (var server in m_ClusterInfo_Local[indexLocalFile].ClusterServers)
             {
-                StringBuilder cmdBuilder = new StringBuilder(256);
-                cmdBuilder.Append($" -conf_dir {comboBox_SavesFolder_Local.SelectedItem.ToString()}");
-                cmdBuilder.Append($" -cluster {listBox_LocalServer_ClusterFile.SelectedItem.ToString()}");
-                cmdBuilder.Append($" -shard {server.Folder}");
-
-                TabItem newProcessTab = System.Windows.Markup.XamlReader.Parse(m_TabItemXaml) as TabItem;
-                newProcessTab.Header = server.Folder;
-                tabControl_ServerLog.Items.Add(newProcessTab);
-
-                ServerProcess process = new ServerProcess(this, tabControl_ServerLog, newProcessTab, false, server.Session);
-                process.StartProcess(exeName, cmdBuilder.ToString());
-                m_ServerProcess.Add(process);
-                //string confdir = comboBox_SavesFolder_Local.SelectedItem.ToString();
-                //string cluster = listBox_LocalServer_ClusterFile.SelectedItem.ToString();
-                //string folders = server.Folder;
-
-                //string serverExe = (dataGrid_LocalServer_ServersPath.SelectedItem as DataRowView)[2].ToString();
-                //string parameter = ServersManager.CreatParameter(confdir, cluster, folders);
-                //ServersManager.CreatNewProcess(serverExe, parameter, server.Session);
-
-
-                //m_ServerProcess.Add(process);
+                string parameter = ServersManager.CreatParameter(confdir, cluster, server.Folder);
+                ServersManager.CreatNewProcess(exefile, parameter, server.Session);
             }
         }
 

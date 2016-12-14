@@ -20,8 +20,7 @@ namespace DSTServerManager.Servers
 
         private string m_LogInfos = string.Empty;
         private string m_ScreenName = string.Empty;
-
-        private Window m_MainWindow = null;
+        
         private TabControl m_TabControl = null;
         private TabItem m_ServerTab = null;
         private TextBox m_ServerLog = null;
@@ -32,18 +31,17 @@ namespace DSTServerManager.Servers
             m_DefaultPathUser = string.Format(m_DefaultPathUser, m_ServerConnect.UserName);
         }
 
-        public void CreatTabWindow(Window window, TabControl tabControl, TabItem tabItem)
+        public void CreatTabWindow( TabControl tabControl, TabItem tabItem)
         {
             if (!m_ServerConnect.AllConnected) return;
 
             m_ServerConnect.StartConnect();
 
             m_ServerTab = tabItem;
-            m_MainWindow = window;
             m_TabControl = tabControl;
             foreach (var item in (tabItem.Content as Grid).Children) m_ServerLog = (TextBox)item;
 
-            if (m_LogInfos != string.Empty) m_MainWindow.Dispatcher.Invoke(new Action(WriteTextLogs));
+            if (m_LogInfos != string.Empty) tabControl.Dispatcher.Invoke(new Action(WriteTextLogs));
         }
 
         public void AttachScreen(string screenName)
