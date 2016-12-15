@@ -71,6 +71,10 @@ namespace DSTServerManager
 
             //服务器控制命令列表
             dataGrid_ServersInfo_CommandLine.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(UI_DATA.ServerConsole)) { Source = UI_DATA });
+
+            //存档文件夹列表
+            comboBox_SavesFolder_Local.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(UI_DATA.SaveFolders_Local)) { Source = UI_DATA });
+            comboBox_SavesFolder_Cloud.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(UI_DATA.SaveFolders_Cloud)) { Source = UI_DATA });
         }
 
         #region 获取用户配置文件数据

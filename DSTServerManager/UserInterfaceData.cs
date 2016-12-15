@@ -403,9 +403,32 @@ namespace DSTServerManager
         DataTable serverConsole = new DataTable("serverConsole");
         DataTable serverLeveled = new DataTable("serverLeveled");
 
+        List<string> saveFolders_Local = new List<string>();
+        List<string> saveFolders_Cloud = new List<string>();
+
         #endregion
 
         #region 用户信息属性
+
+        public List<string> SaveFolders_Local
+        {
+            get { return saveFolders_Local; }
+            set
+            {
+                saveFolders_Local = value;
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(SaveFolders_Local)));
+            }
+        }
+
+        public List<string> SaveFolders_Cloud
+        {
+            get { return saveFolders_Cloud; }
+            set
+            {
+                saveFolders_Cloud = value;
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(SaveFolders_Cloud)));
+            }
+        }
 
         public DataTable ServerFileListTable_Local
         {
@@ -454,7 +477,6 @@ namespace DSTServerManager
         }
 
         #endregion
-
 
         public UserInterfaceData(int columns)
         {

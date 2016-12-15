@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using DSTServerManager.Saves;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -19,18 +20,8 @@ namespace DSTServerManager.Servers
     /// </summary>
     static class ServersManager
     {
-        private static List<ServerConnect> m_ServerConnect = new List<ServerConnect>();
-        private static List<ServerProcess> m_ServerProcess = new List<ServerProcess>();
-        private static List<ServerScreens> m_ServerScreens = new List<ServerScreens>();
-
         private static string m_DefaultPath_CloudUser = string.Empty;
         private static string m_DefaultPath_CloudRoot = $"/var/run/screen/S-root";
-
-        private static string m_TabItemXaml = null;
-        private static TabControl m_TabCtrl = null;
-
-        public static string TabItemXaml { set { m_TabItemXaml = value; } }
-        public static TabControl TabCtrl { set { m_TabCtrl = value; } }
 
         /// <summary>
         /// 创建服务器启动参数
@@ -48,80 +39,7 @@ namespace DSTServerManager.Servers
 
             return cmdBuilder.ToString();
         }
-
-        /// <summary>
-        /// 发送控制命令
-        /// </summary>
-        /// <param name="command"></param>
-        internal static void SendCommand(string command)
-        {
-            foreach (var server in m_ServerProcess)
-            {
-                if (!server.ServerTab.Equals(m_TabCtrl.SelectedItem)) continue;
-
-                server.SendCommand(command);
-            }
-        }
-
-        /// <summary>
-        /// 状态列表检查
-        /// </summary>
-        internal static void RefreshList()
-        {
-            for (int i = 0; i < m_ServerProcess.Count; i++)
-            {
-                if (m_ServerProcess[i].IsProcessActive == true) continue;
-
-                m_ServerProcess[i] = null;
-                m_ServerProcess.Remove(m_ServerProcess[i]);
-            }
-        }
-
-        #region [本地Process]----------------------------------------------------------------------------------------------------
         
-        /// <summary>
-        /// 创建本地Process
-        /// </summary>
-        /// <param name="serverExe"></param>
-        /// <param name="parameter"></param>
-        /// <param name="session"></param>
-        internal static void CreatNewProcess(string serverExe, string parameter, string session)
-        {
-            if (!File.Exists(serverExe)) return;
-
-            RefreshList();
-            TabItem newProcessTab = System.Windows.Markup.XamlReader.Parse(m_TabItemXaml) as TabItem;
-            m_TabCtrl.Dispatcher.Invoke(new Action(() => { m_TabCtrl.Items.Add(newProcessTab); }));
-
-            ServerProcess process = new ServerProcess(m_TabCtrl, newProcessTab, false, session);
-
-            //在后台线程开始执行
-            //BackgroundWorker processWorker = new BackgroundWorker();
-            //processWorker.DoWork +=ProcessWorker_DoWork;
-            //processWorker.RunWorkerCompleted += ProcessWorker_RunWorkerCompleted;
-            //processWorker.RunWorkerAsync(indexConn);
-
-            process.StartProcess(serverExe, parameter);
-
-            m_ServerProcess.Add(process);
-        }
-
-        private static void ProcessWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private static void ProcessWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion ----------------------------------------------------------------------------------------------------
-
-        #region [远程Connect]----------------------------------------------------------------------------------------------------
-
-        #endregion ----------------------------------------------------------------------------------------------------
-
         /// <summary>
         /// 获取已经存在的Process
         /// </summary>

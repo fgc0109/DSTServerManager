@@ -23,10 +23,15 @@ using System.Runtime.InteropServices;
 namespace DSTServerManager.Servers
 {
     /// <summary>
-    /// 
+    /// 本地服务器Process
     /// </summary>
     class ServerProcess
     {
+        [DllImport("user32.dll")]
+        private static extern bool SetForegroundWindow(IntPtr hWnd);
+        [DllImport("user32.dll")]
+        private static extern IntPtr SetActiveWindow(IntPtr hWnd);
+
         private Process m_ServerProcess = null;
         private string m_ServerSession = string.Empty;
         private bool m_ProcessActive = false;
@@ -46,16 +51,11 @@ namespace DSTServerManager.Servers
         /// <param name="tabItem">包含TextBox子控件的TabItem控件</param>
         /// <param name="isShell"></param>
         /// <param name="session"></param>
-        public ServerProcess(TabControl tabControl, TabItem tabItem, bool isShell, string session)
+        public ServerProcess(bool isShell, string session)
         {
-            //获取重定向后的窗口和输出控件
             m_IsShellWin = isShell;
-            m_ServersTab = tabItem;
-            m_TabControl = tabControl;
-            foreach (var item in (tabItem.Content as Grid).Children) m_ServersLog = (TextBox)item;
-
-            m_ServerProcess = new Process();
             m_ServerSession = session;
+            m_ServerProcess = new Process();
         }
 
         public TabItem ServerTab { get { return m_ServersTab; } }
@@ -63,22 +63,17 @@ namespace DSTServerManager.Servers
         public string ServerSession { get { return m_ServerSession; } }
 
         /// <summary>
-        /// 不使用windows外壳程序并且不显示窗口,所有信息输出到重定向的TextBox
+        /// 开启Process
         /// </summary>
         /// <param name="fullpath">程序全路径</param>
-        /// <param name="argument">程序启动参数</param>
-        public void StartProcess(string fullpath, params string[] argument)
+        /// <param name="command">程序启动参数</param>
+        public void StartProcess(string fullpath, string command)
         {
             //获取工作目录
             string directory = string.Empty;
             string[] folder = fullpath.Split('\\');
             for (int i = 0; i < folder.Length - 1; i++)
                 directory += folder[i] + "\\";
-
-            //获取完整命令
-            string command = string.Empty;
-            foreach (var argue in argument)
-                command += argue;
 
             //设置启动参数
             m_ServerProcess.StartInfo.WorkingDirectory = directory;
@@ -92,10 +87,10 @@ namespace DSTServerManager.Servers
                 m_ServerProcess.StartInfo.RedirectStandardError = true;
                 m_ServerProcess.StartInfo.CreateNoWindow = true;
 
-                m_ServerProcess.OutputDataReceived += new DataReceivedEventHandler(process_OutputDataReceived);
+                m_ServerProcess.OutputDataReceived += new DataReceivedEventHandler(Process_OutputDataReceived);
             }
             m_ServerProcess.EnableRaisingEvents = true;
-            m_ServerProcess.Exited += new EventHandler(process_Exited);
+            m_ServerProcess.Exited += new EventHandler(Process_Exited);
 
             m_ServerProcess.Start();
             if (!m_IsShellWin)
@@ -108,10 +103,13 @@ namespace DSTServerManager.Servers
             m_ProcessActive = true;
         }
 
-        [DllImport("user32.dll")]
-        private static extern bool SetForegroundWindow(IntPtr hWnd);
-        [DllImport("user32.dll")]
-        private static extern IntPtr SetActiveWindow(IntPtr hWnd);
+        public void CreatTabWindow(TabControl tabControl, TabItem tabItem)
+        {
+            m_ServersTab = tabItem;
+            m_TabControl = tabControl;
+            foreach (var item in (tabItem.Content as Grid).Children) m_ServersLog = (TextBox)item;
+        }
+
         /// <summary>
         /// 向Process发送控制台命令
         /// </summary>
@@ -134,7 +132,7 @@ namespace DSTServerManager.Servers
             }
         }
 
-        private void process_Exited(object sender, EventArgs e)
+        private void Process_Exited(object sender, EventArgs e)
         {
             m_ServerProcess = null;
             if (m_ServersTab != null)
@@ -143,7 +141,7 @@ namespace DSTServerManager.Servers
             m_ProcessActive = false;
         }
 
-        private void process_OutputDataReceived(object sender, DataReceivedEventArgs received)
+        private void Process_OutputDataReceived(object sender, DataReceivedEventArgs received)
         {
             m_TabControl.Dispatcher.Invoke(new Action(() =>
             {

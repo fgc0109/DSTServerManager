@@ -24,21 +24,20 @@ namespace DSTServerManager.Servers
         private bool m_AllConnected = false;
         private string m_LogInfos = string.Empty;
         private ShellStream m_ShellStream = null;
-
-        private Window m_MainWindow = null;
+        
         private TabControl m_TabControl = null;
-        private TabItem m_ServerTab = null;
-        private TextBox m_ServerLog = null;
+        private TabItem m_ConnectTab = null;
+        private TextBox m_ConnectLog = null;
 
         private string m_UserName = string.Empty;
         private string m_Password = string.Empty;
         private string m_IPAddres = string.Empty;
 
         /// <summary>
-        /// 
+        /// 初始化连接
         /// </summary>
         /// <param name="ip"></param>
-        /// <param name="user"></param>
+        /// <param name="userName"></param>
         /// <param name="password"></param>
         public ServerConnect(string ip, string userName, string password)
         {
@@ -54,7 +53,7 @@ namespace DSTServerManager.Servers
         public SftpClient GetSftpClient { get { return m_SftpClient; } }
         public SshClient GetSshClient { get { return m_SshClient; } }
         public ScpClient GetScpClient { get { return m_ScpClient; } }
-        public TabItem ServerTab { get { return m_ServerTab; } }
+        public TabItem ServerTab { get { return m_ConnectTab; } }
 
         public bool AllConnected { get { return m_AllConnected; } }
 
@@ -63,7 +62,7 @@ namespace DSTServerManager.Servers
         public string IPAddres { get { return m_IPAddres; } }
 
         /// <summary>
-        /// 
+        /// 开启Connect
         /// </summary>
         /// <returns></returns>
         public void StartConnect()
@@ -87,14 +86,13 @@ namespace DSTServerManager.Servers
             m_ShellStream.ReadAsync(buffer, 0, buffer.Length);
         }
 
-        public void CreatTabWindow(Window window, TabControl tabControl, TabItem tabItem)
+        public void CreatTabWindow(TabControl tabControl, TabItem tabItem)
         {
-            m_ServerTab = tabItem;
-            m_MainWindow = window;
+            m_ConnectTab = tabItem;
             m_TabControl = tabControl;
-            foreach (var item in (tabItem.Content as Grid).Children) m_ServerLog = (TextBox)item;
+            foreach (var item in (tabItem.Content as Grid).Children) m_ConnectLog = (TextBox)item;
 
-            if (m_LogInfos != string.Empty) m_MainWindow.Dispatcher.Invoke(new Action(WriteTextLogs));
+            if (m_LogInfos != string.Empty) tabControl.Dispatcher.Invoke(new Action(WriteTextLogs));
         }
 
         public void SendCommand(string command)
@@ -117,8 +115,8 @@ namespace DSTServerManager.Servers
             m_LogInfos = lines.Replace(m_LogInfos, "");
             m_LogInfos = test1.Replace(m_LogInfos, "");
 
-            if (m_ServerLog == null) return;
-            m_MainWindow.Dispatcher.Invoke(new Action(WriteTextLogs));
+            if (m_ConnectLog == null) return;
+            m_TabControl.Dispatcher.Invoke(new Action(WriteTextLogs));
             m_LogInfos = string.Empty;
         }
 
@@ -128,9 +126,9 @@ namespace DSTServerManager.Servers
         /// <param name="logInfo"></param>
         private void WriteTextLogs()
         {
-            m_ServerLog.Text += m_LogInfos;
-            m_ServerLog.CaretIndex = m_ServerLog.Text.Length;
-            m_ServerLog.ScrollToEnd();
+            m_ConnectLog.Text += m_LogInfos;
+            m_ConnectLog.CaretIndex = m_ConnectLog.Text.Length;
+            m_ConnectLog.ScrollToEnd();
         }
     }
 

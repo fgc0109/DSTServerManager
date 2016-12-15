@@ -31,7 +31,11 @@ namespace DSTServerManager
     /// </summary>
     public partial class DSTServerLauncher : Window
     {
-        string appStartupPath = System.IO.Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+        private static string appStartupPath = System.IO.Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+
+        private static List<ServerConnect> m_ServerConnect = new List<ServerConnect>();
+        private static List<ServerProcess> m_ServerProcess = new List<ServerProcess>();
+        private static List<ServerScreens> m_ServerScreens = new List<ServerScreens>();
 
         private List<ClusterInfo> m_ClusterInfo_Local = null;
         private List<ClusterInfo> m_ClusterInfo_Cloud = null;
@@ -43,32 +47,18 @@ namespace DSTServerManager
         private CloudConnection m_Win_CloudConnection = null;
         private SteamCommand m_Win_SteamCommand = null;
 
-        private List<ServerConnect> m_ServerConnect = null;
-        private List<ServerScreens> m_ServerScreens = null;
-
         private string m_TabItemXaml = string.Empty;
 
         public DSTServerLauncher()
         {
             InitializeComponent();
-
-            #region 全局变量初始化
-
-            m_ServerConnect = new List<ServerConnect>();
-            m_ServerScreens = new List<ServerScreens>();
-
             m_TabItemXaml = System.Windows.Markup.XamlWriter.Save(tabItemMain);
-
-            ServersManager.TabItemXaml = m_TabItemXaml;
-            ServersManager.TabCtrl = tabControl_ServerLog;
-
-            #endregion
 
             #region 界面绑定数据初始化
 
             UI_DATA = new UserInterfaceData(dataGrid_ClusterInfo_ServersList.Columns.Count);
             BindingState();
-
+            
             textBox_BasicInfo_Key.Text = ConfigHelper.GetValue("textBox_BasicInfo_Key");
             dataGrid_LocalServer_ServersPath.FrozenColumnCount = 2;
             dataGrid_CloudServer_ServersPath.FrozenColumnCount = 2;
@@ -81,7 +71,6 @@ namespace DSTServerManager
             #endregion
         }
 
-
         private void UserDataWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             m_UserDataSQLite = new SQLiteHelper();
@@ -89,8 +78,10 @@ namespace DSTServerManager
         }
         private void UserdataWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            application_LocalServer_Init();
-            application_CloudServer_Init();
+            if (SavesManager.GetSavesFolder().Count == 0) SavesManager.CreatSavesFolder();
+
+            UI_DATA.SaveFolders_Local = SavesManager.GetSavesFolder();
+            comboBox_SavesFolder_Local.SelectedIndex = 0;
         }
 
         #region $$$ 菜单功能区
@@ -120,78 +111,15 @@ namespace DSTServerManager
         #endregion
 
         /// <summary>
-        /// 远程服务器-远程连接列表初始化
-        /// </summary>
-        private void application_CloudServer_Init()
-        {
-            if (UI_DATA.ServerConnectsTable_Cloud.Rows.Count == 0) return;
-
-            foreach (DataRow item in UI_DATA.ServerConnectsTable_Cloud.Rows)
-            {
-                object[] data = item.ItemArray;
-                ServerConnect serverConnect = new ServerConnect(data[1].ToString(), data[2].ToString(), data[3].ToString());
-                m_ServerConnect.Add(serverConnect);
-            }
-        }
-
-        /// <summary>
-        /// 本地服务器-获取默认存档路径下的存档文件夹列表
-        /// </summary>
-        private void application_LocalServer_Init()
-        {
-            if (SavesManager.GetSavesFolder().Count == 0) SavesManager.CreatSavesFolder();
-
-            List<string> saveFolders_Local = SavesManager.GetSavesFolder();
-            foreach (var item in saveFolders_Local) comboBox_SavesFolder_Local.Items.Add(item);
-            comboBox_SavesFolder_Local.SelectedIndex = 0;
-        }
-
-        /// <summary>
-        /// 远程服务器-获取默认存档路径下的存档文件夹列表
+        /// 远程服务器-打开远程连接
         /// </summary>
         private void dataGrid_CloudServer_Connection_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            int indexConn = dataGrid_CloudServer_Connections.SelectedIndex;
+            string ip = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[1].ToString();
+            string userName = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[2].ToString();
+            string password = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[3].ToString();
 
-            //在后台线程开始打开远程连接
-            BackgroundWorker connectWorker = new BackgroundWorker();
-            connectWorker.DoWork += ConnectWorker_DoWork;
-            connectWorker.RunWorkerCompleted += ConnectWorker_RunWorkerCompleted;
-            connectWorker.RunWorkerAsync(indexConn);
-        }
-        private void ConnectWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            m_ServerConnect[(int)e.Argument].StartConnect();
-            e.Result = (int)e.Argument;
-        }
-        private void ConnectWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            int indexConn = (int)e.Result;
-            if (m_ServerConnect[indexConn].AllConnected == false) return;
-
-            TabItem connectTab = System.Windows.Markup.XamlReader.Parse(m_TabItemXaml) as TabItem;
-            tabControl_ServerLog.Items.Add(connectTab);
-
-            m_ServerConnect[indexConn].CreatTabWindow(this, tabControl_ServerLog, connectTab);
-
-            //控制DataGrid的颜色
-            DataGridRow dataRow = (DataGridRow)dataGrid_CloudServer_Connections.ItemContainerGenerator.ContainerFromIndex(indexConn);
-            if (m_ServerConnect[indexConn].AllConnected) dataRow.Background = new SolidColorBrush(Colors.LightGreen);
-            else dataRow.Background = new SolidColorBrush(Colors.OrangeRed);
-
-            SftpClient client = m_ServerConnect[indexConn].GetSftpClient;
-            if (SavesManager.GetSavesFolder(client).Count == 0)
-                SavesManager.CreatSavesFolder(client);
-
-            List<string> saveFolders_Cloud = SavesManager.GetSavesFolder(client);
-            foreach (var item in saveFolders_Cloud) comboBox_SavesFolder_Cloud.Items.Add(item);
-            comboBox_SavesFolder_Cloud.SelectedIndex = 0;
-
-
-            foreach (var item in ServersManager.GetExistScreens(m_ServerConnect[indexConn]))
-            {
-                textBox_Servers_Tab_Log.Text += item + "\r\n";
-            }
+            CreatNewConnect(ip, userName, password);
         }
 
         private void dataGrid_CloudServer_Connection_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -223,12 +151,13 @@ namespace DSTServerManager
         private void comboBox_SavesFolder_Cloud_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             int indexConn = dataGrid_CloudServer_Connections.SelectedIndex;
+            SftpClient client = m_ServerConnect[indexConn].GetSftpClient;
 
             //获取集群信息
             string saveFolder = comboBox_SavesFolder_Cloud.SelectedItem?.ToString();
             if (saveFolder == string.Empty) return;
-            RefreshClusterData(saveFolder, "Cluster", ref listBox_CloudServer_ClusterFile, m_ServerConnect[indexConn].GetSftpClient);
-            m_ClusterInfo_Cloud = SavesManager.GetClusterInfo(saveFolder, "Cluster", m_ServerConnect[indexConn].GetSftpClient);
+            RefreshClusterData(saveFolder, "Cluster", ref listBox_CloudServer_ClusterFile, client);
+            m_ClusterInfo_Cloud = SavesManager.GetClusterInfo(saveFolder, "Cluster", client);
             if (listBox_CloudServer_ClusterFile.Items.Count != 0) listBox_CloudServer_ClusterFile.SelectedIndex = 0;
         }
 
@@ -305,15 +234,7 @@ namespace DSTServerManager
             textBox_Servers_Tab_Log.Text += tabControl_ServerLog.SelectedIndex.ToString();
             textBox_Servers_Tab_Log.Text += sender.ToString() + "\r\n";
 
-            ServersManager.SendCommand(textBox_Server_Server_Input.Text);
-
-            foreach (var connect in m_ServerConnect)
-            {
-                if (!connect.AllConnected) continue;
-                if (!connect.ServerTab.Equals(tabControl_ServerLog.SelectedItem)) continue;
-
-                connect.SendCommand(textBox_Server_Server_Input.Text);
-            }
+            SendCommand(textBox_Server_Server_Input.Text);
         }
 
         private void dataGrid_Server_Command_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -366,7 +287,7 @@ namespace DSTServerManager
         {
             if (m_Win_SteamCommand == null) m_Win_SteamCommand = new SteamCommand();
 
-            m_Win_SteamCommand.SteamCommandEvent += new SteamCommand.SteamCommandHandler(window_ReceiveSteamCommandValues);
+            m_Win_SteamCommand.SteamCommandEvent += new SteamCommand.SteamCommandHandler(Window_ReceiveSteamCommandValues);
             m_Win_SteamCommand.Show();
 
             m_Win_SteamCommand.Closed += (object sender2, EventArgs e2) => { m_Win_SteamCommand = null; };
@@ -452,12 +373,13 @@ namespace DSTServerManager
             string confdir = comboBox_SavesFolder_Local.SelectedItem.ToString();
             string cluster = listBox_LocalServer_ClusterFile.SelectedItem.ToString();
             string exefile = (dataGrid_LocalServer_ServersPath.SelectedItem as DataRowView)[2].ToString();
+            bool isShell = (bool)radioButton_LocalServer_OpenType_1.IsChecked;
 
             //依次开启集群服务器
             foreach (var server in m_ClusterInfo_Local[indexLocalFile].ClusterServers)
             {
                 string parameter = ServersManager.CreatParameter(confdir, cluster, server.Folder);
-                ServersManager.CreatNewProcess(exefile, parameter, server.Session);
+                CreatNewProcess(exefile, parameter, isShell, server.Session);
             }
         }
 
@@ -536,7 +458,7 @@ namespace DSTServerManager
             }
         }
 
-        private void window_ReceiveSteamCommandValues(object sender, SteamCommandEventArgs commandArgs)
+        private void Window_ReceiveSteamCommandValues(object sender, SteamCommandEventArgs commandArgs)
         {
             if (!File.Exists(commandArgs.NewServerPath)) return;
 

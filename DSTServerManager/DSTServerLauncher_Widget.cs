@@ -58,16 +58,5 @@ namespace DSTServerManager
             bindData.ClusterServersTable.Clear();
             ExtendHelper.CopyAllProperties(clusterInfo, bindData);
         }
-
-
-        /// <summary>
-        /// 创建子文件夹
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="name"></param>
-        private void CreatChildFolder(string path, string name)
-        {
-
-        }
     }
 }
