@@ -20,7 +20,7 @@ namespace DSTServerManager.Servers
 
         private string m_LogInfos = string.Empty;
         private string m_ScreenName = string.Empty;
-        
+
         private TabControl m_TabControl = null;
         private TabItem m_ServerTab = null;
         private TextBox m_ServerLog = null;
@@ -31,7 +31,7 @@ namespace DSTServerManager.Servers
             m_DefaultPathUser = string.Format(m_DefaultPathUser, m_ServerConnect.UserName);
         }
 
-        public void CreatTabWindow( TabControl tabControl, TabItem tabItem)
+        public void CreatTabWindow(TabControl tabControl, TabItem tabItem)
         {
             if (!m_ServerConnect.AllConnected) return;
 
@@ -44,7 +44,15 @@ namespace DSTServerManager.Servers
             if (m_LogInfos != string.Empty) tabControl.Dispatcher.Invoke(new Action(WriteTextLogs));
         }
 
-        public void AttachScreen(string screenName)
+        /// <summary>
+        /// 开启Screens
+        /// </summary>
+        public void StartScreens()
+        {
+
+        }
+
+        public void AttachScreens(string screenName)
         {
             if (!m_ServerConnect.AllConnected) return;
 

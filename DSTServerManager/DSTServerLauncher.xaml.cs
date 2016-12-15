@@ -75,12 +75,17 @@ namespace DSTServerManager
         {
             m_UserDataSQLite = new SQLiteHelper();
             GetUserData(m_UserDataSQLite);
+
+            if (SavesManager.GetSavesFolder().Count == 0) SavesManager.CreatSavesFolder();
+            UI_DATA.SaveFolders_Local = SavesManager.GetSavesFolder();
+
+            foreach (var item in ServersManager.GetExistProcess())
+            {
+                textBox_Servers_Tab_Log.Text += item + "\r\n";
+            }
         }
         private void UserdataWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (SavesManager.GetSavesFolder().Count == 0) SavesManager.CreatSavesFolder();
-
-            UI_DATA.SaveFolders_Local = SavesManager.GetSavesFolder();
             comboBox_SavesFolder_Local.SelectedIndex = 0;
         }
 

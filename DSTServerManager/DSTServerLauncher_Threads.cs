@@ -60,7 +60,7 @@ namespace DSTServerManager
 
             foreach (var item in ServersManager.GetExistScreens(serverConnect))
             {
-                // textBox_Servers_Tab_Log.Text += item + "\r\n";
+                textBox_Servers_Tab_Log.Text += item + "\r\n";
             }
         }
         private void ConnectWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs passValue)
@@ -115,6 +115,51 @@ namespace DSTServerManager
         }
 
         private void ProcessWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            //throw new NotImplementedException();
+        }
+
+        #endregion ----------------------------------------------------------------------------------------------------
+
+        #region [远程Screens]----------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// 创建远程Screens
+        /// </summary>
+        /// <param name="serverExe"></param>
+        /// <param name="parameter"></param>
+        /// <param name="session"></param>
+        internal void CreatNewScreens(string serverExe, string parameter, bool isShell, string session)
+        {
+            if (!File.Exists(serverExe)) return;
+
+            RefreshList();
+            TabItem processTab = System.Windows.Markup.XamlReader.Parse(m_TabItemXaml) as TabItem;
+            tabControl_ServerLog.Items.Add(processTab);
+
+            ServerProcess process = new ServerProcess(isShell, session);
+            process.CreatTabWindow(tabControl_ServerLog, processTab);
+
+            //在后台线程开始执行
+            BackgroundWorker processWorker = new BackgroundWorker();
+            processWorker.DoWork += ScreensWorker_DoWork;
+            processWorker.RunWorkerCompleted += ScreensWorker_RunWorkerCompleted;
+            processWorker.RunWorkerAsync(new object[] { process, serverExe, parameter });
+        }
+
+        private void ScreensWorker_DoWork(object sender, DoWorkEventArgs passValue)
+        {
+            object[] argument = (object[])passValue.Argument;
+
+            ServerProcess process = argument[0] as ServerProcess;
+            string serverExe = argument[1] as string;
+            string parameter = argument[2] as string;
+
+            process.StartProcess(serverExe, parameter);
+            m_ServerProcess.Add(process);
+        }
+
+        private void ScreensWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             //throw new NotImplementedException();
         }
