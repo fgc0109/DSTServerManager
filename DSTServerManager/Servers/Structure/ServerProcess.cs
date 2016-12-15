@@ -40,8 +40,8 @@ namespace DSTServerManager.Servers
         private bool m_IsShellWin = true;
 
         private TabControl m_TabControl = null;
-        private TabItem m_ServersTab = null;
-        private TextBox m_ServersLog = null;
+        private TabItem m_ProcessTab = null;
+        private TextBox m_ProcessLog = null;
         private StreamWriter m_StreamWriter = null;
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace DSTServerManager.Servers
             m_ServerProcess = new Process();
         }
 
-        public TabItem ServerTab { get { return m_ServersTab; } }
+        public TabItem ServerTab { get { return m_ProcessTab; } }
         public bool IsProcessActive { get { return m_ProcessActive; } }
         public string ServerSession { get { return m_ServerSession; } }
 
@@ -105,9 +105,9 @@ namespace DSTServerManager.Servers
 
         public void CreatTabWindow(TabControl tabControl, TabItem tabItem)
         {
-            m_ServersTab = tabItem;
+            m_ProcessTab = tabItem;
             m_TabControl = tabControl;
-            foreach (var item in (tabItem.Content as Grid).Children) m_ServersLog = (TextBox)item;
+            foreach (var item in (tabItem.Content as Grid).Children) m_ProcessLog = (TextBox)item;
         }
 
         /// <summary>
@@ -135,8 +135,8 @@ namespace DSTServerManager.Servers
         private void Process_Exited(object sender, EventArgs e)
         {
             m_ServerProcess = null;
-            if (m_ServersTab != null)
-                m_TabControl.Dispatcher.Invoke(new Action(() => { m_TabControl.Items.Remove(m_ServersTab); }));
+            if (m_ProcessTab != null)
+                m_TabControl.Dispatcher.Invoke(new Action(() => { m_TabControl.Items.Remove(m_ProcessTab); }));
 
             m_ProcessActive = false;
         }
@@ -145,9 +145,9 @@ namespace DSTServerManager.Servers
         {
             m_TabControl.Dispatcher.Invoke(new Action(() =>
             {
-                m_ServersLog.Text += received.Data + "\r\n";
-                m_ServersLog.CaretIndex = m_ServersLog.Text.Length;
-                m_ServersLog.ScrollToEnd();
+                m_ProcessLog.Text += received.Data + "\r\n";
+                m_ProcessLog.CaretIndex = m_ProcessLog.Text.Length;
+                m_ProcessLog.ScrollToEnd();
             }));
         }
     }

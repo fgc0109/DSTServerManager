@@ -24,7 +24,7 @@ namespace DSTServerManager.Servers
         private bool m_AllConnected = false;
         private string m_LogInfos = string.Empty;
         private ShellStream m_ShellStream = null;
-        
+
         private TabControl m_TabControl = null;
         private TabItem m_ConnectTab = null;
         private TextBox m_ConnectLog = null;
@@ -77,12 +77,12 @@ namespace DSTServerManager.Servers
             }
             catch { throw; }
 
-            //m_ShellStream = m_SshClient.CreateShellStream("anything", 80, 24, 800, 600, 4096);
+            m_ShellStream = m_SshClient.CreateShellStream("anything", 80, 24, 800, 600, 4096);
             //m_ShellStream = m_SshClient.CreateShellStream("xterm", 80, 24, 800, 600, 4096);
-            m_ShellStream = m_SshClient.CreateShellStream("putty-vt100", 80, 24, 800, 600, 4096);
+            //m_ShellStream = m_SshClient.CreateShellStream("putty-vt100", 80, 24, 800, 600, 4096);
             byte[] buffer = new byte[4096];
 
-            m_ShellStream.DataReceived += new EventHandler<ShellDataEventArgs>(connect_OutputDataReceived);
+            m_ShellStream.DataReceived += new EventHandler<ShellDataEventArgs>(Connect_OutputDataReceived);
             m_ShellStream.ReadAsync(buffer, 0, buffer.Length);
         }
 
@@ -107,7 +107,7 @@ namespace DSTServerManager.Servers
         Regex lines = new Regex("%[ ]*?\\r", RegexOptions.Compiled);
         Regex test1 = new Regex("\\r", RegexOptions.Compiled);
 
-        private void connect_OutputDataReceived(object sender, ShellDataEventArgs received)
+        private void Connect_OutputDataReceived(object sender, ShellDataEventArgs received)
         {
             m_LogInfos += Encoding.UTF8.GetString(received.Data);
 
@@ -130,20 +130,5 @@ namespace DSTServerManager.Servers
             m_ConnectLog.CaretIndex = m_ConnectLog.Text.Length;
             m_ConnectLog.ScrollToEnd();
         }
-    }
-
-
-    /// <summary>
-    /// 容纳参数传递事件的附加信息
-    /// </summary>
-    public class SteamCommandEventArgs : EventArgs
-    {
-        private readonly string m_NewServerPath;
-
-        public SteamCommandEventArgs(string NewServerPath)
-        {
-            m_NewServerPath = NewServerPath;
-        }
-        public string NewServerPath { get { return m_NewServerPath; } }
     }
 }

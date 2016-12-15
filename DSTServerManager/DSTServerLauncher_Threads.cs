@@ -159,7 +159,7 @@ namespace DSTServerManager
             TabItem connectTab = System.Windows.Markup.XamlReader.Parse(m_TabItemXaml) as TabItem;
             tabControl_ServerLog.Items.Add(connectTab);
 
-            ServerConnect serverConnect = new ServerConnect(ip, userName, password);
+            ServerScreens serverConnect = new ServerScreens(ip, userName, password);
             serverConnect.CreatTabWindow(tabControl_ServerLog, connectTab);
 
             //在后台线程开始执行
