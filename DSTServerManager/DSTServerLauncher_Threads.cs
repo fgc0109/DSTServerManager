@@ -33,6 +33,7 @@ namespace DSTServerManager
         {
             RefreshList();
             TabItem connectTab = System.Windows.Markup.XamlReader.Parse(m_TabItemXaml) as TabItem;
+            connectTab.MouseDoubleClick += ConnectTab_MouseDoubleClick;
             tabControl_ServerLog.Items.Add(connectTab);
 
             ServerConnect serverConnect = new ServerConnect(ip, userName, password);
@@ -43,6 +44,17 @@ namespace DSTServerManager
             connectWorker.DoWork += ConnectWorker_DoWork;
             connectWorker.RunWorkerCompleted += ConnectWorker_RunWorkerCompleted;
             connectWorker.RunWorkerAsync(new object[] { serverConnect });
+        }
+
+        private void ConnectTab_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            foreach (var connect in m_ServerConnect)
+            {
+                if (!connect.ServerTab.Equals(sender as TabItem)) continue;
+
+                textBox_Servers_Tab_Log.Text = sender.ToString();
+                tabControl_ServerLog.Items.Remove(sender as TabItem);
+            }
         }
 
         private void ConnectWorker_DoWork(object sender, DoWorkEventArgs passValue)
@@ -90,6 +102,7 @@ namespace DSTServerManager
 
             RefreshList();
             TabItem processTab = System.Windows.Markup.XamlReader.Parse(m_TabItemXaml) as TabItem;
+            processTab.MouseDoubleClick += ProcessTab_MouseDoubleClick;
             tabControl_ServerLog.Items.Add(processTab);
 
             ServerProcess process = new ServerProcess(isShell, session);
@@ -100,6 +113,17 @@ namespace DSTServerManager
             processWorker.DoWork += ProcessWorker_DoWork;
             processWorker.RunWorkerCompleted += ProcessWorker_RunWorkerCompleted;
             processWorker.RunWorkerAsync(new object[] { process, serverExe, parameter });
+        }
+
+        private void ProcessTab_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            foreach (var servers in m_ServerProcess)
+            {
+                if (!servers.ServerTab.Equals(sender as TabItem)) continue;
+
+                textBox_Servers_Tab_Log.Text = sender.ToString();
+                servers.SendCommand("c_shutdown()");
+            }
         }
 
         private void ProcessWorker_DoWork(object sender, DoWorkEventArgs passValue)
@@ -129,34 +153,31 @@ namespace DSTServerManager
         /// <param name="serverExe"></param>
         /// <param name="parameter"></param>
         /// <param name="session"></param>
-        internal void CreatNewScreens(string serverExe, string parameter, bool isShell, string session)
+        internal void CreatNewScreens(string ip, string userName, string password)
         {
-            if (!File.Exists(serverExe)) return;
-
             RefreshList();
-            TabItem processTab = System.Windows.Markup.XamlReader.Parse(m_TabItemXaml) as TabItem;
-            tabControl_ServerLog.Items.Add(processTab);
+            TabItem connectTab = System.Windows.Markup.XamlReader.Parse(m_TabItemXaml) as TabItem;
+            tabControl_ServerLog.Items.Add(connectTab);
 
-            ServerProcess process = new ServerProcess(isShell, session);
-            process.CreatTabWindow(tabControl_ServerLog, processTab);
+            ServerConnect serverConnect = new ServerConnect(ip, userName, password);
+            serverConnect.CreatTabWindow(tabControl_ServerLog, connectTab);
 
             //在后台线程开始执行
-            BackgroundWorker processWorker = new BackgroundWorker();
-            processWorker.DoWork += ScreensWorker_DoWork;
-            processWorker.RunWorkerCompleted += ScreensWorker_RunWorkerCompleted;
-            processWorker.RunWorkerAsync(new object[] { process, serverExe, parameter });
+            BackgroundWorker connectWorker = new BackgroundWorker();
+            connectWorker.DoWork += ConnectWorker_DoWork;
+            connectWorker.RunWorkerCompleted += ConnectWorker_RunWorkerCompleted;
+            connectWorker.RunWorkerAsync(new object[] { serverConnect });
         }
 
         private void ScreensWorker_DoWork(object sender, DoWorkEventArgs passValue)
         {
             object[] argument = (object[])passValue.Argument;
 
-            ServerProcess process = argument[0] as ServerProcess;
-            string serverExe = argument[1] as string;
-            string parameter = argument[2] as string;
+            ServerConnect serverConnect = argument[0] as ServerConnect;
+            SftpClient client = serverConnect.GetSftpClient;
 
-            process.StartProcess(serverExe, parameter);
-            m_ServerProcess.Add(process);
+            serverConnect.StartConnect();
+            //serverConnect.SendCommand
         }
 
         private void ScreensWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

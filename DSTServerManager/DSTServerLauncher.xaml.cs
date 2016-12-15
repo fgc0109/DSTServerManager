@@ -297,6 +297,10 @@ namespace DSTServerManager
 
             m_Win_SteamCommand.Closed += (object sender2, EventArgs e2) => { m_Win_SteamCommand = null; };
         }
+        private void Window_ReceiveSteamCommandValues(object sender, SteamCommandEventArgs commandArgs)
+        {
+            if (!File.Exists(commandArgs.NewServerPath)) return;
+        }
 
         /// <summary>
         /// 本地服务器-删除指定的服务器
@@ -390,13 +394,8 @@ namespace DSTServerManager
 
         #endregion ----------------------------------------------------------------------------------------------------
 
-        private void button_CloudServer_AddServer_Click(object sender, RoutedEventArgs e)
-        {
-            System.Windows.Forms.OpenFileDialog openFile = new System.Windows.Forms.OpenFileDialog();
-            openFile.Filter = "EXE - File(*.exe) | *.exe| 所有文件(*.*) | *.*";
-            openFile.ShowDialog();
-        }
-
+        #region [远程服务器 服务器连接功能区]----------------------------------------------------------------------------------------------------
+        
         /// <summary>
         /// 增加远程服务器链接
         /// </summary>
@@ -463,15 +462,18 @@ namespace DSTServerManager
             }
         }
 
-        private void Window_ReceiveSteamCommandValues(object sender, SteamCommandEventArgs commandArgs)
-        {
-            if (!File.Exists(commandArgs.NewServerPath)) return;
-
-        }
+        #endregion ----------------------------------------------------------------------------------------------------
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void button_CloudServer_AddServer_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.OpenFileDialog openFile = new System.Windows.Forms.OpenFileDialog();
+            openFile.Filter = "EXE - File(*.exe) | *.exe| 所有文件(*.*) | *.*";
+            openFile.ShowDialog();
         }
 
 
@@ -490,8 +492,18 @@ namespace DSTServerManager
 
         private void button_CloudServer_StartCluster_Click(object sender, RoutedEventArgs e)
         {
+            int indexConn = dataGrid_CloudServer_Connections.SelectedIndex;
 
+            string ip = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[1].ToString();
+            string userName = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[2].ToString();
+            string password = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[3].ToString();
+
+            CreatNewScreens(ip, userName, password);
+
+
+            //sudo screen -S "world" "$gamesFile" - console - cluster "$cluster_name"_"$input_save" - shard Master; ;
         }
+
 
 
 

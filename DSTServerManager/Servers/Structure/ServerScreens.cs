@@ -33,15 +33,13 @@ namespace DSTServerManager.Servers
 
         public void CreatTabWindow(TabControl tabControl, TabItem tabItem)
         {
-            if (!m_ServerConnect.AllConnected) return;
+            //m_ServerTab = tabItem;
+            //m_TabControl = tabControl;
+            //foreach (var item in (tabItem.Content as Grid).Children) m_ServerLog = (TextBox)item;
 
-            m_ServerConnect.StartConnect();
+            //if (m_LogInfos != string.Empty) tabControl.Dispatcher.Invoke(new Action(WriteTextLogs));
 
-            m_ServerTab = tabItem;
-            m_TabControl = tabControl;
-            foreach (var item in (tabItem.Content as Grid).Children) m_ServerLog = (TextBox)item;
-
-            if (m_LogInfos != string.Empty) tabControl.Dispatcher.Invoke(new Action(WriteTextLogs));
+            m_ServerConnect.CreatTabWindow(tabControl, tabItem);
         }
 
         /// <summary>
@@ -49,6 +47,9 @@ namespace DSTServerManager.Servers
         /// </summary>
         public void StartScreens()
         {
+            if (!m_ServerConnect.AllConnected) return;
+            m_ServerConnect.StartConnect();
+
 
         }
 
