@@ -21,10 +21,10 @@ namespace DSTServerManager
             RefreshList();
             TabItem connectTab = System.Windows.Markup.XamlReader.Parse(m_TabItemXaml) as TabItem;
             connectTab.MouseDoubleClick += ConnectTab_MouseDoubleClick;
-            tabControl_ServerLog.Items.Add(connectTab);
+            TabControl_ServerLog.Items.Add(connectTab);
 
             ServerConnect serverConnect = new ServerConnect(ip, userName, password);
-            serverConnect.CreatTabWindow(tabControl_ServerLog, connectTab);
+            serverConnect.CreatTabWindow(TabControl_ServerLog, connectTab);
 
             //在后台线程开始执行
             BackgroundWorker connectWorker = new BackgroundWorker();
@@ -40,7 +40,7 @@ namespace DSTServerManager
                 if (!connect.ServerTab.Equals(sender as TabItem)) continue;
 
                 textBox_Servers_Tab_Log.Text = sender.ToString();
-                tabControl_ServerLog.Items.Remove(sender as TabItem);
+                TabControl_ServerLog.Items.Remove(sender as TabItem);
             }
         }
 
@@ -90,10 +90,10 @@ namespace DSTServerManager
             RefreshList();
             TabItem processTab = System.Windows.Markup.XamlReader.Parse(m_TabItemXaml) as TabItem;
             processTab.MouseDoubleClick += ProcessTab_MouseDoubleClick;
-            tabControl_ServerLog.Items.Add(processTab);
+            TabControl_ServerLog.Items.Add(processTab);
 
             ServerProcess process = new ServerProcess(isShell, session);
-            process.CreatTabWindow(tabControl_ServerLog, processTab);
+            process.CreatTabWindow(TabControl_ServerLog, processTab);
 
             //在后台线程开始执行
             BackgroundWorker processWorker = new BackgroundWorker();
@@ -143,17 +143,29 @@ namespace DSTServerManager
         internal void CreatNewScreens(string ip, string userName, string password)
         {
             RefreshList();
-            TabItem connectTab = System.Windows.Markup.XamlReader.Parse(m_TabItemXaml) as TabItem;
-            tabControl_ServerLog.Items.Add(connectTab);
+            TabItem screensTab = System.Windows.Markup.XamlReader.Parse(m_TabItemXaml) as TabItem;
+            screensTab.MouseDoubleClick += ScreensTab_MouseDoubleClick;
+            TabControl_ServerLog.Items.Add(screensTab);
 
             ServerScreens serverScreens = new ServerScreens(ip, userName, password);
-            serverScreens.CreatTabWindow(tabControl_ServerLog, connectTab);
+            serverScreens.CreatTabWindow(TabControl_ServerLog, screensTab);
 
             //在后台线程开始执行
             BackgroundWorker screensWorker = new BackgroundWorker();
-            screensWorker.DoWork += ConnectWorker_DoWork;
-            screensWorker.RunWorkerCompleted += ConnectWorker_RunWorkerCompleted;
+            screensWorker.DoWork += ScreensWorker_DoWork;
+            screensWorker.RunWorkerCompleted += ScreensWorker_RunWorkerCompleted;
             screensWorker.RunWorkerAsync(new object[] { serverScreens });
+        }
+
+        private void ScreensTab_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            foreach (var screens in m_ServerScreens)
+            {
+                if (!screens.ServerTab.Equals(sender as TabItem)) continue;
+
+                textBox_Servers_Tab_Log.Text = sender.ToString();
+                TabControl_ServerLog.Items.Remove(sender as TabItem);
+            }
         }
 
         private void ScreensWorker_DoWork(object sender, DoWorkEventArgs passValue)
@@ -164,6 +176,8 @@ namespace DSTServerManager
             SftpClient client = serverScreens.GetSftpClient;
 
             serverScreens.StartScreens();
+            m_ServerScreens.Add(serverScreens);
+
             serverScreens.SendCommand("");
         }
 
@@ -182,7 +196,7 @@ namespace DSTServerManager
         {
             foreach (var servers in m_ServerProcess)
             {
-                if (!servers.ServerTab.Equals(tabControl_ServerLog.SelectedItem)) continue;
+                if (!servers.ServerTab.Equals(TabControl_ServerLog.SelectedItem)) continue;
 
                 servers.SendCommand(command);
             }
@@ -190,9 +204,16 @@ namespace DSTServerManager
             foreach (var connect in m_ServerConnect)
             {
                 if (!connect.AllConnected) continue;
-                if (!connect.ServerTab.Equals(tabControl_ServerLog.SelectedItem)) continue;
+                if (!connect.ServerTab.Equals(TabControl_ServerLog.SelectedItem)) continue;
 
                 connect.SendCommand(command);
+            }
+
+            foreach (var screens in m_ServerScreens)
+            {
+                if (!screens.ServerTab.Equals(TabControl_ServerLog.SelectedItem)) continue;
+
+                screens.SendCommand(command);
             }
         }
 
@@ -207,6 +228,21 @@ namespace DSTServerManager
 
                 m_ServerProcess[i] = null;
                 m_ServerProcess.Remove(m_ServerProcess[i]);
+            }
+        }
+
+        private void TabControl_ServerLog_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            foreach (var screens in m_ServerScreens)
+            {
+                if (!screens.ServerTab.Equals(TabControl_ServerLog.SelectedItem))
+                {
+                    screens.IsLogOutput = false;
+                    continue;
+                }
+
+                screens.IsLogOutput = true;
+                screens.DisplayData();
             }
         }
 

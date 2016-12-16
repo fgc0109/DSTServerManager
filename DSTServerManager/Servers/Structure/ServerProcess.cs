@@ -134,11 +134,10 @@ namespace DSTServerManager.Servers
 
         private void Process_Exited(object sender, EventArgs e)
         {
-            m_ServerProcess = null;
-            if (m_ProcessTab != null)
-                m_TabControl.Dispatcher.Invoke(new Action(() => { m_TabControl.Items.Remove(m_ProcessTab); }));
-
             m_ProcessActive = false;
+            m_ServerProcess = null;
+
+            m_TabControl.Dispatcher.Invoke(new Action(() => { m_TabControl.Items.Remove(m_ProcessTab); }));
         }
 
         private void Process_OutputDataReceived(object sender, DataReceivedEventArgs received)

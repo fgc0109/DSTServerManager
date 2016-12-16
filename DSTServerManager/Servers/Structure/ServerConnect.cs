@@ -17,13 +17,19 @@ namespace DSTServerManager.Servers
     /// </summary>
     class ServerConnect
     {
+        Regex color = new Regex("\\[[^ ]*?m", RegexOptions.Compiled);
+        Regex lines = new Regex("%[ ]*?\\r", RegexOptions.Compiled);
+        Regex enter = new Regex("[ ]*\\r", RegexOptions.Compiled);
+
+        private bool isLogOutput = true;
+        private ShellStream m_ShellStream = null;
+        private StringBuilder connectLogBuffer = new StringBuilder(4096);
+
         private SftpClient m_SftpClient;
         private SshClient m_SshClient;
         private ScpClient m_ScpClient;
 
         private bool m_AllConnected = false;
-        private string m_LogInfos = string.Empty;
-        private ShellStream m_ShellStream = null;
 
         private TabControl m_TabControl = null;
         private TabItem m_ConnectTab = null;
@@ -54,6 +60,7 @@ namespace DSTServerManager.Servers
         public SshClient GetSshClient { get { return m_SshClient; } }
         public ScpClient GetScpClient { get { return m_ScpClient; } }
         public TabItem ServerTab { get { return m_ConnectTab; } }
+        public bool IsLogOutput { set { isLogOutput = value; } }
 
         public bool AllConnected { get { return m_AllConnected; } }
 
@@ -64,7 +71,6 @@ namespace DSTServerManager.Servers
         /// <summary>
         /// 开启Connect
         /// </summary>
-        /// <returns></returns>
         public void StartConnect()
         {
             try
@@ -78,8 +84,6 @@ namespace DSTServerManager.Servers
             catch { throw; }
 
             m_ShellStream = m_SshClient.CreateShellStream("anything", 80, 24, 800, 600, 4096);
-            //m_ShellStream = m_SshClient.CreateShellStream("xterm", 80, 24, 800, 600, 4096);
-            //m_ShellStream = m_SshClient.CreateShellStream("putty-vt100", 80, 24, 800, 600, 4096);
             byte[] buffer = new byte[4096];
 
             m_ShellStream.DataReceived += new EventHandler<ShellDataEventArgs>(Connect_OutputDataReceived);
@@ -91,44 +95,40 @@ namespace DSTServerManager.Servers
             m_ConnectTab = tabItem;
             m_TabControl = tabControl;
             foreach (var item in (tabItem.Content as Grid).Children) m_ConnectLog = (TextBox)item;
-
-            if (m_LogInfos != string.Empty) tabControl.Dispatcher.Invoke(new Action(WriteTextLogs));
         }
 
         public void SendCommand(string command)
         {
-            //byte[] buffer =Encoding.UTF8.GetBytes(command);
-            //m_ShellStream.WriteAsync(buffer, 0, buffer.Length);
+            byte[] buffer = Encoding.UTF8.GetBytes(command + "\r");
+            m_ShellStream.WriteAsync(buffer, 0, buffer.Length);
 
-            m_ShellStream.WriteLine(command);
+            m_ShellStream.FlushAsync();
         }
-
-        Regex color = new Regex("\\[[^ ]*?m", RegexOptions.Compiled);
-        Regex lines = new Regex("%[ ]*?\\r", RegexOptions.Compiled);
-        Regex test1 = new Regex("\\r", RegexOptions.Compiled);
 
         private void Connect_OutputDataReceived(object sender, ShellDataEventArgs received)
         {
-            m_LogInfos += Encoding.UTF8.GetString(received.Data);
+            string data = Encoding.UTF8.GetString(received.Data);
+            data = color.Replace(data, "");
+            data = lines.Replace(data, "");
+            data = enter.Replace(data, "");
+            connectLogBuffer.Append(data);
 
-            m_LogInfos = color.Replace(m_LogInfos, "");
-            m_LogInfos = lines.Replace(m_LogInfos, "");
-            m_LogInfos = test1.Replace(m_LogInfos, "");
-
-            if (m_ConnectLog == null) return;
-            m_TabControl.Dispatcher.Invoke(new Action(WriteTextLogs));
-            m_LogInfos = string.Empty;
+            if (isLogOutput == false) return;
+            DisplayData();
         }
 
-        /// <summary>
-        /// 向TextBox控件写入Log信息
-        /// </summary>
-        /// <param name="logInfo"></param>
-        private void WriteTextLogs()
+        public void DisplayData()
         {
-            m_ConnectLog.Text += m_LogInfos;
-            m_ConnectLog.CaretIndex = m_ConnectLog.Text.Length;
-            m_ConnectLog.ScrollToEnd();
+            string connectLog = connectLogBuffer.ToString();
+            connectLogBuffer.Clear();
+
+            m_TabControl.Dispatcher.Invoke(new Action(() =>
+            {
+                m_ConnectLog.Text += connectLog;
+                connectLog = string.Empty;
+                m_ConnectLog.CaretIndex = m_ConnectLog.Text.Length;
+                m_ConnectLog.ScrollToEnd();
+            }));
         }
     }
 }

@@ -251,7 +251,7 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <TextBox x:Name="textBox_Server_Server_Input" Margin="5" TextWrapping="Wrap" KeyDown="textBox_Server_Server_Input_KeyDown" Grid.Row="1"/>
-                            <TabControl x:Name="tabControl_ServerLog" Grid.Column="1" Grid.RowSpan="2" Padding="5" Margin="5">
+                            <TabControl x:Name="TabControl_ServerLog" Grid.Column="1" Grid.RowSpan="2" Padding="5" Margin="5">
                                 <TabItem x:Name="tabItemMain" Header="TabItem">
                                     <Grid Background="#FFE5E5E5">
                                         <Grid.RowDefinitions>

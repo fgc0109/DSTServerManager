@@ -39,6 +39,7 @@ namespace DSTServerManager
         {
             InitializeComponent();
             m_TabItemXaml = System.Windows.Markup.XamlWriter.Save(tabItemMain);
+            TabControl_ServerLog.SelectionChanged += TabControl_ServerLog_SelectionChanged;
 
             #region 界面绑定数据初始化
 
@@ -160,7 +161,7 @@ namespace DSTServerManager
         {
             if (keyEventArgs.Key != Key.Enter) return;
 
-            textBox_Servers_Tab_Log.Text += tabControl_ServerLog.SelectedIndex.ToString();
+            textBox_Servers_Tab_Log.Text += TabControl_ServerLog.SelectedIndex.ToString();
             textBox_Servers_Tab_Log.Text += sender.ToString() + "\r\n";
 
             SendCommand(textBox_Server_Server_Input.Text);
