@@ -77,7 +77,7 @@ namespace DSTServerManager
         }
         private void ConnectWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs passValue)
         {
-            comboBox_SavesFolder_Cloud.SelectedIndex = 0;
+            ComboBox_CloudServer_SavesFolder.SelectedIndex = 0;
 
             int indexConn = dataGrid_CloudServer_Connections.SelectedIndex;
             //控制DataGrid的颜色
@@ -159,25 +159,25 @@ namespace DSTServerManager
             TabItem connectTab = System.Windows.Markup.XamlReader.Parse(m_TabItemXaml) as TabItem;
             tabControl_ServerLog.Items.Add(connectTab);
 
-            ServerScreens serverConnect = new ServerScreens(ip, userName, password);
-            serverConnect.CreatTabWindow(tabControl_ServerLog, connectTab);
+            ServerScreens serverScreens = new ServerScreens(ip, userName, password);
+            serverScreens.CreatTabWindow(tabControl_ServerLog, connectTab);
 
             //在后台线程开始执行
-            BackgroundWorker connectWorker = new BackgroundWorker();
-            connectWorker.DoWork += ConnectWorker_DoWork;
-            connectWorker.RunWorkerCompleted += ConnectWorker_RunWorkerCompleted;
-            connectWorker.RunWorkerAsync(new object[] { serverConnect });
+            BackgroundWorker screensWorker = new BackgroundWorker();
+            screensWorker.DoWork += ConnectWorker_DoWork;
+            screensWorker.RunWorkerCompleted += ConnectWorker_RunWorkerCompleted;
+            screensWorker.RunWorkerAsync(new object[] { serverScreens });
         }
 
         private void ScreensWorker_DoWork(object sender, DoWorkEventArgs passValue)
         {
             object[] argument = (object[])passValue.Argument;
 
-            ServerConnect serverConnect = argument[0] as ServerConnect;
-            SftpClient client = serverConnect.GetSftpClient;
+            ServerScreens serverScreens = argument[0] as ServerScreens;
+            SftpClient client = serverScreens.GetSftpClient;
 
-            serverConnect.StartConnect();
-            //serverConnect.SendCommand
+            serverScreens.StartScreens();
+            serverScreens.SendCommand("");
         }
 
         private void ScreensWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

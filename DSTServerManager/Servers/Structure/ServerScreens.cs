@@ -39,6 +39,11 @@ namespace DSTServerManager.Servers
             m_ScpClient = new ScpClient(ip, userName, password);
         }
 
+        public SftpClient GetSftpClient { get { return m_SftpClient; } }
+        public SshClient GetSshClient { get { return m_SshClient; } }
+        public ScpClient GetScpClient { get { return m_ScpClient; } }
+        public TabItem ServerTab { get { return m_ScreensTab; } }
+
         public void CreatTabWindow(TabControl tabControl, TabItem tabItem)
         {
             m_ScreensTab = tabItem;
@@ -70,6 +75,13 @@ namespace DSTServerManager.Servers
 
             m_ShellStream.DataReceived += new EventHandler<ShellDataEventArgs>(Screens_OutputDataReceived);
             m_ShellStream.ReadAsync(buffer, 0, buffer.Length);
+        }
+        public void SendCommand(string command)
+        {
+            //byte[] buffer =Encoding.UTF8.GetBytes(command);
+            //m_ShellStream.WriteAsync(buffer, 0, buffer.Length);
+
+            m_ShellStream.WriteLine(command);
         }
 
         Regex color = new Regex("\\[[^ ]*?m", RegexOptions.Compiled);
