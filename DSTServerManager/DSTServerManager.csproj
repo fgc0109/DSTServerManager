@@ -113,13 +113,28 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DSTServerLauncher.cloud.cs">
+      <DependentUpon>DSTServerLauncher.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DSTServerLauncher.local.cs">
+      <DependentUpon>DSTServerLauncher.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DSTServerLauncher._bind.cs">
+      <DependentUpon>DSTServerLauncher.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DSTServerLauncher._func.cs">
+      <DependentUpon>DSTServerLauncher.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DataHelper\ExtendHelper.cs" />
     <Compile Include="DataHelper\ConfigHelper.cs" />
     <Compile Include="DataHelper\ExcelHelper.cs" />
     <Compile Include="DataHelper\HttpHelper.cs" />
     <Compile Include="DataHelper\ShellHelper.cs" />
     <Compile Include="DataHelper\SQLiteHelper.cs" />
-    <Compile Include="DSTServerLauncher_Threads.cs" />
     <Compile Include="Saves\Structure\ServerShard.cs" />
     <Compile Include="Servers\ServerReceivedEventArgs.cs" />
     <Compile Include="Servers\Structure\ServerConnect.cs" />
@@ -128,8 +143,6 @@
     <Compile Include="Window\CloudConnection.xaml.cs">
       <DependentUpon>CloudConnection.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DSTServerLauncher_Widget.cs" />
-    <Compile Include="DSTServerLauncher_Binding.cs" />
     <Compile Include="Saves\LicenseManager.cs" />
     <Compile Include="Saves\Structure\DefaultData.cs" />
     <Compile Include="Saves\Structure\ServerLevel.cs" />
