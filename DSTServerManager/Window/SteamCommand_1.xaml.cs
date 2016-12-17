@@ -36,7 +36,8 @@ namespace DSTServerManager
 
             textBox_Path.Text = appStartupPath;
             textBox_CMDLog.Text += "SteamCMD没有立刻将输出缓存写入数据流\r\n";
-            textBox_CMDLog.Text += "暂时不使用内置窗口\r\n";
+            textBox_CMDLog.Text += "会导致长时间无法获取状态信息\r\n";
+            textBox_CMDLog.Text += "所以暂时不使用内置窗口\r\n";
         }
 
         private void Button_Download_Click(object sender, RoutedEventArgs e)

@@ -58,19 +58,23 @@ namespace DSTServerManager
             m_UserName = userName;
             m_Password = password;
             m_Location = location;
+
+            string userPath = (m_UserName == "root") ? "/root" : $"/home/{m_UserName}";
+            textBox_Path.Text = userPath + "/DontStarveDedicatedServer";
+
+            StartScreens();
+            ShellBuilder();
         }
 
         private void Button_Download_Click(object sender, RoutedEventArgs e)
         {
-            StringBuilder command = new StringBuilder(512);
-            command.Append($" +force_install_dir {textBox_Path.Text.Replace(@"\", @"\\")}");
-            command.Append($" +login anonymous");
-            command.Append($" +app_update 343050");
-            if ((bool)radioButton_Alpha.IsChecked) command.Append($" -beta {textBox_Name.Text}");
-            command.Append($" +validate");
-            command.Append($" +quit");
+            string userPath = (m_UserName == "root") ? "/root" : $"/home/{m_UserName}";
+            List<string> path = new List<string>();
 
-            StartScreens();
+            try { m_SftpClient.CreateDirectory(textBox_Path.Text); }
+            catch { }
+
+            SendCommand($"{userPath}/steamcmd/getsteamcmd.sh");
         }
 
         /// <summary>
@@ -92,14 +96,33 @@ namespace DSTServerManager
             m_ShellStream.ReadAsync(buffer, 0, buffer.Length);
         }
 
-        private void Screens_OutputDataReceived(object sender, ShellDataEventArgs e)
+        public void SendCommand(string command)
         {
-            throw new NotImplementedException();
+            byte[] buffer = Encoding.UTF8.GetBytes(command + "\r");
+            m_ShellStream.WriteAsync(buffer, 0, buffer.Length);
+
+            m_ShellStream.FlushAsync();
+        }
+
+        private void Screens_OutputDataReceived(object sender, ShellDataEventArgs received)
+        {
+            string data = Encoding.UTF8.GetString(received.Data);
+            data = color.Replace(data, "");
+            data = lines.Replace(data, "");
+            data = enter.Replace(data, "");
+            data = othr1.Replace(data, "");
+            data = othr2.Replace(data, "");
+            screensLogBuffer.Append(data);
+
+            if (isLogOutput == false) return;
+            DisplayData();
         }
 
         private void textBox_Path_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (!Directory.Exists(textBox_Path.Text)) button_Download.IsEnabled = false;
+            string userPath = (m_UserName == "root") ? "/root" : $"/home/{m_UserName}";
+
+            if (!textBox_Path.Text.Contains(userPath + "/")) button_Download.IsEnabled = false;
             else button_Download.IsEnabled = true;
         }
 
@@ -117,6 +140,66 @@ namespace DSTServerManager
             //m_SteamProcess.Close();
         }
 
-        //https://developer.valvesoftware.com/wiki/Dedicated_Servers_List
+        public void DisplayData()
+        {
+            string connectLog = screensLogBuffer.ToString();
+            screensLogBuffer.Clear();
+
+            Dispatcher.Invoke(new Action(() =>
+              {
+                  textBox_CMDLog.Text += connectLog;
+                  connectLog = string.Empty;
+                  textBox_CMDLog.CaretIndex = textBox_CMDLog.Text.Length;
+                  textBox_CMDLog.ScrollToEnd();
+              }));
+        }
+
+        private void ShellBuilder()
+        {
+            bool isExist = false;
+            string userPath = (m_UserName == "root") ? "/root" : $"/home/{m_UserName}";
+            List<string> path = new List<string>();
+            List<string> file = new List<string>();
+
+            foreach (var item in m_SftpClient.ListDirectory(userPath))
+                if (item.IsDirectory) path.Add(item.Name);
+            if (!path.Contains("steamcmd")) m_SftpClient.CreateDirectory(userPath + "/steamcmd");
+
+            foreach (var item in m_SftpClient.ListDirectory(userPath + "/steamcmd"))
+                if (!item.IsDirectory) file.Add(item.Name);
+            if (file.Contains("steamcmd_linux.tar.gz")) isExist = true;
+
+            m_SftpClient.Create(userPath + "/steamcmd" + "/getsteamcmd.sh");
+
+            StringBuilder command = new StringBuilder(512);
+            command.Append($" +force_install_dir {textBox_Path.Text.Replace(@"\", @"\\")}");
+            command.Append($" +login anonymous");
+            command.Append($" +app_update 343050");
+            if ((bool)radioButton_Alpha.IsChecked) command.Append($" -beta {textBox_Name.Text}");
+            command.Append($" validate");
+            command.Append($" +quit");
+
+            MemoryStream commandStream = new MemoryStream();
+            StreamWriter commandWriter = new StreamWriter(commandStream, Encoding.UTF8);
+
+            commandWriter.Write($"#!/bin/bash\n\n");
+            commandWriter.Write($"cd steamcmd\n");
+            if (!isExist) commandWriter.Write($"wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz\n");
+            if (!isExist) commandWriter.Write($"tar -xvzf steamcmd_linux.tar.gz\n");
+            //commandWriter.Write($"rm -f steamcmd_linux.tar.gz\n");
+            commandWriter.Write($"chmod 777 ./steamcmd.sh\n");
+            commandWriter.Write($"./steamcmd.sh {command.ToString()}\n");
+
+            commandWriter.Flush();
+
+            m_SftpClient.WriteAllBytes(userPath + "/steamcmd" + "/getsteamcmd.sh", commandStream.ToArray());
+            commandStream.Close();
+
+
+            SendCommand($"chmod 777 {userPath}/steamcmd/getsteamcmd.sh");
+            SendCommand($"dos2unix {userPath}/steamcmd/getsteamcmd.sh");
+
+            m_SftpClient.Dispose();
+        }
     }
 }

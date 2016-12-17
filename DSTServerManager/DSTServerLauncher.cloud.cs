@@ -109,7 +109,7 @@ namespace DSTServerManager
         #region [远程服务器 服务器列表功能区]----------------------------------------------------------------------------------------------------
 
 
-        private void button_CloudServer_AddServer_Click(object sender, RoutedEventArgs e)
+        private void Button_CloudServer_AddServer_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Forms.OpenFileDialog openFile = new System.Windows.Forms.OpenFileDialog();
             openFile.Filter = "EXE - File(*.exe) | *.exe| 所有文件(*.*) | *.*";
@@ -117,12 +117,14 @@ namespace DSTServerManager
         }
 
 
-        private void button_CloudServer_GetServer_Click(object sender, RoutedEventArgs e)
+        private void Button_CloudServer_GetServer_Click(object sender, RoutedEventArgs e)
         {
             string location = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[1].ToString();
             string username = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[2].ToString();
             string password = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[3].ToString();
 
+            Window temp = new SteamCommand_2(location, username, password);
+            temp.Show();
 
             //  int indexConn = dataGrid_CloudServer_Connection.SelectedIndex;
 
