@@ -52,9 +52,9 @@ namespace DSTServerManager
         /// </summary>
         private void button_LocalServer_GetServer_Click(object sender, RoutedEventArgs e)
         {
-            if (m_Win_SteamCommand == null) m_Win_SteamCommand = new SteamCommand();
+            if (m_Win_SteamCommand == null) m_Win_SteamCommand = new SteamCommand_1();
 
-            m_Win_SteamCommand.SteamCommandEvent += new SteamCommand.SteamCommandHandler(Window_ReceiveSteamCommandValues);
+            m_Win_SteamCommand.SteamCommandEvent += new SteamCommand_1.SteamCommandHandler(Window_ReceiveSteamCommandValues);
             m_Win_SteamCommand.Show();
 
             m_Win_SteamCommand.Closed += (object sender2, EventArgs e2) => { m_Win_SteamCommand = null; };
@@ -62,6 +62,15 @@ namespace DSTServerManager
         private void Window_ReceiveSteamCommandValues(object sender, SteamCommandEventArgs commandArgs)
         {
             if (!File.Exists(commandArgs.NewServerPath)) return;
+
+            if (commandArgs.NewServerPath.Contains("dontstarve_dedicated_server_nullrenderer"))
+            {
+                DataRow newPath = UI_DATA.ServerFileListTable_Local.NewRow();
+                newPath.ItemArray = new object[3] { 0, "Steam", commandArgs.NewServerPath };
+                UI_DATA.ServerFileListTable_Local.Rows.Add(newPath);
+                UI_DATA.ServerFileListTable_Local.RefreshDataTable();
+                m_UserDataSQLite.SaveDataTable(UI_DATA.ServerFileListTable_Local, "LocalServerList");
+            }
         }
 
         /// <summary>

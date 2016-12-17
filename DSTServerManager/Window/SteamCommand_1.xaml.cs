@@ -20,7 +20,7 @@ namespace DSTServerManager
     /// <summary>
     /// SubWindow_SteamCommandLine.xaml 的交互逻辑
     /// </summary>
-    public partial class SteamCommand : Window
+    public partial class SteamCommand_1 : Window
     {
         string appStartupPath = System.IO.Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
 
@@ -30,17 +30,16 @@ namespace DSTServerManager
         private StreamWriter m_StreamWriter = null;
         private Process m_SteamProcess = null;
 
-        public SteamCommand()
+        public SteamCommand_1()
         {
             InitializeComponent();
-            //textBox_Path.Text = appStartupPath;
-            textBox_Path.Text = @"D:\Data\dst";
 
+            textBox_Path.Text = appStartupPath;
             textBox_CMDLog.Text += "SteamCMD没有立刻将输出缓存写入数据流\r\n";
             textBox_CMDLog.Text += "暂时不使用内置窗口\r\n";
         }
 
-        private void button_Download_Click(object sender, RoutedEventArgs e)
+        private void Button_Download_Click(object sender, RoutedEventArgs e)
         {
             StringBuilder command = new StringBuilder(512);
             command.Append($" +force_install_dir {textBox_Path.Text.Replace(@"\", @"\\")}");
@@ -51,7 +50,6 @@ namespace DSTServerManager
             command.Append($" +quit");
 
             StartProcess(command.ToString());
-
         }
 
         public void StartProcess(params string[] argument)
@@ -81,7 +79,7 @@ namespace DSTServerManager
             if (SteamCommandEvent == null) Close();
             string path = string.Empty;
             Dispatcher.Invoke(new Action(() => { path = textBox_Path.Text; }));
-            path += @"\steamapps\common\Don't Starve Together Dedicated Server\dontstarve_dedicated_server_nullrenderer.exe";
+            path += @"\bin\dontstarve_dedicated_server_nullrenderer.exe";
 
             SteamCommandEventArgs args = new SteamCommandEventArgs(path);
             SteamCommandEvent(this, args);

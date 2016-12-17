@@ -1,0 +1,30 @@
+﻿<Window x:Class="DSTServerManager.SteamCommand_1"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DSTServerManager"
+        mc:Ignorable="d"
+        Title="SubWindow_SteamCommand" Height="320" Width="500" MinWidth="500" MinHeight="320" Closing="Window_Closing">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100*"/>
+            <ColumnDefinition Width="200*"/>
+            <ColumnDefinition Width="100"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100*"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="35"/>
+        </Grid.RowDefinitions>
+        <TextBox x:Name="textBox_Path" Margin="10,5,5,5" Grid.Row="1" TextWrapping="Wrap" Grid.ColumnSpan="2" TextChanged="textBox_Path_TextChanged"/>
+        <Button x:Name="button_SelectPath" Content="选择安装路径" Grid.Column="2" Margin="5,5,10,5" Grid.Row="1" Click="button_SelectPath_Click"/>
+        <RadioButton x:Name="radioButton_Normal" Content="正常版本" Margin="10,5,5,5" Grid.Row="2" VerticalContentAlignment="Center" IsChecked="True"/>
+        <RadioButton x:Name="radioButton_Alpha" Content="测试版本" Margin="10,5,5,10" Grid.Row="3" VerticalContentAlignment="Center"/>
+        <TextBox x:Name="textBox_CMDLog" Margin="10,10,10,5" TextWrapping="Wrap" Background="#FF464646" Foreground="White" IsReadOnly="True" FontFamily="Courier New" Grid.ColumnSpan="3"/>
+        <TextBox x:Name="textBox_Name" Grid.Column="1" Margin="5,5,5,10" Grid.Row="3" TextWrapping="Wrap" IsEnabled="{Binding  ElementName=radioButton_Alpha, Path=IsChecked}" Text="测试版本名字"/>
+        <Button x:Name="button_Download" Content="下载" Grid.Column="2" Margin="5,5,10,10" Grid.Row="2" Grid.RowSpan="2" Click="Button_Download_Click" IsEnabled="False"/>
+
+    </Grid>
+</Window>

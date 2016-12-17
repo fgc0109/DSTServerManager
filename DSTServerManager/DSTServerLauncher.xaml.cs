@@ -31,7 +31,7 @@ namespace DSTServerManager
         private SQLiteHelper m_UserDataSQLite = null;
 
         private CloudConnection m_Win_CloudConnection = null;
-        private SteamCommand m_Win_SteamCommand = null;
+        private SteamCommand_1 m_Win_SteamCommand = null;
 
         private string m_TabItemXaml = string.Empty;
 

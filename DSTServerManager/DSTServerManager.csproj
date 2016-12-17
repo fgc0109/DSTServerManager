@@ -138,6 +138,9 @@
     <Compile Include="Saves\Structure\ServerShard.cs" />
     <Compile Include="Servers\ServerReceivedEventArgs.cs" />
     <Compile Include="Servers\Structure\ServerConnect.cs" />
+    <Compile Include="Window\SteamCommand_2.xaml.cs">
+      <DependentUpon>SteamCommand_2.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Window\SteamCommandEventArgs.cs" />
     <Compile Include="Window\CloudConnectionEventArgs.cs" />
     <Compile Include="Window\CloudConnection.xaml.cs">
@@ -155,10 +158,14 @@
     <Compile Include="Servers\ServersManager.cs" />
     <Compile Include="Servers\Structure\ServerProcess.cs" />
     <Compile Include="Servers\Structure\ServerScreens.cs" />
-    <Compile Include="Window\SteamCommand.xaml.cs">
-      <DependentUpon>SteamCommand.xaml</DependentUpon>
+    <Compile Include="Window\SteamCommand_1.xaml.cs">
+      <DependentUpon>SteamCommand_1.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserInterfaceData.cs" />
+    <Page Include="Window\SteamCommand_2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Window\CloudConnection.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -183,7 +190,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Window\SteamCommand.xaml">
+    <Page Include="Window\SteamCommand_1.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
