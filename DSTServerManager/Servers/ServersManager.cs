@@ -39,11 +39,10 @@ namespace DSTServerManager.Servers
 
             return cmdBuilder.ToString();
         }
-        
+
         /// <summary>
         /// 获取已经存在的Process
         /// </summary>
-        /// <returns></returns>
         internal static List<string> GetExistProcess()
         {
             List<string> process = new List<string>();
@@ -53,22 +52,25 @@ namespace DSTServerManager.Servers
         /// <summary>
         /// 获取已经存在的Screens
         /// </summary>
-        /// <param name="connect"></param>
-        /// <returns></returns>
-        internal static List<string> GetExistScreens(ServerConnect connect)
+        internal static List<string> GetExistScreens(string ip, string userName, string password)
         {
-            m_DefaultPath_CloudUser = $"/var/run/screen/S-{connect.UserName}";
+            m_DefaultPath_CloudUser = $"/var/run/screen/S-{userName}";
+
+            SftpClient sftpClient = new SftpClient(ip, 22, userName, password);
+            sftpClient.Connect();
 
             List<string> screens = new List<string>();
 
             IEnumerable<SftpFile> sftpFile = null;
-            try { sftpFile = connect.GetSftpClient.ListDirectory(m_DefaultPath_CloudUser); }
+            try { sftpFile = sftpClient.ListDirectory(m_DefaultPath_CloudUser); }
             catch (SftpPathNotFoundException) { return screens; }
             catch (SftpPermissionDeniedException) { throw; }
             catch (Exception) { throw; }
 
             foreach (var item in sftpFile)
-                if (item.Name != "." && item.Name != "..") screens.Add(item.Name);
+                if (item.Name != "." && item.Name != "..") screens.Add(item.Name.Split('.')[1]);
+
+            sftpClient.Disconnect();
             return screens;
         }
     }

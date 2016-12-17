@@ -162,7 +162,9 @@ namespace DSTServerManager
             //依次开启集群服务器
             foreach (var server in m_ClusterInfo_Local[indexLocalFile].ClusterServers)
             {
-                string parameter = ServersManager.CreatParameter(confdir, cluster, server.Folder);
+                string shard = server.Setting.Shard_Master ? "Master" : "Caves";
+
+                string parameter = ServersManager.CreatParameter(confdir, cluster, shard);
                 CreatNewProcess(exefile, parameter, isShell, server.Session);
             }
         }

@@ -1,5 +1,6 @@
 ﻿using DSTServerManager.DataHelper;
 using DSTServerManager.Saves;
+using DSTServerManager.Servers;
 using Renci.SshNet;
 using System;
 using System.Collections.Generic;
@@ -19,11 +20,11 @@ namespace DSTServerManager
         /// </summary>
         private void dataGrid_CloudServer_Connection_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            string ip = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[1].ToString();
-            string userName = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[2].ToString();
+            string location = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[1].ToString();
+            string username = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[2].ToString();
             string password = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[3].ToString();
 
-            CreatNewConnect(ip, userName, password);
+            CreatNewConnect(location, username, password);
         }
 
         private void dataGrid_CloudServer_Connection_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -118,6 +119,11 @@ namespace DSTServerManager
 
         private void button_CloudServer_GetServer_Click(object sender, RoutedEventArgs e)
         {
+            string location = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[1].ToString();
+            string username = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[2].ToString();
+            string password = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[3].ToString();
+
+
             //  int indexConn = dataGrid_CloudServer_Connection.SelectedIndex;
 
             //  m_ServerConnect[indexConn].GetSshClient.RunCommand("").Execute();
@@ -139,8 +145,17 @@ namespace DSTServerManager
         /// </summary>
         private void ComboBox_CloudServer_SavesFolder_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            int indexConn = dataGrid_CloudServer_Connections.SelectedIndex;
-            SftpClient client = m_ServerConnect[indexConn].GetSftpClient;
+            string location = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[1].ToString();
+            string username = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[2].ToString();
+            string password = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[3].ToString();
+
+            SftpClient client = null;
+            foreach (var item in m_ServerConnect)
+            {
+                if (location == item.Location && username == item.UserName && password == item.Password)
+                    client = item.GetSftpClient;
+            }
+            if (client == null) return;
 
             //获取集群信息
             string saveFolder = ComboBox_CloudServer_SavesFolder.SelectedItem?.ToString();
@@ -163,16 +178,38 @@ namespace DSTServerManager
 
         private void button_CloudServer_StartCluster_Click(object sender, RoutedEventArgs e)
         {
-            int indexConn = dataGrid_CloudServer_Connections.SelectedIndex;
+            int indexCloudFile = listBox_CloudServer_ClusterFile.SelectedIndex;
 
-            string ip = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[1].ToString();
+            string location = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[1].ToString();
             string userName = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[2].ToString();
             string password = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[3].ToString();
 
-            CreatNewScreens(ip, userName, password);
+            string confdir = ComboBox_CloudServer_SavesFolder.SelectedItem.ToString();
+            string cluster = listBox_CloudServer_ClusterFile.SelectedItem.ToString();
+            string exefile = (dataGrid_CloudServer_ServersPath.SelectedItem as DataRowView)[2].ToString();
 
+            List<string> screenList = ServersManager.GetExistScreens(location, userName, password);
 
-            //sudo screen -S "world" "$gamesFile" - console - cluster "$cluster_name"_"$input_save" - shard Master; ;
+            foreach (var server in m_ClusterInfo_Cloud[indexCloudFile].ClusterServers)
+            {
+                string shard = server.Setting.Shard_Master ? "Master" : "Caves";
+
+                string parameter = ServersManager.CreatParameter(confdir, cluster, shard);
+
+                string command = string.Empty;
+                string screenName = cluster + "_" + server.Folder;
+
+                if (screenList.Contains(screenName))
+                {
+                    command = $"screen -xr {screenName}";
+                }
+                else
+                {
+                    command = $"screen -S {screenName} {exefile} {parameter}";
+                }
+
+                CreatNewScreens(location, userName, password, command);
+            }
         }
 
         #endregion ----------------------------------------------------------------------------------------------------

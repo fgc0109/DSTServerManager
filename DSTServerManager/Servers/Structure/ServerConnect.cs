@@ -37,23 +37,23 @@ namespace DSTServerManager.Servers
 
         private string m_UserName = string.Empty;
         private string m_Password = string.Empty;
-        private string m_IPAddres = string.Empty;
+        private string m_Location = string.Empty;
 
         /// <summary>
         /// 初始化连接
         /// </summary>
-        /// <param name="ip"></param>
-        /// <param name="userName"></param>
+        /// <param name="location"></param>
+        /// <param name="username"></param>
         /// <param name="password"></param>
-        public ServerConnect(string ip, string userName, string password)
+        public ServerConnect(string location, string username, string password)
         {
-            m_SftpClient = new SftpClient(ip, 22, userName, password);
-            m_SshClient = new SshClient(ip, userName, password);
-            m_ScpClient = new ScpClient(ip, userName, password);
+            m_SftpClient = new SftpClient(location, 22, username, password);
+            m_SshClient = new SshClient(location, username, password);
+            m_ScpClient = new ScpClient(location, username, password);
 
-            m_UserName = userName;
+            m_UserName = username;
             m_Password = password;
-            m_IPAddres = ip;
+            m_Location = location;
         }
 
         public SftpClient GetSftpClient { get { return m_SftpClient; } }
@@ -66,7 +66,7 @@ namespace DSTServerManager.Servers
 
         public string UserName { get { return m_UserName; } }
         public string Password { get { return m_Password; } }
-        public string IPAddres { get { return m_IPAddres; } }
+        public string Location { get { return m_Location; } }
 
         /// <summary>
         /// 开启Connect

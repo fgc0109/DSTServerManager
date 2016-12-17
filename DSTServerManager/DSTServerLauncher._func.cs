@@ -16,14 +16,14 @@ namespace DSTServerManager
     {
         #region [远程Connect]----------------------------------------------------------------------------------------------------
 
-        internal void CreatNewConnect(string ip, string userName, string password)
+        internal void CreatNewConnect(string location, string username, string password)
         {
             RefreshList();
             TabItem connectTab = System.Windows.Markup.XamlReader.Parse(m_TabItemXaml) as TabItem;
             connectTab.MouseDoubleClick += ConnectTab_MouseDoubleClick;
             TabControl_ServerLog.Items.Add(connectTab);
 
-            ServerConnect serverConnect = new ServerConnect(ip, userName, password);
+            ServerConnect serverConnect = new ServerConnect(location, username, password);
             serverConnect.CreatTabWindow(TabControl_ServerLog, connectTab);
 
             //在后台线程开始执行
@@ -31,17 +31,6 @@ namespace DSTServerManager
             connectWorker.DoWork += ConnectWorker_DoWork;
             connectWorker.RunWorkerCompleted += ConnectWorker_RunWorkerCompleted;
             connectWorker.RunWorkerAsync(new object[] { serverConnect });
-        }
-
-        private void ConnectTab_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            foreach (var connect in m_ServerConnect)
-            {
-                if (!connect.ServerTab.Equals(sender as TabItem)) continue;
-
-                textBox_Servers_Tab_Log.Text = sender.ToString();
-                TabControl_ServerLog.Items.Remove(sender as TabItem);
-            }
         }
 
         private void ConnectWorker_DoWork(object sender, DoWorkEventArgs passValue)
@@ -57,20 +46,32 @@ namespace DSTServerManager
             if (SavesManager.GetSavesFolder(client).Count == 0) SavesManager.CreatSavesFolder(client);
             UI_DATA.SaveFolders_Cloud = SavesManager.GetSavesFolder(client);
 
-            foreach (var item in ServersManager.GetExistScreens(serverConnect))
-            {
-                textBox_Servers_Tab_Log.Text += item + "\r\n";
-            }
+            passValue.Result = new object[] { serverConnect };
         }
         private void ConnectWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs passValue)
         {
+            object[] argument = (object[])passValue.Result;
+
+            ServerConnect serverConnect = argument[0] as ServerConnect;
+
             ComboBox_CloudServer_SavesFolder.SelectedIndex = 0;
 
             int indexConn = dataGrid_CloudServer_Connections.SelectedIndex;
             //控制DataGrid的颜色
             DataGridRow dataRow = (DataGridRow)dataGrid_CloudServer_Connections.ItemContainerGenerator.ContainerFromIndex(indexConn);
-            if (m_ServerConnect[indexConn].AllConnected) dataRow.Background = new SolidColorBrush(Colors.LightGreen);
+            if (serverConnect.AllConnected) dataRow.Background = new SolidColorBrush(Colors.LightGreen);
             else dataRow.Background = new SolidColorBrush(Colors.OrangeRed);
+        }
+
+        private void ConnectTab_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            foreach (var connect in m_ServerConnect)
+            {
+                if (!connect.ServerTab.Equals(sender as TabItem)) continue;
+
+                textBox_Servers_Tab_Log.Text = sender.ToString();
+                TabControl_ServerLog.Items.Remove(sender as TabItem);
+            }
         }
 
         #endregion ----------------------------------------------------------------------------------------------------
@@ -140,21 +141,40 @@ namespace DSTServerManager
         /// <param name="serverExe"></param>
         /// <param name="parameter"></param>
         /// <param name="session"></param>
-        internal void CreatNewScreens(string ip, string userName, string password)
+        internal void CreatNewScreens(string location, string username, string password, string command)
         {
             RefreshList();
             TabItem screensTab = System.Windows.Markup.XamlReader.Parse(m_TabItemXaml) as TabItem;
             screensTab.MouseDoubleClick += ScreensTab_MouseDoubleClick;
             TabControl_ServerLog.Items.Add(screensTab);
 
-            ServerScreens serverScreens = new ServerScreens(ip, userName, password);
+            ServerScreens serverScreens = new ServerScreens(location, username, password);
             serverScreens.CreatTabWindow(TabControl_ServerLog, screensTab);
 
             //在后台线程开始执行
             BackgroundWorker screensWorker = new BackgroundWorker();
             screensWorker.DoWork += ScreensWorker_DoWork;
             screensWorker.RunWorkerCompleted += ScreensWorker_RunWorkerCompleted;
-            screensWorker.RunWorkerAsync(new object[] { serverScreens });
+            screensWorker.RunWorkerAsync(new object[] { serverScreens, command });
+        }
+
+        private void ScreensWorker_DoWork(object sender, DoWorkEventArgs passValue)
+        {
+            object[] argument = (object[])passValue.Argument;
+
+            ServerScreens serverScreens = argument[0] as ServerScreens;
+            string command = argument[1] as string;
+            SftpClient client = serverScreens.GetSftpClient;
+
+            serverScreens.StartScreens();
+            m_ServerScreens.Add(serverScreens);
+
+            serverScreens.SendCommand(command);
+        }
+
+        private void ScreensWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            //throw new NotImplementedException();
         }
 
         private void ScreensTab_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -166,24 +186,6 @@ namespace DSTServerManager
                 textBox_Servers_Tab_Log.Text = sender.ToString();
                 TabControl_ServerLog.Items.Remove(sender as TabItem);
             }
-        }
-
-        private void ScreensWorker_DoWork(object sender, DoWorkEventArgs passValue)
-        {
-            object[] argument = (object[])passValue.Argument;
-
-            ServerScreens serverScreens = argument[0] as ServerScreens;
-            SftpClient client = serverScreens.GetSftpClient;
-
-            serverScreens.StartScreens();
-            m_ServerScreens.Add(serverScreens);
-
-            serverScreens.SendCommand("");
-        }
-
-        private void ScreensWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            //throw new NotImplementedException();
         }
 
         #endregion ----------------------------------------------------------------------------------------------------

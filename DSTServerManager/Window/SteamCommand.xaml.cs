@@ -71,12 +71,12 @@ namespace DSTServerManager
             m_SteamProcess.StartInfo.FileName = appStartupPath + "\\steamcmd.exe";
             m_SteamProcess.StartInfo.Arguments = command;
             m_SteamProcess.EnableRaisingEvents = true;
-            m_SteamProcess.Exited += new EventHandler(process_Exited);
+            m_SteamProcess.Exited += new EventHandler(Process_Exited);
 
             m_SteamProcess.Start();
         }
 
-        private void process_Exited(object sender, EventArgs e)
+        private void Process_Exited(object sender, EventArgs e)
         {
             if (SteamCommandEvent == null) Close();
             string path = string.Empty;

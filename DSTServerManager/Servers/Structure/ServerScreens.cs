@@ -28,20 +28,24 @@ namespace DSTServerManager.Servers
 
         private SftpClient m_SftpClient;
         private SshClient m_SshClient;
-
-        private string m_DefaultPathRoot = @"/root";
-        private string m_DefaultPathUser = @"/home/{0}";
-
-        private string m_ScreenName = string.Empty;
-
+        
         private TabControl m_TabControl = null;
         private TabItem m_ScreensTab = null;
         private TextBox m_ScreensLog = null;
 
-        public ServerScreens(string ip, string userName, string password)
+        private string m_ScreenName = string.Empty;
+        private string m_UserName = string.Empty;
+        private string m_Password = string.Empty;
+        private string m_Location = string.Empty;
+
+        public ServerScreens(string location, string userName, string password)
         {
-            m_SftpClient = new SftpClient(ip, 22, userName, password);
-            m_SshClient = new SshClient(ip, userName, password);
+            m_SftpClient = new SftpClient(location, 22, userName, password);
+            m_SshClient = new SshClient(location, userName, password);
+
+            m_UserName = userName;
+            m_Password = password;
+            m_Location = location;
         }
 
         public SftpClient GetSftpClient { get { return m_SftpClient; } }
@@ -49,12 +53,9 @@ namespace DSTServerManager.Servers
         public TabItem ServerTab { get { return m_ScreensTab; } }
         public bool IsLogOutput { set { isLogOutput = value; } }
 
-        public void CreatTabWindow(TabControl tabControl, TabItem tabItem)
-        {
-            m_ScreensTab = tabItem;
-            m_TabControl = tabControl;
-            foreach (var item in (tabItem.Content as Grid).Children) m_ScreensLog = (TextBox)item;
-        }
+        public string UserName { get { return m_UserName; } }
+        public string Password { get { return m_Password; } }
+        public string Location { get { return m_Location; } }
 
         /// <summary>
         /// 开启Screens
@@ -73,6 +74,13 @@ namespace DSTServerManager.Servers
 
             m_ShellStream.DataReceived += new EventHandler<ShellDataEventArgs>(Screens_OutputDataReceived);
             m_ShellStream.ReadAsync(buffer, 0, buffer.Length);
+        }
+
+        public void CreatTabWindow(TabControl tabControl, TabItem tabItem)
+        {
+            m_ScreensTab = tabItem;
+            m_TabControl = tabControl;
+            foreach (var item in (tabItem.Content as Grid).Children) m_ScreensLog = (TextBox)item;
         }
 
         public void SendCommand(string command)
