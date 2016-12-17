@@ -79,7 +79,7 @@ namespace DSTServerManager.DataHelper
         public void AnalysisFile(MemoryStream stream, bool readUnknowSectionKey)
         {
             Dictionary<string, string> data = null;
-            StreamReader reader = new StreamReader(stream, Encoding.Default);
+            StreamReader reader = new StreamReader(stream, Encoding.UTF8);
             string line;
             while (!reader.EndOfStream)
             {

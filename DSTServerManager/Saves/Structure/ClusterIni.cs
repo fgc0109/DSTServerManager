@@ -227,6 +227,7 @@ namespace DSTServerManager.Saves
         /// <param name="clusterIniFullPath">集群配置文件完整路径</param>
         public void ReadFromFile(string clusterIniFullPath)
         {
+            //没有文件时,需要创建默认配置
             if (!File.Exists(clusterIniFullPath)) return;
 
             MemoryStream clusterDataStream = new MemoryStream(File.ReadAllBytes(clusterIniFullPath));
@@ -261,8 +262,11 @@ namespace DSTServerManager.Saves
         /// <param name="serverIniFullPath"></param>
         public void ReadFromSSH(string clusterIniFullPath, SftpClient client)
         {
+            //没有文件时,需要创建默认配置
+
             MemoryStream stream = new MemoryStream();
             client.OpenRead(clusterIniFullPath).CopyTo(stream);
+            stream.Seek(0, SeekOrigin.Begin);
 
             m_Setting = new IniHelper(stream, false);
             try { SettingToFields(); }

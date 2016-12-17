@@ -135,6 +135,7 @@ namespace DSTServerManager.Saves
         {
             MemoryStream stream = new MemoryStream();
             client.OpenRead(serverIniFullPath).CopyTo(stream);
+            stream.Seek(0, SeekOrigin.Begin);
 
             m_Setting = new IniHelper(stream, false);
             try { SettingToFields(); }
