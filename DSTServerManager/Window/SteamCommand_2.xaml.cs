@@ -44,7 +44,7 @@ namespace DSTServerManager
         private SshClient m_SshClient;
 
         private string m_ScreenName = string.Empty;
-        private string m_UserName = string.Empty;
+        private string m_Username = string.Empty;
         private string m_Password = string.Empty;
         private string m_Location = string.Empty;
 
@@ -55,11 +55,11 @@ namespace DSTServerManager
             m_SftpClient = new SftpClient(location, 22, userName, password);
             m_SshClient = new SshClient(location, userName, password);
 
-            m_UserName = userName;
+            m_Username = userName;
             m_Password = password;
             m_Location = location;
 
-            string userPath = (m_UserName == "root") ? "/root" : $"/home/{m_UserName}";
+            string userPath = (m_Username == "root") ? "/root" : $"/home/{m_Username}";
             textBox_Path.Text = userPath + "/DontStarveDedicatedServer";
 
             StartScreens();
@@ -68,7 +68,7 @@ namespace DSTServerManager
 
         private void Button_Download_Click(object sender, RoutedEventArgs e)
         {
-            string userPath = (m_UserName == "root") ? "/root" : $"/home/{m_UserName}";
+            string userPath = (m_Username == "root") ? "/root" : $"/home/{m_Username}";
             List<string> path = new List<string>();
 
             try { m_SftpClient.CreateDirectory(textBox_Path.Text); }
@@ -120,7 +120,7 @@ namespace DSTServerManager
 
         private void textBox_Path_TextChanged(object sender, TextChangedEventArgs e)
         {
-            string userPath = (m_UserName == "root") ? "/root" : $"/home/{m_UserName}";
+            string userPath = (m_Username == "root") ? "/root" : $"/home/{m_Username}";
 
             if (!textBox_Path.Text.Contains(userPath + "/")) button_Download.IsEnabled = false;
             else button_Download.IsEnabled = true;
@@ -157,7 +157,7 @@ namespace DSTServerManager
         private void ShellBuilder()
         {
             bool isExist = false;
-            string userPath = (m_UserName == "root") ? "/root" : $"/home/{m_UserName}";
+            string userPath = (m_Username == "root") ? "/root" : $"/home/{m_Username}";
             List<string> path = new List<string>();
             List<string> file = new List<string>();
 

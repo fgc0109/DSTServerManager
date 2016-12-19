@@ -3,6 +3,7 @@ using DSTServerManager.Saves;
 using DSTServerManager.Servers;
 using Renci.SshNet;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
@@ -258,7 +259,7 @@ namespace DSTServerManager
         private void RefreshClusterData(string saveFolder, string keyword, ref ListBox clusterList, SftpClient client)
         {
             //获取集群文件夹名称并更新显示
-            List<string> clusterFolder = null;
+            ObservableCollection<string> clusterFolder = null;
             if (client == null) clusterFolder = SavesManager.GetClusterFolder(saveFolder, keyword);
             else clusterFolder = SavesManager.GetClusterFolder(saveFolder, keyword, client);
 

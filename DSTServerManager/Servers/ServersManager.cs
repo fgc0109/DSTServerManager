@@ -23,6 +23,16 @@ namespace DSTServerManager.Servers
         private static string m_DefaultPath_CloudUser = string.Empty;
         private static string m_DefaultPath_CloudRoot = $"/var/run/screen/S-root";
 
+        internal static SftpClient GetExistSftp(List<ServerConnect> connect, string location, string username, string password)
+        {
+            foreach (var item in connect)
+            {
+                if (location == item.Location && username == item.Username && password == item.Password)
+                    return item.GetSftpClient;
+            }
+            return null;
+        }
+
         /// <summary>
         /// 创建服务器启动参数
         /// </summary>
@@ -52,11 +62,11 @@ namespace DSTServerManager.Servers
         /// <summary>
         /// 获取已经存在的Screens
         /// </summary>
-        internal static List<string> GetExistScreens(string ip, string userName, string password)
+        internal static List<string> GetExistScreens(string location, string username, string password)
         {
-            m_DefaultPath_CloudUser = $"/var/run/screen/S-{userName}";
+            m_DefaultPath_CloudUser = $"/var/run/screen/S-{username}";
 
-            SftpClient sftpClient = new SftpClient(ip, 22, userName, password);
+            SftpClient sftpClient = new SftpClient(location, 22, username, password);
             sftpClient.Connect();
 
             List<string> screens = new List<string>();

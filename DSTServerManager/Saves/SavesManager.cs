@@ -6,6 +6,7 @@ using System.IO;
 using Renci.SshNet;
 using Renci.SshNet.Common;
 using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 
 namespace DSTServerManager.Saves
 {
@@ -28,15 +29,15 @@ namespace DSTServerManager.Saves
         /// 获取存档文件夹名称
         /// </summary>
         /// <returns></returns>
-        internal static List<string> GetSavesFolder()
+        internal static ObservableCollection<string> GetSavesFolder()
         {
             return GetFolder(m_DefaultPath_Local);
         }
-        internal static List<string> GetSavesFolder(SftpClient client)
+        internal static ObservableCollection<string> GetSavesFolder(SftpClient client)
         {
             string defaultUser = client.ConnectionInfo.Username;
             string defaultPath = (defaultUser == "root") ? m_DefaultPath_CloudRoot : string.Format(m_DefaultPath_CloudUser, defaultUser);
-            List<string> folder = new List<string>();
+            ObservableCollection<string> folder = new ObservableCollection<string>();
             try { client.ListDirectory(defaultPath); }
             catch (SftpPathNotFoundException) { client.CreateDirectory(defaultPath); }
             catch (SftpPermissionDeniedException) { throw; }
@@ -56,18 +57,18 @@ namespace DSTServerManager.Saves
         /// <param name="saveName"></param>
         /// <param name="keyword"></param>
         /// <returns></returns>
-        internal static List<string> GetClusterFolder(string saveName, string keyword)
+        internal static ObservableCollection<string> GetClusterFolder(string saveName, string keyword)
         {
-            List<string> cluster = new List<string>();
+            ObservableCollection<string> cluster = new ObservableCollection<string>();
             foreach (var item in GetFolder($"{m_DefaultPath_Local}\\{saveName}"))
                 if (item.Contains(keyword)) cluster.Add(item);
             return cluster;
         }
-        internal static List<string> GetClusterFolder(string saveName, string keyword, SftpClient client)
+        internal static ObservableCollection<string> GetClusterFolder(string saveName, string keyword, SftpClient client)
         {
             string defaultUser = client.ConnectionInfo.Username;
             string defaultPath = (defaultUser == "root") ? m_DefaultPath_CloudRoot : string.Format(m_DefaultPath_CloudUser, defaultUser);
-            List<string> cluster = new List<string>();
+            ObservableCollection<string> cluster = new ObservableCollection<string>();
             foreach (var item in client.ListDirectory($"{defaultPath}/{saveName}"))
                 if (item.Name.Contains(keyword)) cluster.Add(item.Name);
             return cluster;
@@ -83,7 +84,7 @@ namespace DSTServerManager.Saves
         internal static List<ClusterInfo> GetClusterInfo(string saveName, string keyword)
         {
             List<ClusterInfo> clusterList = new List<ClusterInfo>();
-            List<string> clusterFolder = GetClusterFolder(saveName, keyword);
+            ObservableCollection<string> clusterFolder = GetClusterFolder(saveName, keyword);
 
             foreach (var clusterName in clusterFolder)
             {
@@ -100,7 +101,7 @@ namespace DSTServerManager.Saves
             string defaultUser = client.ConnectionInfo.Username;
             string defaultPath = (defaultUser == "root") ? m_DefaultPath_CloudRoot : string.Format(m_DefaultPath_CloudUser, defaultUser);
             List<ClusterInfo> clusterList = new List<ClusterInfo>();
-            List<string> clusterFolder = GetClusterFolder(saveName, keyword, client);
+            ObservableCollection<string> clusterFolder = GetClusterFolder(saveName, keyword, client);
 
             foreach (var clusterName in clusterFolder)
             {
@@ -230,9 +231,9 @@ namespace DSTServerManager.Saves
         /// </summary>
         /// <param name="path">路径</param>
         /// <returns></returns>
-        private static List<string> GetFolder(string path)
+        private static ObservableCollection<string> GetFolder(string path)
         {
-            List<string> folderList = new List<string>();
+            ObservableCollection<string> folderList = new ObservableCollection<string>();
             if (!Directory.Exists(path))
                 return folderList;
 

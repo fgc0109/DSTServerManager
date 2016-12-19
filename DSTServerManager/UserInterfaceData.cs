@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Threading.Tasks;
 using DSTServerManager.Saves;
+using System.Collections.ObjectModel;
 
 namespace DSTServerManager
 {
@@ -403,14 +404,14 @@ namespace DSTServerManager
         private DataTable serverConsole = new DataTable("serverConsole");
         private DataTable serverLeveled = new DataTable("serverLeveled");
 
-        private List<string> saveFolders_Local = new List<string>();
-        private List<string> saveFolders_Cloud = new List<string>();
+        private ObservableCollection<string> saveFolders_Local = new ObservableCollection<string>();
+        private ObservableCollection<string> saveFolders_Cloud = new ObservableCollection<string>();
 
         #endregion
 
         #region 用户信息属性
 
-        public List<string> SaveFolders_Local
+        public ObservableCollection<string> SaveFolders_Local
         {
             get { return saveFolders_Local; }
             set
@@ -420,7 +421,7 @@ namespace DSTServerManager
             }
         }
 
-        public List<string> SaveFolders_Cloud
+        public ObservableCollection<string> SaveFolders_Cloud
         {
             get { return saveFolders_Cloud; }
             set
@@ -495,11 +496,11 @@ namespace DSTServerManager
                 location = (value as DataRowView)[1].ToString();
                 username = (value as DataRowView)[2].ToString();
                 password = (value as DataRowView)[3].ToString();
-                if (PropertyChanged == null) return;
 
+                if (PropertyChanged == null) return;
                 PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Location)));
-                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Password)));
                 PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Username)));
+                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Password)));
             }
         }
 

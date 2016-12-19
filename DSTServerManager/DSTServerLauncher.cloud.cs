@@ -8,6 +8,7 @@ using System.Data;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Renci.SshNet.Common;
 
 namespace DSTServerManager
 {
@@ -139,12 +140,7 @@ namespace DSTServerManager
         /// </summary>
         private void ComboBox_CloudServer_SavesFolder_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            SftpClient client = null;
-            foreach (var item in m_ServerConnect)
-            {
-                if (UI.Location== item.Location &&  UI.Username == item.Username &&  UI.Password == item.Password)
-                    client = item.GetSftpClient;
-            }
+            SftpClient client = ServersManager.GetExistSftp(m_ServerConnect, UI.Location, UI.Username, UI.Password);
             if (client == null) return;
 
             //获取集群信息
@@ -166,9 +162,29 @@ namespace DSTServerManager
             if (m_ClusterInfo_Cloud[index].ClusterServers.Count != 0) dataGrid_ClusterInfo_ServersList.SelectedIndex = 0;
         }
 
+        private void textBox_CloudServer_ClusterSaveList_AddPath_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (UI == null) return;
+            button_CloudServer_AddCluster.IsEnabled = false;
+
+            SftpClient client = ServersManager.GetExistSftp(m_ServerConnect, UI.Location, UI.Username, UI.Password);
+            if (client == null) return;
+            if (UI.SaveFolders_Cloud.Contains(textBox_CloudServer_ClusterSaveList_AddPath.Text)) return;
+
+            button_CloudServer_AddCluster.IsEnabled = true;
+        }
+
         private void button_CloudServer_AddCluster_Click(object sender, RoutedEventArgs e)
         {
+            SftpClient client = ServersManager.GetExistSftp(m_ServerConnect, UI.Location, UI.Username, UI.Password);
+            if (client == null) return;
 
+            string userPath = (UI.Username == "root") ? "/root" : $"/home/{UI.Username}";
+            try { client.CreateDirectory($"{userPath}/.klei/{textBox_CloudServer_ClusterSaveList_AddPath.Text}"); }
+            catch (SshException) { }
+            catch (Exception) { throw; };
+
+            UI.SaveFolders_Cloud.Add(textBox_CloudServer_ClusterSaveList_AddPath.Text);
         }
 
         private void button_CloudServer_StartCluster_Click(object sender, RoutedEventArgs e)
