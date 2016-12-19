@@ -39,11 +39,11 @@ namespace DSTServerManager
 
             if (openFile.SafeFileName.Contains("dontstarve_dedicated_server_nullrenderer"))
             {
-                DataRow newPath = UI_DATA.ServerFileListTable_Local.NewRow();
+                DataRow newPath = UI.ServerFileListTable_Local.NewRow();
                 newPath.ItemArray = new object[3] { 0, "Steam", openFile.FileName };
-                UI_DATA.ServerFileListTable_Local.Rows.Add(newPath);
-                UI_DATA.ServerFileListTable_Local.RefreshDataTable();
-                m_UserDataSQLite.SaveDataTable(UI_DATA.ServerFileListTable_Local, "LocalServerList");
+                UI.ServerFileListTable_Local.Rows.Add(newPath);
+                UI.ServerFileListTable_Local.RefreshDataTable();
+                m_UserDataSQLite.SaveDataTable(UI.ServerFileListTable_Local, "LocalServerList");
             }
         }
 
@@ -65,11 +65,11 @@ namespace DSTServerManager
 
             if (commandArgs.NewServerPath.Contains("dontstarve_dedicated_server_nullrenderer"))
             {
-                DataRow newPath = UI_DATA.ServerFileListTable_Local.NewRow();
+                DataRow newPath = UI.ServerFileListTable_Local.NewRow();
                 newPath.ItemArray = new object[3] { 0, "Steam", commandArgs.NewServerPath };
-                UI_DATA.ServerFileListTable_Local.Rows.Add(newPath);
-                UI_DATA.ServerFileListTable_Local.RefreshDataTable();
-                m_UserDataSQLite.SaveDataTable(UI_DATA.ServerFileListTable_Local, "LocalServerList");
+                UI.ServerFileListTable_Local.Rows.Add(newPath);
+                UI.ServerFileListTable_Local.RefreshDataTable();
+                m_UserDataSQLite.SaveDataTable(UI.ServerFileListTable_Local, "LocalServerList");
             }
         }
 
@@ -81,10 +81,10 @@ namespace DSTServerManager
             int indexPath = dataGrid_LocalServer_ServersPath.SelectedIndex;
             if (indexPath == -1) return;
 
-            UI_DATA.ServerFileListTable_Local.Rows[indexPath].Delete();
-            UI_DATA.ServerFileListTable_Local.Rows[indexPath].AcceptChanges();
-            UI_DATA.ServerFileListTable_Local.RefreshDataTable();
-            m_UserDataSQLite.SaveDataTable(UI_DATA.ServerFileListTable_Local, "LocalServerList");
+            UI.ServerFileListTable_Local.Rows[indexPath].Delete();
+            UI.ServerFileListTable_Local.Rows[indexPath].AcceptChanges();
+            UI.ServerFileListTable_Local.RefreshDataTable();
+            m_UserDataSQLite.SaveDataTable(UI.ServerFileListTable_Local, "LocalServerList");
         }
 
         #endregion ----------------------------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ namespace DSTServerManager
             }
             button_LocalServer_StartCluster.IsEnabled = true;
 
-            RefreshServersData(m_ClusterInfo_Local[index], ref UI_DATA);
+            RefreshServersData(m_ClusterInfo_Local[index], ref UI);
             if (m_ClusterInfo_Local[index].ClusterServers.Count != 0) dataGrid_ClusterInfo_ServersList.SelectedIndex = 0;
         }
 
@@ -145,7 +145,7 @@ namespace DSTServerManager
             int index = listBox_LocalServer_ClusterFile.SelectedIndex;
             if (index == -1) return;
 
-            RefreshServersData(m_ClusterInfo_Local[index], ref UI_DATA);
+            RefreshServersData(m_ClusterInfo_Local[index], ref UI);
             if (m_ClusterInfo_Local[index].ClusterServers.Count != 0) dataGrid_ClusterInfo_ServersList.SelectedIndex = 0;
         }
 
@@ -160,7 +160,7 @@ namespace DSTServerManager
             if (indexLocalFile == -1 || indexLocalPath == -1) return;
 
             //保存当前选中的集群配置
-            ExtendHelper.CopyAllProperties(UI_DATA, m_ClusterInfo_Local[indexLocalFile].ClusterSetting);
+            ExtendHelper.CopyAllProperties(UI, m_ClusterInfo_Local[indexLocalFile].ClusterSetting);
             SavesManager.SetClusterInfo(ComboBox_LocalServer_SavesFolder.SelectedItem?.ToString(), m_ClusterInfo_Local[indexLocalFile]);
 
             string confdir = ComboBox_LocalServer_SavesFolder.SelectedItem.ToString();

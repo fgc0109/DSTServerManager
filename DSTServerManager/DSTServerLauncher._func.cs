@@ -44,7 +44,7 @@ namespace DSTServerManager
             m_ServerConnect.Add(serverConnect);
 
             if (SavesManager.GetSavesFolder(client).Count == 0) SavesManager.CreatSavesFolder(client);
-            UI_DATA.SaveFolders_Cloud = SavesManager.GetSavesFolder(client);
+            UI.SaveFolders_Cloud = SavesManager.GetSavesFolder(client);
 
             passValue.Result = new object[] { serverConnect };
         }

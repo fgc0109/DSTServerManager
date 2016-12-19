@@ -26,7 +26,7 @@ namespace DSTServerManager
         private List<ClusterInfo> m_ClusterInfo_Local = null;
         private List<ClusterInfo> m_ClusterInfo_Cloud = null;
 
-        private UserInterfaceData UI_DATA = null;
+        private UserInterfaceData UI = null;
 
         private SQLiteHelper m_UserDataSQLite = null;
 
@@ -43,7 +43,7 @@ namespace DSTServerManager
 
             #region 界面绑定数据初始化
 
-            UI_DATA = new UserInterfaceData(dataGrid_ClusterInfo_ServersList.Columns.Count);
+            UI = new UserInterfaceData(dataGrid_ClusterInfo_ServersList.Columns.Count);
             BindingState();
             
             textBox_BasicInfo_Key.Text = ConfigHelper.GetValue("textBox_BasicInfo_Key");
@@ -64,7 +64,7 @@ namespace DSTServerManager
             GetUserData(m_UserDataSQLite);
 
             if (SavesManager.GetSavesFolder().Count == 0) SavesManager.CreatSavesFolder();
-            UI_DATA.SaveFolders_Local = SavesManager.GetSavesFolder();
+            UI.SaveFolders_Local = SavesManager.GetSavesFolder();
 
             foreach (var item in ServersManager.GetExistProcess())
             {
@@ -131,7 +131,7 @@ namespace DSTServerManager
             if (indexLocalServer_ClusterFile == -1) return;
 
             //保存当前选中的集群配置
-            ExtendHelper.CopyAllProperties(UI_DATA, m_ClusterInfo_Local[indexLocalServer_ClusterFile].ClusterSetting);
+            ExtendHelper.CopyAllProperties(UI, m_ClusterInfo_Local[indexLocalServer_ClusterFile].ClusterSetting);
             SavesManager.SetClusterInfo(ComboBox_LocalServer_SavesFolder.SelectedItem?.ToString(), m_ClusterInfo_Local[indexLocalServer_ClusterFile]);
         }
 
@@ -146,7 +146,7 @@ namespace DSTServerManager
             string nameCluster = listBox_LocalServer_ClusterFile.SelectedItem?.ToString();
 
 
-            ExtendHelper.CopyAllProperties(UI_DATA, m_ClusterInfo_Local[indexLocalServer_ClusterFile]);
+            ExtendHelper.CopyAllProperties(UI, m_ClusterInfo_Local[indexLocalServer_ClusterFile]);
 
             for (int i = 0; i < m_ClusterInfo_Local[indexLocalServer_ClusterFile].ClusterServers.Count; i++)
                 SavesManager.SetServerInfo(nameSave, nameCluster, m_ClusterInfo_Local[indexLocalServer_ClusterFile].ClusterServers[i]);
@@ -178,11 +178,6 @@ namespace DSTServerManager
         {
 
         }
-
-
-
-
-
 
         //dataGrid和datatable之间数据直接赋值的示例 不应该使用这种方式
         //应该dataGrid绑定一个datatable,然后给datatable的数据进行改变

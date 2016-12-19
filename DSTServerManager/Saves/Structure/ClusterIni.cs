@@ -265,7 +265,8 @@ namespace DSTServerManager.Saves
             //没有文件时,需要创建默认配置
 
             MemoryStream stream = new MemoryStream();
-            client.OpenRead(clusterIniFullPath).CopyTo(stream);
+            try { client.OpenRead(clusterIniFullPath).CopyTo(stream); }
+            catch { }
             stream.Seek(0, SeekOrigin.Begin);
 
             m_Setting = new IniHelper(stream, false);

@@ -20,11 +20,7 @@ namespace DSTServerManager
         /// </summary>
         private void dataGrid_CloudServer_Connection_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            string location = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[1].ToString();
-            string username = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[2].ToString();
-            string password = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[3].ToString();
-
-            CreatNewConnect(location, username, password);
+            CreatNewConnect(UI.Location, UI.Username, UI.Password);
         }
 
         private void dataGrid_CloudServer_Connection_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -33,9 +29,9 @@ namespace DSTServerManager
             if (indexConn == -1) return;
 
             List<string> serverID = new List<string>();
-            foreach (var server in UI_DATA.ServerConnectsTable_Cloud.DefaultView[indexConn][4].ToString().Split('|'))
+            foreach (var server in UI.ServerConnectsTable_Cloud.DefaultView[indexConn][4].ToString().Split('|'))
                 serverID.Add(server.ToString());
-            UI_DATA.ServerFileListTable_Cloud = ServerFileListTable_CloudOrigin.CopyConfirmTable(0, serverID);
+            UI.ServerFileListTable_Cloud = ServerFileListTable_CloudOrigin.CopyConfirmTable(0, serverID);
         }
 
         /// <summary>
@@ -43,8 +39,8 @@ namespace DSTServerManager
         /// </summary>
         private void button_CloudServer_AddConn_Click(object sender, RoutedEventArgs e)
         {
-            DataRow currentRow = UI_DATA.ServerConnectsTable_Cloud.NewRow();
-            int newIndex = UI_DATA.ServerConnectsTable_Cloud.Rows.Count + 1;
+            DataRow currentRow = UI.ServerConnectsTable_Cloud.NewRow();
+            int newIndex = UI.ServerConnectsTable_Cloud.Rows.Count + 1;
 
             if (m_Win_CloudConnection == null) m_Win_CloudConnection = new CloudConnection(currentRow, true, newIndex);
 
@@ -62,7 +58,7 @@ namespace DSTServerManager
             int indexConn = dataGrid_CloudServer_Connections.SelectedIndex;
             if (indexConn == -1) return;
 
-            DataRow currentRow = UI_DATA.ServerConnectsTable_Cloud.Rows[indexConn];
+            DataRow currentRow = UI.ServerConnectsTable_Cloud.Rows[indexConn];
             if (m_Win_CloudConnection == null) m_Win_CloudConnection = new CloudConnection(currentRow, false, 0);
 
             m_Win_CloudConnection.CloudConnectionEvent += new CloudConnection.CloudConnectionHandler(window_ReceiveConnectionValues);
@@ -79,11 +75,11 @@ namespace DSTServerManager
             int indexConn = dataGrid_CloudServer_Connections.SelectedIndex;
             if (indexConn == -1) return;
 
-            UI_DATA.ServerConnectsTable_Cloud.Rows[indexConn].Delete();
-            UI_DATA.ServerConnectsTable_Cloud.AcceptChanges();
+            UI.ServerConnectsTable_Cloud.Rows[indexConn].Delete();
+            UI.ServerConnectsTable_Cloud.AcceptChanges();
 
-            UI_DATA.ServerConnectsTable_Cloud.RefreshDataTable();
-            m_UserDataSQLite.SaveDataTable(UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList");
+            UI.ServerConnectsTable_Cloud.RefreshDataTable();
+            m_UserDataSQLite.SaveDataTable(UI.ServerConnectsTable_Cloud, "CloudServerConnList");
         }
 
         /// <summary>
@@ -93,14 +89,14 @@ namespace DSTServerManager
         {
             if (connectionArgs.IsNewRow)
             {
-                UI_DATA.ServerConnectsTable_Cloud.Rows.Add(connectionArgs.GetRow);
+                UI.ServerConnectsTable_Cloud.Rows.Add(connectionArgs.GetRow);
 
-                UI_DATA.ServerConnectsTable_Cloud.RefreshDataTable();
-                m_UserDataSQLite.SaveDataTable(UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList");
+                UI.ServerConnectsTable_Cloud.RefreshDataTable();
+                m_UserDataSQLite.SaveDataTable(UI.ServerConnectsTable_Cloud, "CloudServerConnList");
             }
             else
             {
-                m_UserDataSQLite.UpdateDataTable(UI_DATA.ServerConnectsTable_Cloud, "CloudServerConnList");
+                m_UserDataSQLite.UpdateDataTable(UI.ServerConnectsTable_Cloud, "CloudServerConnList");
             }
         }
 
@@ -119,11 +115,7 @@ namespace DSTServerManager
 
         private void Button_CloudServer_GetServer_Click(object sender, RoutedEventArgs e)
         {
-            string location = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[1].ToString();
-            string username = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[2].ToString();
-            string password = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[3].ToString();
-
-            Window temp = new SteamCommand_2(location, username, password);
+            Window temp = new SteamCommand_2(UI.Location, UI.Username, UI.Password);
             temp.Show();
 
             //  int indexConn = dataGrid_CloudServer_Connection.SelectedIndex;
@@ -147,14 +139,10 @@ namespace DSTServerManager
         /// </summary>
         private void ComboBox_CloudServer_SavesFolder_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string location = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[1].ToString();
-            string username = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[2].ToString();
-            string password = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[3].ToString();
-
             SftpClient client = null;
             foreach (var item in m_ServerConnect)
             {
-                if (location == item.Location && username == item.UserName && password == item.Password)
+                if (UI.Location== item.Location &&  UI.Username == item.Username &&  UI.Password == item.Password)
                     client = item.GetSftpClient;
             }
             if (client == null) return;
@@ -174,23 +162,24 @@ namespace DSTServerManager
         {
             int index = listBox_CloudServer_ClusterFile.SelectedIndex;
             if (index == -1) return;
-            RefreshServersData(m_ClusterInfo_Cloud[index], ref UI_DATA);
+            RefreshServersData(m_ClusterInfo_Cloud[index], ref UI);
             if (m_ClusterInfo_Cloud[index].ClusterServers.Count != 0) dataGrid_ClusterInfo_ServersList.SelectedIndex = 0;
+        }
+
+        private void button_CloudServer_AddCluster_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
         private void button_CloudServer_StartCluster_Click(object sender, RoutedEventArgs e)
         {
             int indexCloudFile = listBox_CloudServer_ClusterFile.SelectedIndex;
 
-            string location = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[1].ToString();
-            string userName = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[2].ToString();
-            string password = (dataGrid_CloudServer_Connections.SelectedItem as DataRowView)[3].ToString();
-
             string confdir = ComboBox_CloudServer_SavesFolder.SelectedItem.ToString();
             string cluster = listBox_CloudServer_ClusterFile.SelectedItem.ToString();
             string exefile = (dataGrid_CloudServer_ServersPath.SelectedItem as DataRowView)[2].ToString();
 
-            List<string> screenList = ServersManager.GetExistScreens(location, userName, password);
+            List<string> screenList = ServersManager.GetExistScreens(UI.Location, UI.Username, UI.Password);
 
             foreach (var server in m_ClusterInfo_Cloud[indexCloudFile].ClusterServers)
             {
@@ -210,7 +199,7 @@ namespace DSTServerManager
                     command = $"screen -S {screenName} {exefile} {parameter}";
                 }
 
-                CreatNewScreens(location, userName, password, command);
+                CreatNewScreens(UI.Location, UI.Username, UI.Password, command);
             }
         }
 

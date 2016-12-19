@@ -64,7 +64,7 @@ namespace DSTServerManager.Servers
 
         public bool AllConnected { get { return m_AllConnected; } }
 
-        public string UserName { get { return m_UserName; } }
+        public string Username { get { return m_UserName; } }
         public string Password { get { return m_Password; } }
         public string Location { get { return m_Location; } }
 

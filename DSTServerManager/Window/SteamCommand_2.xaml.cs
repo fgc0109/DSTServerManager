@@ -195,7 +195,6 @@ namespace DSTServerManager
             m_SftpClient.WriteAllBytes(userPath + "/steamcmd" + "/getsteamcmd.sh", commandStream.ToArray());
             commandStream.Close();
 
-
             SendCommand($"chmod 777 {userPath}/steamcmd/getsteamcmd.sh");
             SendCommand($"dos2unix {userPath}/steamcmd/getsteamcmd.sh");
 

@@ -397,14 +397,14 @@ namespace DSTServerManager
 
         #region 用户信息字段
 
-        DataTable serverFileListTable_Local = new DataTable("serverFileListTable_Local");
-        DataTable serverFileListTable_Cloud = new DataTable("serverFileListTable_Cloud");
-        DataTable serverConnectsTable_Cloud = new DataTable("serverConnectsTable_Cloud");
-        DataTable serverConsole = new DataTable("serverConsole");
-        DataTable serverLeveled = new DataTable("serverLeveled");
+        private DataTable serverFileListTable_Local = new DataTable("serverFileListTable_Local");
+        private DataTable serverFileListTable_Cloud = new DataTable("serverFileListTable_Cloud");
+        private DataTable serverConnectsTable_Cloud = new DataTable("serverConnectsTable_Cloud");
+        private DataTable serverConsole = new DataTable("serverConsole");
+        private DataTable serverLeveled = new DataTable("serverLeveled");
 
-        List<string> saveFolders_Local = new List<string>();
-        List<string> saveFolders_Cloud = new List<string>();
+        private List<string> saveFolders_Local = new List<string>();
+        private List<string> saveFolders_Cloud = new List<string>();
 
         #endregion
 
@@ -475,6 +475,37 @@ namespace DSTServerManager
                 if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ClusterServersLevel)));
             }
         }
+
+        #endregion
+
+        #region 用户操作字段
+
+        private string location;
+        private string username;
+        private string password;
+
+        #endregion
+
+        #region 用户操作字段
+
+        public DataRowView Connection
+        {
+            set
+            {
+                location = (value as DataRowView)[1].ToString();
+                username = (value as DataRowView)[2].ToString();
+                password = (value as DataRowView)[3].ToString();
+                if (PropertyChanged == null) return;
+
+                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Location)));
+                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Password)));
+                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Username)));
+            }
+        }
+
+        public string Location { get { return location; } }
+        public string Username { get { return username; } }
+        public string Password { get { return password; } }
 
         #endregion
 

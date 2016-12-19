@@ -347,6 +347,8 @@
                             <Label Content="路径" Margin="5,5,159,5" HorizontalContentAlignment="Center" RenderTransformOrigin="2.308,0.409" VerticalContentAlignment="Center" Padding="4"/>
                             <TextBox x:Name="textBox_LocalServer_ClusterSaveList_AddPath" Margin="5" TextWrapping="Wrap" VerticalContentAlignment="Center" Grid.Row="1"/>
                             <Button x:Name="button_LocalServer_AddCluster" Content="添加文件夹" Margin="5" Grid.Column="1" Width="90" Height="20" Grid.Row="1" Click="button_LocalServer_AddCluster_Click"/>
+                            <TextBox x:Name="textBox_LocalServer_ClusterSaveList_AddPath_Copy" Margin="249,-37,-357,47" TextWrapping="Wrap" VerticalContentAlignment="Center" Grid.Column="1"/>
+                            <Button x:Name="button_LocalServer_AddCluster_Copy" Content="添加文件夹" Margin="467,-36,-457,48" Grid.Column="1" Width="90" Height="20" Click="button_LocalServer_AddCluster_Click"/>
                         </Grid>
                     </GroupBox>
                 </Grid>
@@ -388,12 +390,15 @@
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="32"/>
-                                <RowDefinition Height="100*"/>
+                                <RowDefinition Height="32"/>
+                                <RowDefinition Height="143*"/>
                             </Grid.RowDefinitions>
-                            <ListBox x:Name="listBox_CloudServer_ClusterFile" Margin="5" SelectionChanged="listBox_CloudServer_ClusterFile_SelectionChanged" Grid.Row="1"/>
+                            <ListBox x:Name="listBox_CloudServer_ClusterFile" Margin="5" SelectionChanged="listBox_CloudServer_ClusterFile_SelectionChanged" Grid.Row="2"/>
                             <ComboBox x:Name="ComboBox_CloudServer_SavesFolder" Margin="65,5,5,5" VerticalContentAlignment="Center" SelectionChanged="ComboBox_CloudServer_SavesFolder_SelectionChanged" Grid.ColumnSpan="2"/>
                             <Label Content="路径" Margin="5,4,159,4" HorizontalContentAlignment="Center" RenderTransformOrigin="2.308,0.409" VerticalContentAlignment="Center" Padding="4"/>
-                            <Button x:Name="button_CloudServer_StartCluster" Content="开启集群" Grid.Column="1" Margin="5,140,5,5" Grid.Row="1" VerticalAlignment="Bottom" Height="20" Click="button_CloudServer_StartCluster_Click"/>
+                            <Button x:Name="button_CloudServer_StartCluster" Content="开启集群" Grid.Column="1" Margin="5,0,5,5" Grid.Row="2" VerticalAlignment="Bottom" Height="20" Click="button_CloudServer_StartCluster_Click"/>
+                            <TextBox x:Name="textBox_CloudServer_ClusterSaveList_AddPath" Margin="5,6,5,4" TextWrapping="Wrap" VerticalContentAlignment="Center" Grid.Row="1"/>
+                            <Button x:Name="button_CloudServer_AddCluster" Content="添加文件夹" Margin="5,7,5,5" Width="90" Height="20" Grid.Column="1" Grid.Row="1" Click="button_CloudServer_AddCluster_Click"/>
                         </Grid>
                     </GroupBox>
 
