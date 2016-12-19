@@ -286,7 +286,7 @@
             </TabItem>
         </TabControl>
         <TabControl x:Name="tabControl" Margin="10,5,5,5" Grid.Row="2">
-            <TabItem Header="本地存档">
+            <TabItem x:Name="tabItem_LocalServer" Header="本地存档">
                 <Grid Background="#FFE5E5E5">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="100"/>
@@ -353,7 +353,7 @@
                     </GroupBox>
                 </Grid>
             </TabItem>
-            <TabItem Header="云服务器">
+            <TabItem x:Name="tabItem_CloudServer" Header="云服务器">
                 <Grid Background="#FFE5E5E5">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="185*"/>

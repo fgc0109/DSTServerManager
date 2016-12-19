@@ -1,6 +1,7 @@
 ﻿using DSTServerManager.DataHelper;
 using DSTServerManager.Saves;
 using DSTServerManager.Servers;
+using Renci.SshNet;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -45,7 +46,7 @@ namespace DSTServerManager
 
             UI = new UserInterfaceData(dataGrid_ClusterInfo_ServersList.Columns.Count);
             BindingState();
-            
+
             textBox_BasicInfo_Key.Text = ConfigHelper.GetValue("textBox_BasicInfo_Key");
             dataGrid_LocalServer_ServersPath.FrozenColumnCount = 2;
             dataGrid_CloudServer_ServersPath.FrozenColumnCount = 2;
@@ -126,13 +127,29 @@ namespace DSTServerManager
         /// </summary>
         private void button_Cluster_SaveIni_Click(object sender, RoutedEventArgs e)
         {
-            int indexLocalServer_ClusterFile = listBox_LocalServer_ClusterFile.SelectedIndex;
+            int indexLocal = listBox_LocalServer_ClusterFile.SelectedIndex;
+            string nameLocal = ComboBox_LocalServer_SavesFolder.SelectedItem?.ToString();
 
-            if (indexLocalServer_ClusterFile == -1) return;
+            if (tabItem_LocalServer.IsSelected)
+            {
+                if (indexLocal == -1) return;
 
-            //保存当前选中的集群配置
-            ExtendHelper.CopyAllProperties(UI, m_ClusterInfo_Local[indexLocalServer_ClusterFile].ClusterSetting);
-            SavesManager.SetClusterInfo(ComboBox_LocalServer_SavesFolder.SelectedItem?.ToString(), m_ClusterInfo_Local[indexLocalServer_ClusterFile]);
+                ExtendHelper.CopyAllProperties(UI, m_ClusterInfo_Local[indexLocal].ClusterSetting);
+                SavesManager.SetClusterInfo(nameLocal, m_ClusterInfo_Local[indexLocal]);
+            }
+
+            SftpClient client = ServersManager.GetExistSftp(m_ServerConnect, UI.Location, UI.Username, UI.Password);
+            int indexCloud = listBox_CloudServer_ClusterFile.SelectedIndex;
+            string nameCloud = ComboBox_CloudServer_SavesFolder.SelectedItem?.ToString();
+
+            if (tabItem_CloudServer.IsSelected)
+            {
+                if (indexCloud == -1) return;
+                if (client == null) return;
+
+                ExtendHelper.CopyAllProperties(UI, m_ClusterInfo_Cloud[indexCloud].ClusterSetting);
+                SavesManager.SetClusterInfo(nameCloud, m_ClusterInfo_Cloud[indexCloud], client);
+            }
         }
 
         /// <summary>
