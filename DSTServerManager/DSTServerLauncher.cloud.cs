@@ -116,18 +116,30 @@ namespace DSTServerManager
 
         private void Button_CloudServer_GetServer_Click(object sender, RoutedEventArgs e)
         {
-            Window temp = new SteamCommand_2(UI.Location, UI.Username, UI.Password);
-            temp.Show();
+            if (m_Win_CloudCommand == null) m_Win_CloudCommand = new SteamCommand_2(UI.Location, UI.Username, UI.Password);
 
-            //  int indexConn = dataGrid_CloudServer_Connection.SelectedIndex;
+            m_Win_CloudCommand.SteamCommandEvent += new SteamCommand_2.SteamCommandHandler(Window_ReceiveCloudCommandValues);
+            m_Win_CloudCommand.Show();
 
-            //  m_ServerConnect[indexConn].GetSshClient.RunCommand("").Execute();
+            m_Win_CloudCommand.Closed += (object sender2, EventArgs e2) => { m_Win_SteamCommand = null; };
+        }
 
-            //textBox_Servers_Tab_Log.Text += m_Current_SshClient.RunCommand("top").Execute();
-            // m_ServerConnect[indexConn].GetSshClient.CreateShell()
+        private void Window_ReceiveCloudCommandValues(object sender, SteamCommandEventArgs commandArgs)
+        {
+            //if (!File.Exists(commandArgs.NewServerPath)) return;
+            int indexConn = dataGrid_CloudServer_Connections.SelectedIndex;
 
+            if (commandArgs.NewServerPath.Contains("dontstarve_dedicated_server_nullrenderer"))
+            {
+                DataRow newPath = UI.ServerFileListTable_Cloud.NewRow();
+                newPath.ItemArray = new object[3] { 0, "Steam", commandArgs.NewServerPath };
+                UI.ServerFileListTable_Cloud.Rows.Add(newPath);
+                UI.ServerFileListTable_Cloud.RefreshDataTable();
+                m_UserDataSQLite.SaveDataTable(UI.ServerFileListTable_Cloud, "CloudServerList");
 
-            //m_ServerConnect[1].SendCommand("top");
+                //需要查找远程服务器链接列表整合后的列表ID
+                UI.ServerConnectsTable_Cloud.DefaultView[indexConn][4] = 1;
+            }
         }
 
 
@@ -189,11 +201,20 @@ namespace DSTServerManager
 
         private void button_CloudServer_StartCluster_Click(object sender, RoutedEventArgs e)
         {
+            SftpClient client = ServersManager.GetExistSftp(m_ServerConnect, UI.Location, UI.Username, UI.Password);
+            string nameCloud = ComboBox_CloudServer_SavesFolder.SelectedItem?.ToString();
+            int indexCloud = listBox_CloudServer_ClusterFile.SelectedIndex;
             int indexCloudFile = listBox_CloudServer_ClusterFile.SelectedIndex;
+
+            if (client == null) return;
+
+            ExtendHelper.CopyAllProperties(UI, m_ClusterInfo_Cloud[indexCloud].ClusterSetting);
+            SavesManager.SetClusterInfo(nameCloud, m_ClusterInfo_Cloud[indexCloud], client);
 
             string confdir = ComboBox_CloudServer_SavesFolder.SelectedItem.ToString();
             string cluster = listBox_CloudServer_ClusterFile.SelectedItem.ToString();
             string exefile = (dataGrid_CloudServer_ServersPath.SelectedItem as DataRowView)[2].ToString();
+            string exepath = exefile.Replace("/dontstarve_dedicated_server_nullrenderer", "");
 
             List<string> screenList = ServersManager.GetExistScreens(UI.Location, UI.Username, UI.Password);
 
@@ -212,7 +233,8 @@ namespace DSTServerManager
                 }
                 else
                 {
-                    command = $"screen -S {screenName} {exefile} {parameter}";
+                    command += $"cd {exepath}\r";
+                    command += $"screen -S {screenName} {"./dontstarve_dedicated_server_nullrenderer"} {parameter}";
                 }
 
                 CreatNewScreens(UI.Location, UI.Username, UI.Password, command);

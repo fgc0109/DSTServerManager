@@ -54,12 +54,12 @@ namespace DSTServerManager
         {
             if (m_Win_SteamCommand == null) m_Win_SteamCommand = new SteamCommand_1();
 
-            m_Win_SteamCommand.SteamCommandEvent += new SteamCommand_1.SteamCommandHandler(Window_ReceiveSteamCommandValues);
+            m_Win_SteamCommand.SteamCommandEvent += new SteamCommand_1.SteamCommandHandler(Window_ReceiveLocalCommandValues);
             m_Win_SteamCommand.Show();
 
             m_Win_SteamCommand.Closed += (object sender2, EventArgs e2) => { m_Win_SteamCommand = null; };
         }
-        private void Window_ReceiveSteamCommandValues(object sender, SteamCommandEventArgs commandArgs)
+        private void Window_ReceiveLocalCommandValues(object sender, SteamCommandEventArgs commandArgs)
         {
             if (!File.Exists(commandArgs.NewServerPath)) return;
 

@@ -268,10 +268,10 @@
                     <GroupBox x:Name="groupBox4" Header="为当前集群添加服务器" Margin="5" Grid.Row="1">
                         <Grid Margin="5">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="508*"/>
-                                <ColumnDefinition Width="361*"/>
+                                <ColumnDefinition Width="270"/>
+                                <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <DataGrid x:Name="dataGrid" Margin="5,5,10,5" CanUserAddRows="False" AutoGenerateColumns="False" Style="{DynamicResource DataGridStyleCenter}"/>
+                            <DataGrid x:Name="dataGrid" Margin="5" CanUserAddRows="False" AutoGenerateColumns="False" Style="{DynamicResource DataGridStyleCenter}" Grid.Column="1"/>
                         </Grid>
                     </GroupBox>
                 </Grid>

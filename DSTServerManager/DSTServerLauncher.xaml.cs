@@ -33,6 +33,7 @@ namespace DSTServerManager
 
         private CloudConnection m_Win_CloudConnection = null;
         private SteamCommand_1 m_Win_SteamCommand = null;
+        private SteamCommand_2 m_Win_CloudCommand = null;
 
         private string m_TabItemXaml = string.Empty;
 

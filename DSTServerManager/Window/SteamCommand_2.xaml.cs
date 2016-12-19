@@ -138,6 +138,9 @@ namespace DSTServerManager
             //if (m_SteamProcess == null) return;
             //m_SteamProcess.CloseMainWindow();
             //m_SteamProcess.Close();
+
+            SteamCommandEventArgs args = new SteamCommandEventArgs($"{textBox_Path.Text}/bin/dontstarve_dedicated_server_nullrenderer");
+            SteamCommandEvent(this, args);
         }
 
         public void DisplayData()
