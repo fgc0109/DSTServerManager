@@ -112,13 +112,13 @@ namespace DSTServerManager
             int indexCloudFile = listBox_CloudServer_ClusterFile.SelectedIndex;
             int indexServer = dataGrid_ClusterInfo_ServersList.SelectedIndex;
 
-            if (indexServer != -1 && indexLocalFile != -1)
+            if (tabItem_LocalServer.IsSelected && indexServer != -1 && indexLocalFile != -1)
             {
-                dataGrid_ClusterInfo_ServerLevel.ItemsSource = m_ClusterInfo_Local[indexLocalFile].ClusterServers[indexServer].Level.ServerLevelTable.DefaultView;
+                UI.ClusterServersLevel = m_ClusterInfo_Local[indexLocalFile].ClusterServers[indexServer].Level.ServerLevelTable.Copy();
             }
-            if (indexServer != -1 && indexCloudFile != -1)
+            if (tabItem_CloudServer.IsSelected && indexServer != -1 && indexCloudFile != -1)
             {
-                dataGrid_ClusterInfo_ServerLevel.ItemsSource = m_ClusterInfo_Cloud[indexCloudFile].ClusterServers[indexServer].Level.ServerLevelTable.DefaultView;
+                UI.ClusterServersLevel = m_ClusterInfo_Cloud[indexCloudFile].ClusterServers[indexServer].Level.ServerLevelTable.Copy();
             }
         }
 
