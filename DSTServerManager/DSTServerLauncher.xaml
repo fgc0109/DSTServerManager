@@ -278,10 +278,19 @@
             </TabItem>
             <TabItem Header="模组设置">
                 <Grid Background="#FFE5E5E5">
+                    <GroupBox x:Name="groupBox" Header="GroupBox" Margin="5">
+                        <Grid Margin="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="131*"/>
+                                <ColumnDefinition Width="165*"/>
+                            </Grid.ColumnDefinitions>
+                            <DataGrid x:Name="dataGrid1" Margin="5"/>
+                        </Grid>
+                    </GroupBox>
 
                 </Grid>
             </TabItem>
-            <TabItem Header="控制台">
+            <TabItem Header="其他">
                 <Grid Background="#FFE5E5E5"/>
             </TabItem>
         </TabControl>

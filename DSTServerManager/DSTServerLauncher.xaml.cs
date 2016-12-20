@@ -3,6 +3,7 @@ using DSTServerManager.Saves;
 using DSTServerManager.Servers;
 using Renci.SshNet;
 using System;
+using NLua;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -198,7 +199,9 @@ namespace DSTServerManager
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-
+            var test = new ServerModInfo(@"C:\Users\mj\Documents\Klei\DSTTools\mods\workshop-359821133\modinfo.lua");
+            test.LuaDoFile();
+            textBox_Servers_Tab_Log.Text = test.Name;
         }
 
         //dataGrid和datatable之间数据直接赋值的示例 不应该使用这种方式
