@@ -46,46 +46,47 @@ namespace DSTServerManager
             #endregion
 
             //服务器文件路径列表
-            dataGrid_LocalServer_ServersPath.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(UI.ServerFileListTable_Local)) { Source = UI });
-            dataGrid_CloudServer_ServersPath.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(UI.ServerFileListTable_Cloud)) { Source = UI });
+            dataGrid_CloudServer_ServersPath.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(UI.ServerCloud)) { Source = UI });
+            dataGrid_LocalServer_ServersPath.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(UI.ServerLocal)) { Source = UI });
 
             //远程服务器连接列表
-            dataGrid_CloudServer_Connections.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(UI.ServerConnectsTable_Cloud)) { Source = UI });
+            dataGrid_CloudServer_Connections.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(UI.Connections)) { Source = UI });
 
             //集群服务器信息列表
             dataGrid_ClusterInfo_ServersList.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(UI.ClusterServersTable)) { Source = UI });
             dataGrid_ClusterInfo_ServerLevel.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(UI.ClusterServersLevel)) { Source = UI });
 
             //服务器控制命令列表
-            dataGrid_ServersInfo_CommandLine.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(UI.ServerConsole)) { Source = UI });
+            dataGrid_ServersInfo_CommandLine.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(UI.ClusterCommandLines)) { Source = UI });
 
             //存档文件夹列表
             ComboBox_LocalServer_SavesFolder.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(UI.SaveFolders_Local)) { Source = UI });
             ComboBox_CloudServer_SavesFolder.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(UI.SaveFolders_Cloud)) { Source = UI });
 
             //当前选定的远程连接信息
-            dataGrid_CloudServer_Connections.SetBinding(DataGrid.SelectedItemProperty,new Binding(nameof(UI.Connection)) { Source = UI });
+            dataGrid_CloudServer_Connections.SetBinding(DataGrid.SelectedItemProperty, new Binding(nameof(UI.CurrentConn)) { Source = UI });
         }
 
         #region 获取用户配置文件数据
 
-        DataTable ServerFileListTable_CloudOrigin = new DataTable("ServerFileListTable_CloudOrigin");
+        private DataTable ConnectionsOrigin = new DataTable(nameof(ConnectionsOrigin));
+        private DataTable ServerCloudOrigin = new DataTable(nameof(ServerCloudOrigin));
+        private DataTable ServerLocalOrigin = new DataTable(nameof(ServerLocalOrigin));
         /// <summary>
         /// 获取用户数据
         /// </summary>
         private void GetUserData(SQLiteHelper userDataSQLite)
         {
-
             userDataSQLite.OpenSQLite(appStartupPath + @"\DSTServerManager.db");
             CreateDefaultTable(ref userDataSQLite);
 
             //读取数据库数据
-            UI.ServerFileListTable_Local = userDataSQLite.ExecuteDataTable("LocalServerList");
-            ServerFileListTable_CloudOrigin = userDataSQLite.ExecuteDataTable("CloudServerList");
-            UI.ServerConnectsTable_Cloud = userDataSQLite.ExecuteDataTable("CloudServerConnList");
+            ConnectionsOrigin = userDataSQLite.ExecuteDataTable(nameof(UI.Connections));
+            ServerCloudOrigin = userDataSQLite.ExecuteDataTable(nameof(UI.ServerCloud));
+            ServerLocalOrigin = userDataSQLite.ExecuteDataTable(nameof(UI.ServerLocal));
 
-            UI.ServerConsole = userDataSQLite.ExecuteDataTable("ServerConsole");
-            UI.ClusterServersLevel = userDataSQLite.ExecuteDataTable("ServerLeveled");
+            UI.ClusterCommandLines = userDataSQLite.ExecuteDataTable(nameof(UI.ClusterCommandLines));
+            UI.ClusterServersLevel = userDataSQLite.ExecuteDataTable(nameof(UI.ClusterServersLevel));
 
             //读取并合并外部数据
             if (!File.Exists(appStartupPath + @"\DSTServerManager.xlsx")) return;
@@ -93,20 +94,20 @@ namespace DSTServerManager
             ExcelHelper userDataExcel = new ExcelHelper();
             userDataExcel.OpenExcel(appStartupPath + @"\DSTServerManager.xlsx", ExcelEngines.ACE, ExcelVersion.Office2007);
 
-            UI.ServerFileListTable_Local.MergeExcelData(userDataExcel, "LocalServerList");
-            ServerFileListTable_CloudOrigin.MergeExcelData(userDataExcel, "CloudServerList");
-            UI.ServerConnectsTable_Cloud.MergeExcelData(userDataExcel, "CloudServerConnList");
+            ConnectionsOrigin.MergeExcelData(userDataExcel.ExecuteDataTable(nameof(UI.Connections)));
+            ServerCloudOrigin.MergeExcelData(userDataExcel.ExecuteDataTable(nameof(UI.ServerCloud)));
+            ServerLocalOrigin.MergeExcelData(userDataExcel.ExecuteDataTable(nameof(UI.ServerLocal)));
 
-            UI.ServerConsole.MergeExcelData(userDataExcel, "ServerConsole");
-            UI.ClusterServersLevel.MergeExcelData(userDataExcel, "ServerLeveled");
+            UI.ClusterCommandLines.MergeExcelData(userDataExcel.ExecuteDataTable(nameof(UI.ClusterCommandLines)));
+            UI.ClusterServersLevel.MergeExcelData(userDataExcel.ExecuteDataTable(nameof(UI.ClusterServersLevel)));
 
             //更新本地数据库数据
-            userDataSQLite.SaveDataTable(UI.ServerFileListTable_Local, "LocalServerList");
-            userDataSQLite.SaveDataTable(ServerFileListTable_CloudOrigin, "CloudServerList");
-            userDataSQLite.SaveDataTable(UI.ServerConnectsTable_Cloud, "CloudServerConnList");
+            userDataSQLite.SaveDataTable(ConnectionsOrigin, nameof(UI.Connections));
+            userDataSQLite.SaveDataTable(ServerCloudOrigin, nameof(UI.ServerCloud));
+            userDataSQLite.SaveDataTable(ServerLocalOrigin, nameof(UI.ServerLocal));
 
-            userDataSQLite.SaveDataTable(UI.ServerConsole, "ServerConsole");
-            userDataSQLite.SaveDataTable(UI.ClusterServersLevel, "ServerLeveled");
+            userDataSQLite.SaveDataTable(UI.ClusterCommandLines, nameof(UI.ClusterCommandLines));
+            userDataSQLite.SaveDataTable(UI.ClusterServersLevel, nameof(UI.ClusterServersLevel));
         }
 
         #endregion
@@ -123,17 +124,17 @@ namespace DSTServerManager
             //创建默认的数据表结构
             string[] parameter = null;
             parameter = new string[3] { "ID integer primary key", "Type text", "Path text" };
-            userDataSQLite.CreatDataTable("LocalServerList", parameter);
-            userDataSQLite.CreatDataTable("CloudServerList", parameter);
+            userDataSQLite.CreatDataTable("ServerLocal", parameter);
+            userDataSQLite.CreatDataTable("ServerCloud", parameter);
 
             parameter = new string[5] { "ID integer primary key", "IP text", "UserName text", "Password text", "ServerID text" };
-            userDataSQLite.CreatDataTable("CloudServerConnList", parameter);
+            userDataSQLite.CreatDataTable("Connections", parameter);
 
             parameter = new string[5] { "ID integer primary key", "Type text", "Explain text", "Command text", "Parameter text" };
-            userDataSQLite.CreatDataTable("ServerConsole", parameter);
+            userDataSQLite.CreatDataTable("ClusterCommandLines", parameter);
 
             parameter = new string[8] { "ID integer primary key", "Name text", "English text", "Chinese text", "WorldType text", "Type text", "Enum text", "Current text" };
-            userDataSQLite.CreatDataTable("ServerLeveled", parameter);
+            userDataSQLite.CreatDataTable("ClusterServersLevel", parameter);
         }
 
         #endregion

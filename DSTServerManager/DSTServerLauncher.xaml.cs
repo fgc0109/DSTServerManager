@@ -75,6 +75,10 @@ namespace DSTServerManager
         }
         private void UserdataWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            UI.Connections = ConnectionsOrigin.Copy();
+            UI.ServerCloud = ServerCloudOrigin.Clone();
+            UI.ServerLocal = ServerLocalOrigin.Copy();
+
             ComboBox_LocalServer_SavesFolder.SelectedIndex = 0;
         }
 

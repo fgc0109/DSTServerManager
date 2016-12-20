@@ -18,31 +18,26 @@ namespace DSTServerManager.DataHelper
         /// <param name="target"></param>
         public static void CopyAllProperties<T>(this object source, T target) where T : class
         {
-            if (source == null || target == null)
-                return;
+            if (source == null || target == null) return;
 
             var properties = target.GetType().GetProperties();
             foreach (var targetPro in properties)
             {
-                try
+                //判断源对象是否存在与目标属性名字对应的源属性  
+                if (source.GetType().GetProperty(targetPro.Name) == null)
                 {
-                    //判断源对象是否存在与目标属性名字对应的源属性  
-                    if (source.GetType().GetProperty(targetPro.Name) == null)
-                    {
-                        continue;
-                    }
-                    //数据类型不相等  
-                    if (targetPro.PropertyType.FullName != source.GetType().GetProperty(targetPro.Name).PropertyType.FullName)
-                    {
-                        continue;
-                    }
-                    var propertyValue = source.GetType().GetProperty(targetPro.Name).GetValue(source, null);
-                    if (propertyValue != null)
-                    {
-                        target.GetType().InvokeMember(targetPro.Name, BindingFlags.SetProperty, null, target, new object[] { propertyValue });
-                    }
+                    continue;
                 }
-                catch { }
+                //数据类型不相等  
+                if (targetPro.PropertyType.FullName != source.GetType().GetProperty(targetPro.Name).PropertyType.FullName)
+                {
+                    continue;
+                }
+                var propertyValue = source.GetType().GetProperty(targetPro.Name).GetValue(source, null);
+                if (propertyValue != null)
+                {
+                    target.GetType().InvokeMember(targetPro.Name, BindingFlags.SetProperty, null, target, new object[] { propertyValue });
+                }
             }
         }
 
@@ -50,14 +45,11 @@ namespace DSTServerManager.DataHelper
         /// [重要]合并一个具有相同结构的Excel表的数据
         /// </summary>
         /// <param name="dataTable"></param>
-        /// <param name="excelData"></param>
-        /// <param name="tableName"></param>
-        /// <returns></returns>
-        public static void MergeExcelData(this DataTable dataTable, ExcelHelper excelData, string tableName)
-        {
-            DataTable localServerList = excelData.ExecuteDataTable(tableName);
-            for (int i = 0; i < localServerList.Rows.Count; i++)
-                dataTable.Rows.Add(localServerList.Rows[i].ItemArray);
+        /// <param name="excelTable"></param>
+        public static void MergeExcelData(this DataTable dataTable,DataTable excelTable)
+        { 
+            for (int i = 0; i < excelTable.Rows.Count; i++)
+                dataTable.Rows.Add(excelTable.Rows[i].ItemArray);
 
             for (int i = 0; i < dataTable.Rows.Count; i++)
                 dataTable.Rows[i][0] = 0;
@@ -89,15 +81,6 @@ namespace DSTServerManager.DataHelper
 
             for (int i = 0; i < dataTable.Rows.Count; i++)
                 dataTable.Rows[i][0] = i + 1;
-        }
-
-        public static DataTable CopyConfirmTable(this DataTable dataTable, int column, List<string> item)
-        {
-            DataTable current = dataTable.Clone();
-            foreach (DataRow row in dataTable.Rows)
-                if (item.Contains(row[column].ToString())) current.Rows.Add(row.ItemArray);
-            current.RefreshDataTable();
-            return current.Copy();
         }
     }
 }

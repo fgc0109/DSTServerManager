@@ -431,40 +431,40 @@ namespace DSTServerManager
             }
         }
 
-        public DataTable ServerFileListTable_Local
+        public DataTable ServerLocal
         {
             get { return serverFileListTable_Local; }
             set
             {
                 serverFileListTable_Local = value.Copy();
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ServerFileListTable_Local)));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ServerLocal)));
             }
         }
-        public DataTable ServerFileListTable_Cloud
+        public DataTable ServerCloud
         {
             get { return serverFileListTable_Cloud; }
             set
             {
                 serverFileListTable_Cloud = value.Copy();
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ServerFileListTable_Cloud)));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ServerCloud)));
             }
         }
-        public DataTable ServerConnectsTable_Cloud
+        public DataTable Connections
         {
             get { return serverConnectsTable_Cloud; }
             set
             {
                 serverConnectsTable_Cloud = value.Copy();
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ServerConnectsTable_Cloud)));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Connections)));
             }
         }
-        public DataTable ServerConsole
+        public DataTable ClusterCommandLines
         {
             get { return serverConsole; }
             set
             {
                 serverConsole = value.Copy();
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ServerConsole)));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ClusterCommandLines)));
             }
         }
         public DataTable ClusterServersLevel
@@ -484,29 +484,36 @@ namespace DSTServerManager
         private string location;
         private string username;
         private string password;
+        private string serverid;
 
         #endregion
 
         #region 用户操作字段
 
-        public DataRowView Connection
+        /// <summary>
+        /// 当前选中的连接信息
+        /// </summary>
+        public DataRowView CurrentConn
         {
             set
             {
                 location = (value as DataRowView)[1].ToString();
                 username = (value as DataRowView)[2].ToString();
                 password = (value as DataRowView)[3].ToString();
+                serverid = (value as DataRowView)[4].ToString();
 
                 if (PropertyChanged == null) return;
                 PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Location)));
                 PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Username)));
                 PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Password)));
+                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Serverid)));
             }
         }
 
         public string Location { get { return location; } }
         public string Username { get { return username; } }
         public string Password { get { return password; } }
+        public string Serverid { get { return serverid; } }
 
         #endregion
 

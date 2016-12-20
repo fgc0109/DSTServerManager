@@ -17,7 +17,7 @@ namespace DSTServerManager
         #region [远程服务器 服务器连接功能区]----------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// 远程服务器-打开远程连接
+        /// 打开远程连接
         /// </summary>
         private void dataGrid_CloudServer_Connection_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -26,13 +26,13 @@ namespace DSTServerManager
 
         private void dataGrid_CloudServer_Connection_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            int indexConn = dataGrid_CloudServer_Connections.SelectedIndex;
-            if (indexConn == -1) return;
-
-            List<string> serverID = new List<string>();
-            foreach (var server in UI.ServerConnectsTable_Cloud.DefaultView[indexConn][4].ToString().Split('|'))
-                serverID.Add(server.ToString());
-            UI.ServerFileListTable_Cloud = ServerFileListTable_CloudOrigin.CopyConfirmTable(0, serverID);
+            UI.ServerCloud.Clear();
+            foreach (var server in UI.Serverid.Split('|'))
+            {
+                if (server == "") return;
+                UI.ServerCloud.ImportRow(ServerCloudOrigin.Rows[int.Parse(server) - 1]);
+            }
+            UI.ServerCloud.RefreshDataTable();   
         }
 
         /// <summary>
@@ -40,8 +40,8 @@ namespace DSTServerManager
         /// </summary>
         private void button_CloudServer_AddConn_Click(object sender, RoutedEventArgs e)
         {
-            DataRow currentRow = UI.ServerConnectsTable_Cloud.NewRow();
-            int newIndex = UI.ServerConnectsTable_Cloud.Rows.Count + 1;
+            DataRow currentRow = UI.Connections.NewRow();
+            int newIndex = UI.Connections.Rows.Count + 1;
 
             if (m_Win_CloudConnection == null) m_Win_CloudConnection = new CloudConnection(currentRow, true, newIndex);
 
@@ -59,7 +59,7 @@ namespace DSTServerManager
             int indexConn = dataGrid_CloudServer_Connections.SelectedIndex;
             if (indexConn == -1) return;
 
-            DataRow currentRow = UI.ServerConnectsTable_Cloud.Rows[indexConn];
+            DataRow currentRow = UI.Connections.Rows[indexConn];
             if (m_Win_CloudConnection == null) m_Win_CloudConnection = new CloudConnection(currentRow, false, 0);
 
             m_Win_CloudConnection.CloudConnectionEvent += new CloudConnection.CloudConnectionHandler(window_ReceiveConnectionValues);
@@ -76,11 +76,11 @@ namespace DSTServerManager
             int indexConn = dataGrid_CloudServer_Connections.SelectedIndex;
             if (indexConn == -1) return;
 
-            UI.ServerConnectsTable_Cloud.Rows[indexConn].Delete();
-            UI.ServerConnectsTable_Cloud.AcceptChanges();
+            UI.Connections.Rows[indexConn].Delete();
+            UI.Connections.AcceptChanges();
 
-            UI.ServerConnectsTable_Cloud.RefreshDataTable();
-            m_UserDataSQLite.SaveDataTable(UI.ServerConnectsTable_Cloud, "CloudServerConnList");
+            UI.Connections.RefreshDataTable();
+            m_UserDataSQLite.SaveDataTable(UI.Connections, "CloudServerConnList");
         }
 
         /// <summary>
@@ -90,14 +90,14 @@ namespace DSTServerManager
         {
             if (connectionArgs.IsNewRow)
             {
-                UI.ServerConnectsTable_Cloud.Rows.Add(connectionArgs.GetRow);
+                UI.Connections.Rows.Add(connectionArgs.GetRow);
 
-                UI.ServerConnectsTable_Cloud.RefreshDataTable();
-                m_UserDataSQLite.SaveDataTable(UI.ServerConnectsTable_Cloud, "CloudServerConnList");
+                UI.Connections.RefreshDataTable();
+                m_UserDataSQLite.SaveDataTable(UI.Connections, "CloudServerConnList");
             }
             else
             {
-                m_UserDataSQLite.UpdateDataTable(UI.ServerConnectsTable_Cloud, "CloudServerConnList");
+                m_UserDataSQLite.UpdateDataTable(UI.Connections, "CloudServerConnList");
             }
         }
 
@@ -131,17 +131,16 @@ namespace DSTServerManager
 
             if (commandArgs.NewServerPath.Contains("dontstarve_dedicated_server_nullrenderer"))
             {
-                DataRow newPath = UI.ServerFileListTable_Cloud.NewRow();
+                DataRow newPath = UI.ServerCloud.NewRow();
                 newPath.ItemArray = new object[3] { 0, "Steam", commandArgs.NewServerPath };
-                UI.ServerFileListTable_Cloud.Rows.Add(newPath);
-                UI.ServerFileListTable_Cloud.RefreshDataTable();
-                m_UserDataSQLite.SaveDataTable(UI.ServerFileListTable_Cloud, "CloudServerList");
+                UI.ServerCloud.Rows.Add(newPath);
+                UI.ServerCloud.RefreshDataTable();
+                m_UserDataSQLite.SaveDataTable(UI.ServerCloud, "CloudServerList");
 
                 //需要查找远程服务器链接列表整合后的列表ID
-                UI.ServerConnectsTable_Cloud.DefaultView[indexConn][4] = 1;
+                UI.Connections.DefaultView[indexConn][4] = 1;
             }
         }
-
 
         #endregion ----------------------------------------------------------------------------------------------------
 

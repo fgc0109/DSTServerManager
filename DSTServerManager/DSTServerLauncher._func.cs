@@ -17,6 +17,12 @@ namespace DSTServerManager
     {
         #region [远程Connect]----------------------------------------------------------------------------------------------------
 
+        /// <summary>
+        /// 创建新的远程连接及相应页面
+        /// </summary>
+        /// <param name="location"></param>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
         internal void CreatNewConnect(string location, string username, string password)
         {
             RefreshList();

@@ -39,11 +39,11 @@ namespace DSTServerManager
 
             if (openFile.SafeFileName.Contains("dontstarve_dedicated_server_nullrenderer"))
             {
-                DataRow newPath = UI.ServerFileListTable_Local.NewRow();
+                DataRow newPath = UI.ServerLocal.NewRow();
                 newPath.ItemArray = new object[3] { 0, "Steam", openFile.FileName };
-                UI.ServerFileListTable_Local.Rows.Add(newPath);
-                UI.ServerFileListTable_Local.RefreshDataTable();
-                m_UserDataSQLite.SaveDataTable(UI.ServerFileListTable_Local, "LocalServerList");
+                UI.ServerLocal.Rows.Add(newPath);
+                UI.ServerLocal.RefreshDataTable();
+                m_UserDataSQLite.SaveDataTable(UI.ServerLocal, "LocalServerList");
             }
         }
 
@@ -65,11 +65,11 @@ namespace DSTServerManager
 
             if (commandArgs.NewServerPath.Contains("dontstarve_dedicated_server_nullrenderer"))
             {
-                DataRow newPath = UI.ServerFileListTable_Local.NewRow();
+                DataRow newPath = UI.ServerLocal.NewRow();
                 newPath.ItemArray = new object[3] { 0, "Steam", commandArgs.NewServerPath };
-                UI.ServerFileListTable_Local.Rows.Add(newPath);
-                UI.ServerFileListTable_Local.RefreshDataTable();
-                m_UserDataSQLite.SaveDataTable(UI.ServerFileListTable_Local, "LocalServerList");
+                UI.ServerLocal.Rows.Add(newPath);
+                UI.ServerLocal.RefreshDataTable();
+                m_UserDataSQLite.SaveDataTable(UI.ServerLocal, "LocalServerList");
             }
         }
 
@@ -81,10 +81,10 @@ namespace DSTServerManager
             int indexPath = dataGrid_LocalServer_ServersPath.SelectedIndex;
             if (indexPath == -1) return;
 
-            UI.ServerFileListTable_Local.Rows[indexPath].Delete();
-            UI.ServerFileListTable_Local.Rows[indexPath].AcceptChanges();
-            UI.ServerFileListTable_Local.RefreshDataTable();
-            m_UserDataSQLite.SaveDataTable(UI.ServerFileListTable_Local, "LocalServerList");
+            UI.ServerLocal.Rows[indexPath].Delete();
+            UI.ServerLocal.Rows[indexPath].AcceptChanges();
+            UI.ServerLocal.RefreshDataTable();
+            m_UserDataSQLite.SaveDataTable(UI.ServerLocal, "LocalServerList");
         }
 
         #endregion ----------------------------------------------------------------------------------------------------
