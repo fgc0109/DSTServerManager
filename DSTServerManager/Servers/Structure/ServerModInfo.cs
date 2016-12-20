@@ -65,5 +65,22 @@ namespace DSTServerManager.Servers
             reign_of_giants_compatible = (bool)luaFile[nameof(reign_of_giants_compatible)];
             all_clients_require_mod = (bool)luaFile[nameof(all_clients_require_mod)];
         }
+
+        public object[] GetItemArray()
+        {
+            var array = new object[]
+            {
+                name,
+                author,
+                version,
+                api_version,
+                dst_compatible,
+                dont_starve_compatible,
+                reign_of_giants_compatible,
+                all_clients_require_mod,
+                description.Replace("\n"," ").Replace("\r"," ")
+            };
+            return array;
+        }
     }
 }

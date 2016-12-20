@@ -24,6 +24,8 @@ namespace DSTServerManager
                 return;
             }
             button_LocalServer_DelServer.IsEnabled = true;
+
+            //dataGrid_ModInfo_MainInfo
         }
 
         /// <summary>

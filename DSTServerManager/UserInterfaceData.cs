@@ -398,11 +398,12 @@ namespace DSTServerManager
 
         #region 用户信息字段
 
-        private DataTable serverFileListTable_Local = new DataTable("serverFileListTable_Local");
-        private DataTable serverFileListTable_Cloud = new DataTable("serverFileListTable_Cloud");
-        private DataTable serverConnectsTable_Cloud = new DataTable("serverConnectsTable_Cloud");
-        private DataTable serverConsole = new DataTable("serverConsole");
-        private DataTable serverLeveled = new DataTable("serverLeveled");
+        private DataTable serverlocal = new DataTable(nameof(serverlocal));
+        private DataTable servercloud = new DataTable(nameof(servercloud));
+        private DataTable connections = new DataTable(nameof(connections));
+        private DataTable clusterCommandLines = new DataTable(nameof(clusterCommandLines));
+        private DataTable clusterServersLevel = new DataTable(nameof(clusterServersLevel));
+        private DataTable modification = new DataTable(nameof(modification));
 
         private ObservableCollection<string> saveFolders_Local = new ObservableCollection<string>();
         private ObservableCollection<string> saveFolders_Cloud = new ObservableCollection<string>();
@@ -433,47 +434,56 @@ namespace DSTServerManager
 
         public DataTable ServerLocal
         {
-            get { return serverFileListTable_Local; }
+            get { return serverlocal; }
             set
             {
-                serverFileListTable_Local = value.Copy();
+                serverlocal = value.Copy();
                 if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ServerLocal)));
             }
         }
         public DataTable ServerCloud
         {
-            get { return serverFileListTable_Cloud; }
+            get { return servercloud; }
             set
             {
-                serverFileListTable_Cloud = value.Copy();
+                servercloud = value.Copy();
                 if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ServerCloud)));
             }
         }
         public DataTable Connections
         {
-            get { return serverConnectsTable_Cloud; }
+            get { return connections; }
             set
             {
-                serverConnectsTable_Cloud = value.Copy();
+                connections = value.Copy();
                 if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Connections)));
             }
         }
         public DataTable ClusterCommandLines
         {
-            get { return serverConsole; }
+            get { return clusterCommandLines; }
             set
             {
-                serverConsole = value.Copy();
+                clusterCommandLines = value.Copy();
                 if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ClusterCommandLines)));
             }
         }
         public DataTable ClusterServersLevel
         {
-            get { return serverLeveled; }
+            get { return clusterServersLevel; }
             set
             {
-                serverLeveled = value.Copy();
+                clusterServersLevel = value.Copy();
                 if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ClusterServersLevel)));
+            }
+        }
+        public DataTable Modification
+        {
+            get { return modification; }
+            set
+            {
+                modification = value.Copy();
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Modification)));
             }
         }
 
@@ -521,6 +531,16 @@ namespace DSTServerManager
         {
             for (int i = 0; i < columns; i++)
                 clusterServersTable.Columns.Add("Column_" + i.ToString());
+
+            modification.Columns.Add("ModInfo_Name");
+            modification.Columns.Add("ModInfo_Auth");
+            modification.Columns.Add("ModInfo_Vern");
+            modification.Columns.Add("ModInfo_ApiV");
+            modification.Columns.Add("ModInfo_Muti");
+            modification.Columns.Add("ModInfo_Solo");
+            modification.Columns.Add("ModInfo_Dlc1");
+            modification.Columns.Add("ModInfo_allC");
+            modification.Columns.Add("ModInfo_Desc");
         }
 
         /// <summary>

@@ -65,6 +65,9 @@ namespace DSTServerManager
 
             //当前选定的远程连接信息
             dataGrid_CloudServer_Connections.SetBinding(DataGrid.SelectedItemProperty, new Binding(nameof(UI.CurrentConn)) { Source = UI });
+
+            //当前服务器模组文件信息
+            dataGrid_Modifications_MainInfos.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(UI.Modification)) { Source = UI });
         }
 
         #region 获取用户配置文件数据

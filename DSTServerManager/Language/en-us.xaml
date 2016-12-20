@@ -11,23 +11,23 @@
     <!--程序菜单项目-->
     <s:String x:Key="MenuItem_ApplicationMenu">Menu</s:String>
     <s:String x:Key="ApplicationMenu_Close">Exit</s:String>
-    
+
     <s:String x:Key="MenuItem_ServerCtrlsMenu">Server</s:String>
     <s:String x:Key="ServerCtrlsMenu_Nothing">Nothing</s:String>
-    
+
     <s:String x:Key="MenuItem_SaveControlMenu">Saves</s:String>
     <s:String x:Key="SaveControlMenu_Nothing">Nothing</s:String>
-    
+
     <s:String x:Key="MenuItem_SelectLanguages">Language</s:String>
     <s:String x:Key="SelectLanguages_Chinese">中文</s:String>
     <s:String x:Key="SelectLanguages_English">English</s:String>
-    
+
     <!--================================================================================-->
     <!--右侧标签页-->
     <s:String x:Key="GROUP_CLUSTER_SETTING">Cluster Setting</s:String>
     <s:String x:Key="GROUP_CLUSTER_SERVERS">Cluster Servers List</s:String>
     <s:String x:Key="GROUP_CLUSTER_SERINFO">Servers Information List</s:String>
-    
+
     <s:String x:Key="GAMEPLAY_GMMODE">Mode</s:String>
     <s:String x:Key="GAMEPLAY_COUNTS">Player</s:String>
     <s:String x:Key="GAMEPLAY_CANPVP">PVP</s:String>
@@ -43,6 +43,16 @@
     <s:String x:Key="SAVESERVER_PORT_3">SteamPort</s:String>
     <s:String x:Key="SAVESERVER_SESSON">Session</s:String>
     <s:String x:Key="SAVESERVER_CONNEC">Connect</s:String>
+
+    <s:String x:Key="ModInfo_Name">名称</s:String>
+    <s:String x:Key="ModInfo_Desc">描述</s:String>
+    <s:String x:Key="ModInfo_Auth">作者</s:String>
+    <s:String x:Key="ModInfo_Vern">版本</s:String>
+    <s:String x:Key="ModInfo_ApiV">API</s:String>
+    <s:String x:Key="ModInfo_Muti">联机</s:String>
+    <s:String x:Key="ModInfo_Solo">单机</s:String>
+    <s:String x:Key="ModInfo_Dlc1">巨人</s:String>
+    <s:String x:Key="ModInfo_allC">客户端需求</s:String>
 
     <!--================================================================================-->
     <!--本地服务器 开启方式-->
@@ -64,7 +74,7 @@
 
     <!--远程服务器 远程连接列表-->
     <s:String x:Key="CloudServer_ConnectionList">远程连接列表</s:String>
-    
+
     <!--远程服务器 服务器列表-->
     <s:String x:Key="CloudServer_ServerList">远程服务器列表</s:String>
     <s:String x:Key="CloudServer_ServerList_Index">ID</s:String>
@@ -76,5 +86,5 @@
 
     <!--远程服务器 集群存档文件列表-->
     <s:String x:Key="CloudServer_ClusterSaveList">远程服务器集群存档文件列表</s:String>
-   
+
 </ResourceDictionary>  

@@ -202,6 +202,11 @@ namespace DSTServerManager
             var test = new ServerModInfo(@"C:\Users\mj\Documents\Klei\DSTTools\mods\workshop-359821133");
             test.LuaDoFile();
             textBox_Servers_Tab_Log.Text = test.Name;
+
+            UI.Modification.Rows.Add(test.GetItemArray());
+            UI.Modification = UI.Modification.Copy();
+
+            //dataGrid_Modifications_MainInfos.ItemsSource = UI.Modification.DefaultView;
         }
 
         //dataGrid和datatable之间数据直接赋值的示例 不应该使用这种方式
