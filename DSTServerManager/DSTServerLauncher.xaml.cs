@@ -199,7 +199,7 @@ namespace DSTServerManager
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-            var test = new ServerModInfo(@"C:\Users\mj\Documents\Klei\DSTTools\mods\workshop-359821133\modinfo.lua");
+            var test = new ServerModInfo(@"C:\Users\mj\Documents\Klei\DSTTools\mods\workshop-359821133");
             test.LuaDoFile();
             textBox_Servers_Tab_Log.Text = test.Name;
         }

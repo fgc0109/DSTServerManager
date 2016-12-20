@@ -10,11 +10,15 @@ namespace DSTServerManager.Servers
     class ServerModInfo
     {
         private string m_FilePath = string.Empty;
+        private string m_WorkShop = string.Empty;
 
         public ServerModInfo(string path)
         {
-            m_FilePath = path;
+            m_FilePath = path + @"\modinfo.lua";
+            m_WorkShop = path.Split('\\')[path.Split('\\').Length - 1].Replace("workshop-", "");
         }
+
+        public string WorkShop { get { return m_WorkShop; } }
 
         #region 信息字段
 
@@ -22,7 +26,6 @@ namespace DSTServerManager.Servers
         private string description;
         private string author;
         private string version;
-
         private double api_version;
         private bool dst_compatible;
         private bool dont_starve_compatible;
