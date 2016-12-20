@@ -6,6 +6,7 @@ using System.Data;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using DSTServerManager.Servers;
 
 namespace DSTServerManager
 {
@@ -25,7 +26,13 @@ namespace DSTServerManager
             }
             button_LocalServer_DelServer.IsEnabled = true;
 
-            //dataGrid_ModInfo_MainInfo
+            string path = (dataGrid_LocalServer_ServersPath.SelectedItem as DataRowView)[2].ToString();
+            path = path.Replace("bin\\dontstarve_dedicated_server_nullrenderer.exe", "mods");
+            UI.Modification.Clear();
+            foreach (var item in ServersManager.GetServerModInfo(path))
+            {
+                UI.Modification.Rows.Add(item.GetItemArray());
+            }
         }
 
         /// <summary>

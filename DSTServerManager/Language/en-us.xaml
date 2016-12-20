@@ -44,6 +44,7 @@
     <s:String x:Key="SAVESERVER_SESSON">Session</s:String>
     <s:String x:Key="SAVESERVER_CONNEC">Connect</s:String>
 
+    <s:String x:Key="ModInfo_Indx">编号</s:String>
     <s:String x:Key="ModInfo_Name">名称</s:String>
     <s:String x:Key="ModInfo_Desc">描述</s:String>
     <s:String x:Key="ModInfo_Auth">作者</s:String>

@@ -284,8 +284,9 @@
                                 <ColumnDefinition Width="131*"/>
                                 <ColumnDefinition Width="165*"/>
                             </Grid.ColumnDefinitions>
-                            <DataGrid x:Name="dataGrid_Modifications_MainInfos" Margin="5" CanUserAddRows="False" AutoGenerateColumns="False" Style="{DynamicResource DataGridStyleCenter}">
+                            <DataGrid x:Name="dataGrid_Modifications_MainInfos" Margin="5" CanUserAddRows="False" AutoGenerateColumns="False" Style="{DynamicResource DataGridStyleCenter}" RowHeight="20">
                                 <DataGrid.Columns>
+                                    <DataGridTextColumn Header="{DynamicResource ModInfo_Indx}" Binding="{Binding ModInfo_Indx}" Width ="80" MinWidth="80" IsReadOnly="True"/>
                                     <DataGridTextColumn Header="{DynamicResource ModInfo_Name}" Binding="{Binding ModInfo_Name}" Width ="80" MinWidth="80" IsReadOnly="True"/>
                                     <DataGridTextColumn Header="{DynamicResource ModInfo_Auth}" Binding="{Binding ModInfo_Auth}" Width ="80" MinWidth="80" IsReadOnly="True"/>
                                     <DataGridTextColumn Header="{DynamicResource ModInfo_Vern}" Binding="{Binding ModInfo_Vern}" Width ="40" MinWidth="40" IsReadOnly="True"/>
@@ -294,7 +295,7 @@
                                     <DataGridTextColumn Header="{DynamicResource ModInfo_Solo}" Binding="{Binding ModInfo_Solo}" Width ="40" MinWidth="40" IsReadOnly="True"/>
                                     <DataGridTextColumn Header="{DynamicResource ModInfo_Dlc1}" Binding="{Binding ModInfo_Dlc1}" Width ="40" MinWidth="40" IsReadOnly="True"/>
                                     <DataGridTextColumn Header="{DynamicResource ModInfo_allC}" Binding="{Binding ModInfo_allC}" Width ="40" MinWidth="40" IsReadOnly="True"/>
-                                    <DataGridTextColumn Header="{DynamicResource ModInfo_Desc}" Binding="{Binding ModInfo_Desc}" Width ="200" MinWidth="40" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="{DynamicResource ModInfo_Desc}" Binding="{Binding ModInfo_Desc}" Width ="200*" MinWidth="200" IsReadOnly="True"/>
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Grid>

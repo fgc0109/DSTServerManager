@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NLua;
+using KeraLua;
+using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace DSTServerManager.Servers
 {
@@ -16,6 +19,7 @@ namespace DSTServerManager.Servers
         {
             m_FilePath = path + @"\modinfo.lua";
             m_WorkShop = path.Split('\\')[path.Split('\\').Length - 1].Replace("workshop-", "");
+            LuaDoFile();
         }
 
         public string WorkShop { get { return m_WorkShop; } }
@@ -50,7 +54,8 @@ namespace DSTServerManager.Servers
 
         public void LuaDoFile()
         {
-            Lua luaFile = new Lua();
+
+            NLua.Lua luaFile = new NLua.Lua();
 
             var data = luaFile.DoFile(m_FilePath);
 
@@ -60,17 +65,18 @@ namespace DSTServerManager.Servers
             version = (string)luaFile[nameof(version)];
 
             api_version = (double)luaFile[nameof(api_version)];
-            dst_compatible = (bool)luaFile[nameof(dst_compatible)];
-            dont_starve_compatible = (bool)luaFile[nameof(dont_starve_compatible)];
-            reign_of_giants_compatible = (bool)luaFile[nameof(reign_of_giants_compatible)];
-            all_clients_require_mod = (bool)luaFile[nameof(all_clients_require_mod)];
+            dst_compatible = (bool?)luaFile[nameof(dst_compatible)] ?? false;
+            dont_starve_compatible = (bool?)luaFile[nameof(dont_starve_compatible)] ?? false;
+            reign_of_giants_compatible = (bool?)luaFile[nameof(reign_of_giants_compatible)] ?? false;
+            all_clients_require_mod = (bool?)luaFile[nameof(all_clients_require_mod)] ?? false;
         }
 
         public object[] GetItemArray()
         {
             var array = new object[]
             {
-                name,
+                WorkShop,
+                Encoding.UTF8.GetString(Encoding.ASCII.GetBytes(name)),
                 author,
                 version,
                 api_version,

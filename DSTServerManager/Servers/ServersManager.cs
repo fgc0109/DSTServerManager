@@ -84,6 +84,16 @@ namespace DSTServerManager.Servers
             return screens;
         }
 
-        //internal static List<ServerModInfo> 
+        internal static List<ServerModInfo> GetServerModInfo(string path)
+        {
+            List<ServerModInfo> modInfo = new List<ServerModInfo>();
+
+            foreach (var item in Directory.EnumerateDirectories(path))
+            {
+                modInfo.Add(new ServerModInfo(item));
+            }
+         
+            return modInfo;
+        }
     }
 }
