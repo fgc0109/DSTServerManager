@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NLua;
 using System.Data;
 using System.IO;
+using LuaInterface;
 
 namespace DSTServerManager.Saves
 {
@@ -35,20 +35,19 @@ namespace DSTServerManager.Saves
         {
             Lua luaFile = new Lua();
 
-            if (!File.Exists(path))
-                return false;
+            if (!File.Exists(path)) return false;
 
             m_ServerLevelData = luaFile.DoFile(path);
 
             m_ServerLevelTable = new DefaultData().ServersLevelDefaultData();
             m_ServerLevelTable.Clear();
 
-            Dictionary<object, object> serverLevel = luaFile.GetTableDict(m_ServerLevelData[0] as LuaTable);
-            Dictionary<object, object> overrides = luaFile.GetTableDict(serverLevel["overrides"] as LuaTable);
+            var serverLevel = luaFile.GetTableDict(m_ServerLevelData[0] as LuaTable);
+            var overrides = luaFile.GetTableDict(serverLevel["overrides"] as LuaTable);
 
             for (int i = 0; i < m_ServerDefault.Rows.Count; i++)
             {
-                if (overrides.ContainsKey(m_ServerDefault.Rows[i][1]))
+                if (overrides.Contains(m_ServerDefault.Rows[i][1]))
                 {
                     DataRow current = m_ServerLevelTable.NewRow();
 

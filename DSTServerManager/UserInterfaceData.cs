@@ -459,22 +459,22 @@ namespace DSTServerManager
                 if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Connections)));
             }
         }
-        public DataTable ClusterCommandLines
+        public DataTable CommandLine
         {
             get { return clusterCommandLines; }
             set
             {
                 clusterCommandLines = value.Copy();
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ClusterCommandLines)));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(CommandLine)));
             }
         }
-        public DataTable ClusterServersLevel
+        public DataTable ServerLevel
         {
             get { return clusterServersLevel; }
             set
             {
                 clusterServersLevel = value.Copy();
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ClusterServersLevel)));
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ServerLevel)));
             }
         }
         public DataTable Modification

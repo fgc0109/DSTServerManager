@@ -32,7 +32,7 @@ namespace DSTServerManager
                 if (server == "") return;
                 UI.ServerCloud.ImportRow(ServerCloudOrigin.Rows[int.Parse(server) - 1]);
             }
-            UI.ServerCloud.RefreshDataTable();   
+            UI.ServerCloud.RefreshDataTable();
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace DSTServerManager
             UI.Connections.AcceptChanges();
 
             UI.Connections.RefreshDataTable();
-            m_UserDataSQLite.SaveDataTable(UI.Connections, "CloudServerConnList");
+            SQLiteHelper.SaveDataTable(UI.Connections, nameof(UI.Connections));
         }
 
         /// <summary>
@@ -93,11 +93,11 @@ namespace DSTServerManager
                 UI.Connections.Rows.Add(connectionArgs.GetRow);
 
                 UI.Connections.RefreshDataTable();
-                m_UserDataSQLite.SaveDataTable(UI.Connections, "CloudServerConnList");
+                SQLiteHelper.SaveDataTable(UI.Connections, nameof(UI.Connections));
             }
             else
             {
-                m_UserDataSQLite.UpdateDataTable(UI.Connections, "CloudServerConnList");
+               // SQLiteHelper.UpdateDataTable(UI.Connections, nameof(UI.Connections));
             }
         }
 
@@ -131,14 +131,15 @@ namespace DSTServerManager
 
             if (commandArgs.NewServerPath.Contains("dontstarve_dedicated_server_nullrenderer"))
             {
-                DataRow newPath = UI.ServerCloud.NewRow();
-                newPath.ItemArray = new object[3] { 0, "Steam", commandArgs.NewServerPath };
-                UI.ServerCloud.Rows.Add(newPath);
-                UI.ServerCloud.RefreshDataTable();
-                m_UserDataSQLite.SaveDataTable(UI.ServerCloud, "CloudServerList");
+                DataRow newPath = ServerCloudOrigin.NewRow();
+                newPath.ItemArray = new object[3] { ServerCloudOrigin.Rows.Count, "Steam", commandArgs.NewServerPath };
+                ServerCloudOrigin.Rows.Add(newPath);
+
+                SQLiteHelper.SaveDataTable(ServerCloudOrigin, nameof(UI.ServerCloud));
 
                 //需要查找远程服务器链接列表整合后的列表ID
-                UI.Connections.DefaultView[indexConn][4] = 1;
+                //UI.Connections.DefaultView[indexConn][4] = 1;
+                var tt = UI.Connections.DefaultView[indexConn][4];
             }
         }
 

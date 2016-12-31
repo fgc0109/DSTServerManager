@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NLua;
-using KeraLua;
 using System.Text.RegularExpressions;
 using System.Globalization;
+using LuaInterface;
+using System.IO;
 
 namespace DSTServerManager.Servers
 {
@@ -54,15 +54,13 @@ namespace DSTServerManager.Servers
 
         public void LuaDoFile()
         {
+            Lua luaFile = new Lua();
+            var interData = luaFile.DoFile(m_FilePath);
 
-            NLua.Lua luaFile = new NLua.Lua();
-
-            var data = luaFile.DoFile(m_FilePath);
-
-            name = (string)luaFile[nameof(name)];
-            description = (string)luaFile[nameof(description)];
-            author = (string)luaFile[nameof(author)];
-            version = (string)luaFile[nameof(version)];
+            name = Encoding.GetEncoding("UTF-8").GetString(Encoding.Default.GetBytes((string)luaFile[nameof(name)]));
+            description = Encoding.GetEncoding("UTF-8").GetString(Encoding.Default.GetBytes((string)luaFile[nameof(description)]));
+            author = Encoding.GetEncoding("UTF-8").GetString(Encoding.Default.GetBytes((string)luaFile[nameof(author)]));
+            version = Encoding.GetEncoding("UTF-8").GetString(Encoding.Default.GetBytes((string)luaFile[nameof(version)]));
 
             api_version = (double)luaFile[nameof(api_version)];
             dst_compatible = (bool?)luaFile[nameof(dst_compatible)] ?? false;
@@ -76,7 +74,7 @@ namespace DSTServerManager.Servers
             var array = new object[]
             {
                 WorkShop,
-                Encoding.UTF8.GetString(Encoding.ASCII.GetBytes(name)),
+                name,
                 author,
                 version,
                 api_version,

@@ -54,10 +54,10 @@ namespace DSTServerManager
 
             //集群服务器信息列表
             dataGrid_ClusterInfo_ServersList.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(UI.ClusterServersTable)) { Source = UI });
-            dataGrid_ClusterInfo_ServerLevel.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(UI.ClusterServersLevel)) { Source = UI });
+            dataGrid_ClusterInfo_ServerLevel.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(UI.ServerLevel)) { Source = UI });
 
             //服务器控制命令列表
-            dataGrid_ServersInfo_CommandLine.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(UI.ClusterCommandLines)) { Source = UI });
+            dataGrid_ServersInfo_CommandLine.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(UI.CommandLine)) { Source = UI });
 
             //存档文件夹列表
             ComboBox_LocalServer_SavesFolder.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(UI.SaveFolders_Local)) { Source = UI });
@@ -72,25 +72,60 @@ namespace DSTServerManager
 
         #region 获取用户配置文件数据
 
-        private DataTable ConnectionsOrigin = new DataTable(nameof(ConnectionsOrigin));
-        private DataTable ServerCloudOrigin = new DataTable(nameof(ServerCloudOrigin));
-        private DataTable ServerLocalOrigin = new DataTable(nameof(ServerLocalOrigin));
+        private static DataTable ConnectionsOrigin = null;
+        private static DataTable ServerCloudOrigin = null;
+        private static DataTable ServerLocalOrigin = null;
+        private static DataTable CommandLineOrigin = null;
+        private static DataTable ServerLevelOrigin = null;
+
         /// <summary>
         /// 获取用户数据
         /// </summary>
-        private void GetUserData(SQLiteHelper userDataSQLite)
+        private void GetDatabaseData()
         {
-            userDataSQLite.OpenSQLite(appStartupPath + @"\DSTServerManager.db");
-            CreateDefaultTable(ref userDataSQLite);
+            ServerCloudOrigin = SQLiteHelper.ExecuteDataTable(nameof(UI.ServerCloud));
+            ServerLocalOrigin = SQLiteHelper.ExecuteDataTable(nameof(UI.ServerLocal));
+            ConnectionsOrigin = SQLiteHelper.ExecuteDataTable(nameof(UI.Connections));
+            CommandLineOrigin = SQLiteHelper.ExecuteDataTable(nameof(UI.CommandLine));
+            ServerLevelOrigin = SQLiteHelper.ExecuteDataTable(nameof(UI.ServerLevel));
 
-            //读取数据库数据
-            ConnectionsOrigin = userDataSQLite.ExecuteDataTable(nameof(UI.Connections));
-            ServerCloudOrigin = userDataSQLite.ExecuteDataTable(nameof(UI.ServerCloud));
-            ServerLocalOrigin = userDataSQLite.ExecuteDataTable(nameof(UI.ServerLocal));
 
-            UI.ClusterCommandLines = userDataSQLite.ExecuteDataTable(nameof(UI.ClusterCommandLines));
-            UI.ClusterServersLevel = userDataSQLite.ExecuteDataTable(nameof(UI.ClusterServersLevel));
 
+            //更新本地数据库数据
+            SQLiteHelper.SaveDataTable(ConnectionsOrigin, nameof(UI.Connections));
+            SQLiteHelper.SaveDataTable(ServerCloudOrigin, nameof(UI.ServerCloud));
+            SQLiteHelper.SaveDataTable(ServerLocalOrigin, nameof(UI.ServerLocal));
+
+            SQLiteHelper.SaveDataTable(CommandLineOrigin, nameof(UI.CommandLine));
+            SQLiteHelper.SaveDataTable(ServerLevelOrigin, nameof(UI.ServerLevel));
+        }
+
+        /// <summary>
+        /// 创建默认的数据表
+        /// </summary>
+        static private void CreateDefaultTable()
+        {
+            //创建默认的数据表结构
+            string[] parameter = null;
+            parameter = new string[3] { "ID integer primary key", "Type text", "Path text" };
+            SQLiteHelper.CreatDataTable(nameof(UI.ServerCloud), parameter);
+            SQLiteHelper.CreatDataTable(nameof(UI.ServerLocal), parameter);
+
+            parameter = new string[5] { "ID integer primary key", "IP text", "UserName text", "Password text", "ServerID text" };
+            SQLiteHelper.CreatDataTable(nameof(UI.Connections), parameter);
+
+            parameter = new string[5] { "ID integer primary key", "Type text", "Explain text", "Command text", "Parameter text" };
+            SQLiteHelper.CreatDataTable(nameof(UI.CommandLine), parameter);
+
+            parameter = new string[8] { "ID integer primary key", "Name text", "English text", "Chinese text", "WorldType text", "Type text", "Enum text", "Current text" };
+            SQLiteHelper.CreatDataTable(nameof(UI.ServerLevel), parameter);
+        }
+
+        /// <summary>
+        /// 读取外部数据表
+        /// </summary>
+        static private void GetExcelData()
+        {
             //读取并合并外部数据
             if (!File.Exists(appStartupPath + @"\DSTServerManager.xlsx")) return;
 
@@ -101,43 +136,8 @@ namespace DSTServerManager
             ServerCloudOrigin.MergeExcelData(userDataExcel.ExecuteDataTable(nameof(UI.ServerCloud)));
             ServerLocalOrigin.MergeExcelData(userDataExcel.ExecuteDataTable(nameof(UI.ServerLocal)));
 
-            UI.ClusterCommandLines.MergeExcelData(userDataExcel.ExecuteDataTable(nameof(UI.ClusterCommandLines)));
-            UI.ClusterServersLevel.MergeExcelData(userDataExcel.ExecuteDataTable(nameof(UI.ClusterServersLevel)));
-
-            //更新本地数据库数据
-            userDataSQLite.SaveDataTable(ConnectionsOrigin, nameof(UI.Connections));
-            userDataSQLite.SaveDataTable(ServerCloudOrigin, nameof(UI.ServerCloud));
-            userDataSQLite.SaveDataTable(ServerLocalOrigin, nameof(UI.ServerLocal));
-
-            userDataSQLite.SaveDataTable(UI.ClusterCommandLines, nameof(UI.ClusterCommandLines));
-            userDataSQLite.SaveDataTable(UI.ClusterServersLevel, nameof(UI.ClusterServersLevel));
-        }
-
-        #endregion
-
-        #region 默认的数据库字段
-
-        /// <summary>
-        /// 创建默认的数据表
-        /// </summary>
-        /// <param name="userDataSQLite"></param>
-        /// <param name="exception"></param>
-        static private void CreateDefaultTable(ref SQLiteHelper userDataSQLite)
-        {
-            //创建默认的数据表结构
-            string[] parameter = null;
-            parameter = new string[3] { "ID integer primary key", "Type text", "Path text" };
-            userDataSQLite.CreatDataTable("ServerLocal", parameter);
-            userDataSQLite.CreatDataTable("ServerCloud", parameter);
-
-            parameter = new string[5] { "ID integer primary key", "IP text", "UserName text", "Password text", "ServerID text" };
-            userDataSQLite.CreatDataTable("Connections", parameter);
-
-            parameter = new string[5] { "ID integer primary key", "Type text", "Explain text", "Command text", "Parameter text" };
-            userDataSQLite.CreatDataTable("ClusterCommandLines", parameter);
-
-            parameter = new string[8] { "ID integer primary key", "Name text", "English text", "Chinese text", "WorldType text", "Type text", "Enum text", "Current text" };
-            userDataSQLite.CreatDataTable("ClusterServersLevel", parameter);
+            CommandLineOrigin.MergeExcelData(userDataExcel.ExecuteDataTable(nameof(UI.CommandLine)));
+            ServerLevelOrigin.MergeExcelData(userDataExcel.ExecuteDataTable(nameof(UI.ServerLevel)));
         }
 
         #endregion

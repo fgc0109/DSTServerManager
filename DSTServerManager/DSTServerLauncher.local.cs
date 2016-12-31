@@ -6,7 +6,6 @@ using System.Data;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using DSTServerManager.Servers;
 
 namespace DSTServerManager
 {
@@ -52,7 +51,7 @@ namespace DSTServerManager
                 newPath.ItemArray = new object[3] { 0, "Steam", openFile.FileName };
                 UI.ServerLocal.Rows.Add(newPath);
                 UI.ServerLocal.RefreshDataTable();
-                m_UserDataSQLite.SaveDataTable(UI.ServerLocal, "LocalServerList");
+                SQLiteHelper.SaveDataTable(UI.ServerLocal, nameof(UI.ServerLocal));
             }
         }
 
@@ -78,7 +77,7 @@ namespace DSTServerManager
                 newPath.ItemArray = new object[3] { 0, "Steam", commandArgs.NewServerPath };
                 UI.ServerLocal.Rows.Add(newPath);
                 UI.ServerLocal.RefreshDataTable();
-                m_UserDataSQLite.SaveDataTable(UI.ServerLocal, "LocalServerList");
+                SQLiteHelper.SaveDataTable(UI.ServerLocal, nameof(UI.ServerLocal));
             }
         }
 
@@ -93,7 +92,7 @@ namespace DSTServerManager
             UI.ServerLocal.Rows[indexPath].Delete();
             UI.ServerLocal.Rows[indexPath].AcceptChanges();
             UI.ServerLocal.RefreshDataTable();
-            m_UserDataSQLite.SaveDataTable(UI.ServerLocal, "LocalServerList");
+            SQLiteHelper.SaveDataTable(UI.ServerLocal, nameof(UI.ServerLocal));
         }
 
         #endregion ----------------------------------------------------------------------------------------------------

@@ -12,24 +12,24 @@ namespace DSTServerManager.DataHelper
     /// <summary> 
     /// 操作SQLite数据库
     /// </summary> 
-    class SQLiteHelper
+    public static class SQLiteHelper
     {
-        private SQLiteConnection m_dbConnection = null;
+        private static SQLiteConnection connection = null;
 
-        public SQLiteConnection DBConnection
-        { get { return m_dbConnection; } }
+        public static SQLiteConnection DBConnection
+        { get { return connection; } }
 
-        private string connectionString = string.Empty;
+        private static string connectionString = string.Empty;
 
         /// <summary> 
         /// 尝试打开SQLite连接
         /// </summary> 
         /// <param name="filePath">SQLite数据库文件路径</param>
-        public void OpenSQLite(string filePath)
+        public static void OpenSQLite(string filePath)
         {
-            m_dbConnection = new SQLiteConnection("Data Source=" + filePath);
+            connection = new SQLiteConnection("Data Source=" + filePath);
 
-            try { m_dbConnection.Open(); }
+            try { connection.Open(); }
             catch (Exception) { throw; }
         }
 
@@ -38,18 +38,19 @@ namespace DSTServerManager.DataHelper
         /// </summary> 
         /// <param name="tableName"></param>
         /// <returns></returns>
-        public DataTable ExecuteDataTable(string tableName)
+        public static DataTable ExecuteDataTable(string tableName)
         {
             DataTable dataTable = new DataTable(tableName);
+            SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter($"select * from {tableName};", connection);
             try
             {
-                SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter($"select * from {tableName};", m_dbConnection);
+                dataAdapter.FillSchema(dataTable, SchemaType.Source);
                 dataAdapter.Fill(dataTable);
-
-                dataTable.AcceptChanges();
-                dataAdapter.Dispose();
             }
             catch (Exception) { throw; }
+            finally { dataAdapter.Dispose(); }
+
+            dataTable.AcceptChanges();
             return dataTable;
         }
 
@@ -59,20 +60,17 @@ namespace DSTServerManager.DataHelper
         /// <param name="tableName"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public void CreatDataTable(string tableName, object[] parameters)
+        public static void CreatDataTable(string tableName, object[] parameters)
         {
-            StringBuilder commandBuilder = new StringBuilder();
+            StringBuilder builder = new StringBuilder();
             if (parameters != null)
             {
-                foreach (var item in parameters) commandBuilder.Append(item).Append(", ");
-                commandBuilder.Remove(commandBuilder.Length - 2, 2);
+                foreach (var item in parameters) builder.Append(item).Append(", ");
+                builder.Remove(builder.Length - 2, 2);
             }
-            string command = $"create table if not exists '{tableName}'({commandBuilder.ToString()});";
-            try
-            {
-                SQLiteCommand cmdCreateTable = new SQLiteCommand(command, m_dbConnection);
-                cmdCreateTable.ExecuteNonQuery();
-            }
+            string cmd = $"create table if not exists '{tableName}'({builder.ToString()});";
+            SQLiteCommand command = new SQLiteCommand(cmd, connection);
+            try { command.ExecuteNonQuery(); }
             catch (Exception) { throw; }
         }
 
@@ -82,24 +80,29 @@ namespace DSTServerManager.DataHelper
         /// <param name="dataTable"></param>
         /// <param name="tableName"></param>
         /// <returns></returns>
-        public void SaveDataTable(DataTable dataTable, string tableName)
+        public static void SaveDataTable(DataTable dataTable, string tableName)
         {
-            string command = $"delete from '{tableName}';";
+            //string command = $"delete from '{tableName}';";
             try
             {
-                SQLiteCommand cmdCreateTable = new SQLiteCommand(command, m_dbConnection);
-                cmdCreateTable.ExecuteNonQuery();
+                //SQLiteCommand cmdCreateTable = new SQLiteCommand(command, m_dbConnection);
+                //cmdCreateTable.ExecuteNonQuery();
 
-                SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter($"select * from {tableName};", m_dbConnection);
+                SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter($"select * from {tableName};", connection);
                 SQLiteCommandBuilder commandBuilder = new SQLiteCommandBuilder(dataAdapter);
 
+                dataAdapter.UpdateCommand = commandBuilder.GetUpdateCommand();
                 dataAdapter.InsertCommand = commandBuilder.GetInsertCommand();
                 dataAdapter.Update(dataTable);
 
                 dataTable.AcceptChanges();
                 dataAdapter.Dispose();
             }
-            catch (Exception) { throw; }
+            catch (Exception e)
+            {
+                e.ToString();
+                throw;
+            }
         }
 
         /// <summary>
@@ -108,20 +111,44 @@ namespace DSTServerManager.DataHelper
         /// <param name="dataTable"></param>
         /// <param name="tableName"></param>
         /// <returns></returns>
-        public void UpdateDataTable(DataTable dataTable, string tableName)
+        public static void CommonAction(string cmd, params SQLiteParameter[] par)
         {
-            try
+            using (SQLiteTransaction transaction = connection.BeginTransaction())
             {
-                SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter($"select * from {tableName};", m_dbConnection);
-                SQLiteCommandBuilder commandBuilder = new SQLiteCommandBuilder(dataAdapter);
+                SQLiteCommand command = new SQLiteCommand(connection);
 
-                dataAdapter.InsertCommand = commandBuilder.GetInsertCommand();
-                dataAdapter.Update(dataTable);
+                command.Transaction = transaction;
+                command.CommandText = cmd;
+                if (par != null) command.Parameters.AddRange(par);
 
-                dataTable.AcceptChanges();
-                dataAdapter.Dispose();
+                command.ExecuteNonQuery();
+
+                transaction.Commit();
             }
+        }
+
+        /// <summary>
+        /// 使用事务将DataTable的操作同步到数据库
+        /// </summary>
+        /// <param name="dataTable"></param>
+        /// <param name="command"></param>
+        public static void UpdateTableAction(this DataTable dataTable)
+        {
+            SQLiteTransaction transaction = connection.BeginTransaction();
+
+            SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter($"select * from {dataTable};", connection);
+            SQLiteCommandBuilder commandBuilder = new SQLiteCommandBuilder(dataAdapter);
+
+            dataAdapter.UpdateCommand = commandBuilder.GetUpdateCommand();
+            dataAdapter.InsertCommand = commandBuilder.GetInsertCommand();
+            dataAdapter.DeleteCommand = commandBuilder.GetDeleteCommand();
+
+            try { dataAdapter.Update(dataTable); }
             catch (Exception) { throw; }
+            finally { dataAdapter.Dispose(); }
+            dataTable.AcceptChanges();
+
+            transaction.Commit();
         }
     }
 }

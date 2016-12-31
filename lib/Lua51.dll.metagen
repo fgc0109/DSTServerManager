@@ -1,0 +1,121 @@
+ImageRuntimeVersion: v4.0.30319
+Assembly Lua51, Version=0.0.0.0, Culture=neutral, PublicKeyToken=1e1fb15b02227b8a: 
+	hash=SHA1, flags=PublicKey
+Assembly mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Assembly System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
+	hash=None, flags=None
+Class Lua51.LuaCSFunction: AutoLayout, AnsiClass, Class, Public, Sealed, BeforeFieldInit
+  :System.MulticastDelegate
+    Void .ctor(System.Object, IntPtr): PrivateScope, Public, SpecialName, RTSpecialName
+  Methods:
+    Invoke(IntPtr): PrivateScope, Public, Final, Virtual, VtableLayoutMask
+    BeginInvoke(IntPtr, AsyncCallback, Object): PrivateScope, Public, Final, Virtual, VtableLayoutMask
+    EndInvoke(IAsyncResult): PrivateScope, Public, Final, Virtual, VtableLayoutMask
+Class Lua51.LuaDLL: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Methods:
+    lua_gc(IntPtr, LuaGCOptions, Int32): PrivateScope, Public, Static, HideBySig
+    lua_typename(IntPtr, LuaTypes): PrivateScope, Public, Static, HideBySig
+    luaL_typename(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    luaL_error(IntPtr, String): PrivateScope, Public, Static, HideBySig
+    luaL_where(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    luaL_newstate(): PrivateScope, Public, Static, HideBySig
+    luaL_openlibs(IntPtr): PrivateScope, Public, Static, HideBySig
+    luaL_loadstring(IntPtr, String): PrivateScope, Public, Static, HideBySig
+    luaL_dostring(IntPtr, String): PrivateScope, Public, Static, HideBySig
+    lua_dostring(IntPtr, String): PrivateScope, Public, Static, HideBySig
+    lua_createtable(IntPtr, Int32, Int32): PrivateScope, Public, Static, HideBySig
+    lua_newtable(IntPtr): PrivateScope, Public, Static, HideBySig
+    luaL_dofile(IntPtr, String): PrivateScope, Public, Static, HideBySig
+    lua_getglobal(IntPtr, String): PrivateScope, Public, Static, HideBySig
+    lua_setglobal(IntPtr, String): PrivateScope, Public, Static, HideBySig
+    lua_settop(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_pop(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_insert(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_remove(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_gettable(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_rawget(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_settable(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_rawset(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_setmetatable(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_getmetatable(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_equal(IntPtr, Int32, Int32): PrivateScope, Public, Static, HideBySig
+    lua_pushvalue(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_replace(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_gettop(IntPtr): PrivateScope, Public, Static, HideBySig
+    lua_type(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_isnil(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_isnumber(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_isboolean(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    luaL_ref(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_ref(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_rawgeti(IntPtr, Int32, Int32): PrivateScope, Public, Static, HideBySig
+    lua_rawseti(IntPtr, Int32, Int32): PrivateScope, Public, Static, HideBySig
+    lua_newuserdata(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_touserdata(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_getref(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_unref(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_isstring(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_iscfunction(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_pushnil(IntPtr): PrivateScope, Public, Static, HideBySig
+    lua_call(IntPtr, Int32, Int32): PrivateScope, Public, Static, HideBySig
+    lua_pcall(IntPtr, Int32, Int32, Int32): PrivateScope, Public, Static, HideBySig
+    lua_tocfunction(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_tonumber(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_toboolean(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_tostring(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_atpanic(IntPtr, LuaCSFunction): PrivateScope, Public, Static, HideBySig
+    lua_pushstdcallcfunction(IntPtr, LuaCSFunction): PrivateScope, Public, Static, HideBySig
+    lua_pushnumber(IntPtr, Double): PrivateScope, Public, Static, HideBySig
+    lua_pushboolean(IntPtr, Boolean(HasFieldMarshal)): PrivateScope, Public, Static, HideBySig
+    lua_pushstring(IntPtr, String): PrivateScope, Public, Static, HideBySig
+    luaL_newmetatable(IntPtr, String): PrivateScope, Public, Static, HideBySig
+    lua_getfield(IntPtr, Int32, String): PrivateScope, Public, Static, HideBySig
+    luaL_getmetatable(IntPtr, String): PrivateScope, Public, Static, HideBySig
+    luaL_checkudata(IntPtr, Int32, String): PrivateScope, Public, Static, HideBySig
+    luaL_getmetafield(IntPtr, Int32, String): PrivateScope, Public, Static, HideBySig
+    luaL_loadbuffer(IntPtr, String, String): PrivateScope, Public, Static, HideBySig
+    luaL_loadfile(IntPtr, String): PrivateScope, Public, Static, HideBySig
+    lua_error(IntPtr): PrivateScope, Public, Static, HideBySig
+    lua_checkstack(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_next(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_pushlightuserdata(IntPtr, IntPtr): PrivateScope, Public, Static, HideBySig
+    luanet_rawnetobj(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    luanet_checkudata(IntPtr, Int32, String): PrivateScope, Public, Static, HideBySig
+    luaL_checkmetatable(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    luanet_gettag(): PrivateScope, Public, Static, HideBySig
+    luanet_newudata(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    luanet_tonetobject(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+Struct Lua51.LuaTypes: AutoLayout, AnsiClass, Class, Public, Sealed, BeforeFieldInit
+  :System.Enum
+  Fields:
+    Int32 value__ : Public, SpecialName, RTSpecialName
+    Lua51.LuaTypes LUA_TNONE = -1 : Public, Static, Literal, HasDefault
+    Lua51.LuaTypes LUA_TNIL = 0 : Public, Static, Literal, HasDefault
+    Lua51.LuaTypes LUA_TNUMBER = 3 : Public, Static, Literal, HasDefault
+    Lua51.LuaTypes LUA_TSTRING = 4 : Public, Static, Literal, HasDefault
+    Lua51.LuaTypes LUA_TBOOLEAN = 1 : Public, Static, Literal, HasDefault
+    Lua51.LuaTypes LUA_TTABLE = 5 : Public, Static, Literal, HasDefault
+    Lua51.LuaTypes LUA_TFUNCTION = 6 : Public, Static, Literal, HasDefault
+    Lua51.LuaTypes LUA_TUSERDATA = 7 : Public, Static, Literal, HasDefault
+    Lua51.LuaTypes LUA_TLIGHTUSERDATA = 2 : Public, Static, Literal, HasDefault
+Struct Lua51.LuaGCOptions: AutoLayout, AnsiClass, Class, Public, Sealed, BeforeFieldInit
+  :System.Enum
+  Fields:
+    Int32 value__ : Public, SpecialName, RTSpecialName
+    Lua51.LuaGCOptions LUA_GCSTOP = 0 : Public, Static, Literal, HasDefault
+    Lua51.LuaGCOptions LUA_GCRESTART = 1 : Public, Static, Literal, HasDefault
+    Lua51.LuaGCOptions LUA_GCCOLLECT = 2 : Public, Static, Literal, HasDefault
+    Lua51.LuaGCOptions LUA_GCCOUNT = 3 : Public, Static, Literal, HasDefault
+    Lua51.LuaGCOptions LUA_GCCOUNTB = 4 : Public, Static, Literal, HasDefault
+    Lua51.LuaGCOptions LUA_GCSTEP = 5 : Public, Static, Literal, HasDefault
+    Lua51.LuaGCOptions LUA_GCSETPAUSE = 6 : Public, Static, Literal, HasDefault
+    Lua51.LuaGCOptions LUA_GCSETSTEPMUL = 7 : Public, Static, Literal, HasDefault
+Struct Lua51.LuaIndexes: AutoLayout, AnsiClass, Class, Public, Sealed, BeforeFieldInit
+  :System.Enum
+  Fields:
+    Int32 value__ : Public, SpecialName, RTSpecialName
+    Lua51.LuaIndexes LUA_REGISTRYINDEX = -10000 : Public, Static, Literal, HasDefault
+    Lua51.LuaIndexes LUA_ENVIRONINDEX = -10001 : Public, Static, Literal, HasDefault
+    Lua51.LuaIndexes LUA_GLOBALSINDEX = -10002 : Public, Static, Literal, HasDefault

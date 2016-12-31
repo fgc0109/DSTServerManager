@@ -3,7 +3,7 @@ using DSTServerManager.Saves;
 using DSTServerManager.Servers;
 using Renci.SshNet;
 using System;
-using NLua;
+using LuaInterface;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -28,9 +28,7 @@ namespace DSTServerManager
         private List<ClusterInfo> m_ClusterInfo_Local = null;
         private List<ClusterInfo> m_ClusterInfo_Cloud = null;
 
-        private UserInterfaceData UI = null;
-
-        private SQLiteHelper m_UserDataSQLite = null;
+        private static UserInterfaceData UI = null;
 
         private CloudConnection m_Win_CloudConnection = null;
         private SteamCommand_1 m_Win_SteamCommand = null;
@@ -41,6 +39,8 @@ namespace DSTServerManager
         public DSTServerLauncher()
         {
             InitializeComponent();
+            SQLiteHelper.OpenSQLite(appStartupPath + @"\DSTServerManager.db");
+
             m_TabItemXaml = System.Windows.Markup.XamlWriter.Save(tabItemMain);
             TabControl_ServerLog.SelectionChanged += TabControl_ServerLog_SelectionChanged;
 
@@ -63,8 +63,8 @@ namespace DSTServerManager
 
         private void UserDataWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            m_UserDataSQLite = new SQLiteHelper();
-            GetUserData(m_UserDataSQLite);
+            CreateDefaultTable();
+            GetDatabaseData();
 
             if (SavesManager.GetSavesFolder().Count == 0) SavesManager.CreatSavesFolder();
             UI.SaveFolders_Local = SavesManager.GetSavesFolder();
@@ -79,6 +79,8 @@ namespace DSTServerManager
             UI.Connections = ConnectionsOrigin.Copy();
             UI.ServerCloud = ServerCloudOrigin.Clone();
             UI.ServerLocal = ServerLocalOrigin.Copy();
+            UI.CommandLine = CommandLineOrigin.Copy();
+            UI.ServerLevel = ServerLevelOrigin.Copy();
 
             ComboBox_LocalServer_SavesFolder.SelectedIndex = 0;
         }
@@ -120,11 +122,11 @@ namespace DSTServerManager
 
             if (tabItem_LocalServer.IsSelected && indexServer != -1 && indexLocalFile != -1)
             {
-                UI.ClusterServersLevel = m_ClusterInfo_Local[indexLocalFile].ClusterServers[indexServer].Level.ServerLevelTable.Copy();
+                UI.ServerLevel = m_ClusterInfo_Local[indexLocalFile].ClusterServers[indexServer].Level.ServerLevelTable.Copy();
             }
             if (tabItem_CloudServer.IsSelected && indexServer != -1 && indexCloudFile != -1)
             {
-                UI.ClusterServersLevel = m_ClusterInfo_Cloud[indexCloudFile].ClusterServers[indexServer].Level.ServerLevelTable.Copy();
+                UI.ServerLevel = m_ClusterInfo_Cloud[indexCloudFile].ClusterServers[indexServer].Level.ServerLevelTable.Copy();
             }
         }
 
@@ -199,7 +201,7 @@ namespace DSTServerManager
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-            var test = new ServerModInfo(@"C:\Users\mj\Documents\Klei\DSTTools\mods\workshop-631648169");
+            var test = new ServerModInfo(@"D:\UserFiles\Documents\Klei\DSTTools\mods\workshop-631648169");
             test.LuaDoFile();
             textBox_Servers_Tab_Log.Text = test.Name;
 

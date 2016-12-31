@@ -46,22 +46,25 @@ namespace DSTServerManager.DataHelper
         /// </summary>
         /// <param name="dataTable"></param>
         /// <param name="excelTable"></param>
-        public static void MergeExcelData(this DataTable dataTable,DataTable excelTable)
-        { 
-            for (int i = 0; i < excelTable.Rows.Count; i++)
-                dataTable.Rows.Add(excelTable.Rows[i].ItemArray);
+        public static void MergeExcelData(this DataTable dataTable, DataTable excelTable)
+        {
+            //for (int i = 0; i < excelTable.Rows.Count; i++)
+            //    dataTable.Rows.Add(excelTable.Rows[i].ItemArray);
 
-            for (int i = 0; i < dataTable.Rows.Count; i++)
-                dataTable.Rows[i][0] = 0;
+            //for (int i = 0; i < dataTable.Rows.Count; i++)
+            //    dataTable.Rows[i][0] = 0;
 
-            DataTable temp = dataTable.DefaultView.ToTable(true).Copy();
-            dataTable.Clear();
+            //DataTable temp = dataTable.DefaultView.ToTable(true).Copy();
+            //dataTable.Clear();
 
-            for (int i = 0; i < temp.Rows.Count; i++)
-                dataTable.Rows.Add(temp.Rows[i].ItemArray);
+            //for (int i = 0; i < temp.Rows.Count; i++)
+            //    dataTable.Rows.Add(temp.Rows[i].ItemArray);
 
-            for (int i = 0; i < dataTable.Rows.Count; i++)
-                dataTable.Rows[i][0] = i + 1;
+            //for (int i = 0; i < dataTable.Rows.Count; i++)
+            //    dataTable.Rows[i][0] = i + 1;
+
+
+  
         }
 
         /// <summary>
