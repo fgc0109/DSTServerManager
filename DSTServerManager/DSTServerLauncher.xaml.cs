@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Text;
 
 namespace DSTServerManager
 {
@@ -33,6 +34,8 @@ namespace DSTServerManager
         private CloudConnection m_Win_CloudConnection = null;
         private SteamCommand_1 m_Win_SteamCommand = null;
         private SteamCommand_2 m_Win_CloudCommand = null;
+
+        private List<ServerModInfo> m_ServerModInfo = new List<ServerModInfo>();
 
         private string m_TabItemXaml = string.Empty;
 
@@ -206,6 +209,21 @@ namespace DSTServerManager
             textBox_Servers_Tab_Log.Text = test.Name;
 
             UI.Modification.Rows.Add(test.GetItemArray());
+        }
+
+        private void dataGrid_Modifications_MainInfos_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int index = dataGrid_Modifications_MainInfos.SelectedIndex;
+            if (index == -1) return;
+            var modData = m_ServerModInfo[index];
+
+            StringBuilder modBuilder = new StringBuilder(1024);
+            modBuilder.Append($"模组名称:{modData.Name}\r\n");
+            modBuilder.Append($"模组作者:{modData.Author}\r\n");
+            modBuilder.Append($"模组版本:{modData.Version}\r\n");
+            modBuilder.Append($"模组介绍:{modData.Description}\r\n");
+
+            textBox_Modifications_CurrentInfo.Text = modBuilder.ToString();
         }
 
         //dataGrid和datatable之间数据直接赋值的示例 不应该使用这种方式

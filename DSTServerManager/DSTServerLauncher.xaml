@@ -278,13 +278,21 @@
             </TabItem>
             <TabItem Header="模组设置">
                 <Grid Background="#FFE5E5E5">
-                    <GroupBox x:Name="groupBox" Header="GroupBox" Margin="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40*"/>
+                        <RowDefinition Height="9*"/>
+                    </Grid.RowDefinitions>
+                    <GroupBox x:Name="groupBox" Header="当前服务器已下载模组" Margin="5">
                         <Grid Margin="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="334*"/>
+                                <RowDefinition Height="321*"/>
+                            </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="131*"/>
                                 <ColumnDefinition Width="165*"/>
                             </Grid.ColumnDefinitions>
-                            <DataGrid x:Name="dataGrid_Modifications_MainInfos" Margin="5" CanUserAddRows="False" AutoGenerateColumns="False" Style="{DynamicResource DataGridStyleCenter}" RowHeight="20">
+                            <DataGrid x:Name="dataGrid_Modifications_MainInfos" Margin="5" CanUserAddRows="False" AutoGenerateColumns="False" Style="{DynamicResource DataGridStyleCenter}" RowHeight="20" Grid.RowSpan="2" SelectionChanged="dataGrid_Modifications_MainInfos_SelectionChanged">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="{DynamicResource ModInfo_Indx}" Binding="{Binding ModInfo_Indx}" Width ="80" MinWidth="80" IsReadOnly="True"/>
                                     <DataGridTextColumn Header="{DynamicResource ModInfo_Name}" Binding="{Binding ModInfo_Name}" Width ="80" MinWidth="80" IsReadOnly="True"/>
@@ -298,8 +306,11 @@
                                     <DataGridTextColumn Header="{DynamicResource ModInfo_Desc}" Binding="{Binding ModInfo_Desc}" Width ="200*" MinWidth="200" IsReadOnly="True"/>
                                 </DataGrid.Columns>
                             </DataGrid>
+                            <TextBox x:Name="textBox_Modifications_CurrentInfo" Margin="5" TextWrapping="Wrap" Background="#FF464646" Foreground="White" IsReadOnly="True" FontFamily="Courier New" Grid.Column="1"/>
+                            <DataGrid Grid.Column="1" Margin="5" Grid.Row="1"/>
                         </Grid>
                     </GroupBox>
+                    <GroupBox Header="下载新的模组" Margin="5" Grid.Row="1"/>
 
                 </Grid>
             </TabItem>

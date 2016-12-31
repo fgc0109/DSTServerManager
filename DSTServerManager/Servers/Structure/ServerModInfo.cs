@@ -36,6 +36,7 @@ namespace DSTServerManager.Servers
         private bool reign_of_giants_compatible;
         private bool all_clients_require_mod;
 
+        private LuaTable configuration_options;
         #endregion
 
         #region 信息属性
@@ -50,6 +51,7 @@ namespace DSTServerManager.Servers
         public bool Reign_of_giants_compatible { get { return reign_of_giants_compatible; } }
         public bool All_clients_require_mod { get { return all_clients_require_mod; } }
 
+        public LuaTable Configuration_options { get { return configuration_options; } }
         #endregion
 
         public void LuaDoFile()
@@ -57,16 +59,21 @@ namespace DSTServerManager.Servers
             Lua luaFile = new Lua();
             var interData = luaFile.DoFile(m_FilePath);
 
-            name = Encoding.GetEncoding("UTF-8").GetString(Encoding.Default.GetBytes((string)luaFile[nameof(name)]));
-            description = Encoding.GetEncoding("UTF-8").GetString(Encoding.Default.GetBytes((string)luaFile[nameof(description)]));
-            author = Encoding.GetEncoding("UTF-8").GetString(Encoding.Default.GetBytes((string)luaFile[nameof(author)]));
-            version = Encoding.GetEncoding("UTF-8").GetString(Encoding.Default.GetBytes((string)luaFile[nameof(version)]));
+            name = Encoding.UTF8.GetString(Encoding.Default.GetBytes((string)luaFile[nameof(name)]));
+            description = Encoding.UTF8.GetString(Encoding.Default.GetBytes((string)luaFile[nameof(description)]));
+            author = Encoding.UTF8.GetString(Encoding.Default.GetBytes((string)luaFile[nameof(author)]));
+            version = Encoding.UTF8.GetString(Encoding.Default.GetBytes((string)luaFile[nameof(version)]));
 
             api_version = (double)luaFile[nameof(api_version)];
             dst_compatible = (bool?)luaFile[nameof(dst_compatible)] ?? false;
             dont_starve_compatible = (bool?)luaFile[nameof(dont_starve_compatible)] ?? false;
             reign_of_giants_compatible = (bool?)luaFile[nameof(reign_of_giants_compatible)] ?? false;
             all_clients_require_mod = (bool?)luaFile[nameof(all_clients_require_mod)] ?? false;
+
+            configuration_options = luaFile[nameof(configuration_options)] as LuaTable;
+
+            //要处理没有设置项的情况
+            //var config = luaFile.GetTableDict(configuration_options);
         }
 
         public object[] GetItemArray()
