@@ -109,7 +109,7 @@ namespace DSTServerManager.Servers
                     array[index] = item.Value;
                     index++;
                 }
-                m_Configuration.Rows.Add(new object[] { 1, de });
+                //m_Configuration.Rows.Add(new object[] { 1, de });
             }
 
         }
