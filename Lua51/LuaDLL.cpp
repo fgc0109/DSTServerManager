@@ -1,4 +1,3 @@
-
 using namespace System;
 using namespace System::Runtime::InteropServices;
 using namespace System::Reflection;
@@ -6,16 +5,11 @@ using namespace System::Collections;
 using namespace System::Text;
 using namespace System::Security;
 
-// #include <vcclr.h>
-// #define _WINNT_
-// #include <WinDef.h>
 #include <vcclr.h>
-// #include <atlstr.h>
 #include <stdio.h>
 #using <mscorlib.dll>
 #include <string.h>
 
-// #define LUA_BUILD_AS_DLL
 #define LUA_LIB
 #define LUA_CORE
 #define lua_c
@@ -26,14 +20,10 @@ using namespace System::Security;
 #include "lualib.h"
 #include "lauxlib.h"
 
-// Not sure of the purpose of this, but I'm keeping it -kevinh
 static int tag = 0;
 
 namespace Lua51
 {
-
-
-#if 1
 #undef LUA_TNONE
 #undef LUA_TNIL
 #undef LUA_TNUMBER
@@ -44,9 +34,6 @@ namespace Lua51
 #undef LUA_TUSERDATA
 #undef LUA_TLIGHTUSERDATA
 
-	/*
-	 * Lua types for the API, returned by lua_type function
-	 */
 	public enum class LuaTypes
 	{
 		LUA_TNONE = -1,
@@ -60,9 +47,6 @@ namespace Lua51
 		LUA_TLIGHTUSERDATA = 2
 	};
 
-#endif
-
-#if 1
 #undef LUA_GCSTOP
 #undef LUA_GCRESTART
 #undef LUA_GCCOLLECT
@@ -72,9 +56,6 @@ namespace Lua51
 #undef LUA_GCSETPAUSE
 #undef LUA_GCSETSTEPMUL
 
-	/*
-	 * Lua Garbage Collector options (param "what")
-	 */
 	public enum class LuaGCOptions
 	{
 		LUA_GCSTOP = 0,
@@ -86,15 +67,11 @@ namespace Lua51
 		LUA_GCSETPAUSE = 6,
 		LUA_GCSETSTEPMUL = 7,
 	};
-#endif
 
 #undef LUA_REGISTRYINDEX
 #undef LUA_ENVIRONINDEX
 #undef LUA_GLOBALSINDEX
 
-	/*
-	 * Special stack indexes
-	 */
 	public enum class LuaIndexes
 	{
 		LUA_REGISTRYINDEX = -10000,
@@ -126,11 +103,8 @@ namespace Lua51
 	 */
 	public delegate int LuaCSFunction(IntPtr luaState);
 
-
-
-
-	// To fix the strings:
-	// http://support.microsoft.com/kb/311259
+	// delegate for lua debug hook callback (by Reinhard Ostermeier)
+	public delegate void LuaHookFunction(IntPtr luaState, IntPtr luaDebug);
 
 	public ref class LuaDLL
 	{
@@ -194,8 +168,10 @@ namespace Lua51
 			return IntPtr(::luaL_newstate());
 		}
 
-		// Not yet wrapped
-		// static void lua_close(IntPtr luaState);
+		static void lua_close(IntPtr luaState)
+		{
+			::lua_close(toState);
+		}
 
 		// steffenj: BEGIN Lua 5.1.1 API change (new function luaL_openlibs)
 		static void luaL_openlibs(IntPtr luaState)
@@ -258,10 +234,13 @@ namespace Lua51
 			char *cs = (char *)Marshal::StringToHGlobalAnsi(fileName).ToPointer();
 
 			int result = ::luaL_loadfile(toState, cs);
+
+			//CP: Free filename string before return to ensure a file that isnt found still has the string freed (submitted by paul moore)
+			//link: http://luaforge.net/forum/forum.php?thread_id=2825&forum_id=145
+			Marshal::FreeHGlobal(IntPtr(cs));
+
 			if (result != 0)
 				return result;
-
-			Marshal::FreeHGlobal(IntPtr(cs));
 
 			return ::lua_pcall(toState, 0, -1, 0);
 		}
@@ -442,7 +421,7 @@ namespace Lua51
 
 		static void lua_unref(IntPtr luaState, int reference)
 		{
-			luaL_unref(toState, (int)LuaIndexes::LUA_REGISTRYINDEX, reference);
+			::luaL_unref(toState, (int)LuaIndexes::LUA_REGISTRYINDEX, reference);
 		}
 
 		static bool lua_isstring(IntPtr luaState, int index)
@@ -499,8 +478,6 @@ namespace Lua51
 
 		static String^ lua_tostring(IntPtr luaState, int index)
 		{
-#if 1
-			// FIXME use the same format string as lua i.e. LUA_NUMBER_FMT
 			LuaTypes t = lua_type(luaState, index);
 
 			if (t == LuaTypes::LUA_TNUMBER)
@@ -513,22 +490,9 @@ namespace Lua51
 				return Marshal::PtrToStringAnsi(IntPtr((char *)str), strlen);
 			}
 			else if (t == LuaTypes::LUA_TNIL)
-				return nullptr;			// treat lua nulls to as C# nulls
+				return nullptr;
 			else
-				return gcnew String("0");	// Because luaV_tostring does this
-#else
-
-
-			size_t strlen;
-
-			// Note!  This method will _change_ the representation of the object on the stack to a string.
-			// We do not want this behavior so we do the conversion ourselves
-			const char *str = ::lua_tolstring(toState, index, &strlen);
-			if (str)
-				return Marshal::PtrToStringAnsi(IntPtr((char *)str), strlen);
-			else
-				return nullptr;            // treat lua nulls to as C# nulls
-#endif
+				return gcnew String("0");
 		}
 
 		static void lua_atpanic(IntPtr luaState, LuaCSFunction^ panicf)
@@ -537,31 +501,11 @@ namespace Lua51
 			::lua_atpanic(toState, (lua_CFunction)p.ToPointer());
 		}
 
-#if 0
-		// no longer needed - all our functions are now stdcall calling convention
-		static int stdcall_closure(lua_State *L) {
-			lua_CFunction fn = (lua_CFunction)lua_touserdata(L, lua_upvalueindex(1));
-			return fn(L);
-		}
-#endif
-
 		static void lua_pushstdcallcfunction(IntPtr luaState, LuaCSFunction^ function)
 		{
 			IntPtr p = Marshal::GetFunctionPointerForDelegate(function);
 			lua_pushcfunction(toState, (lua_CFunction)p.ToPointer());
 		}
-
-
-#if 0
-		// not yet implemented
-		static void lua_atlock(IntPtr luaState, LuaCSFunction^ lockf)
-		{
-			IntPtr p = Marshal::GetFunctionPointerForDelegate(lockf);
-			::lua_atlock(toState, (lua_CFunction)p.ToPointer());
-		}
-
-		static void lua_atunlock(IntPtr luaState, LuaCSFunction^ unlockf);
-#endif
 
 		static void lua_pushnumber(IntPtr luaState, double number)
 		{
@@ -573,19 +517,6 @@ namespace Lua51
 			::lua_pushboolean(toState, value);
 		}
 
-#if 0
-		// Not yet wrapped
-		static void lua_pushlstring(IntPtr luaState, String^ str, int size)
-		{
-			char *cs = (char *)Marshal::StringToHGlobalAnsi(str).ToPointer();
-
-			//
-
-			Marshal::FreeHGlobal(IntPtr(cs));
-		}
-#endif
-
-
 		static void lua_pushstring(IntPtr luaState, String^ str)
 		{
 			char *cs = (char *)Marshal::StringToHGlobalAnsi(str).ToPointer();
@@ -594,7 +525,6 @@ namespace Lua51
 
 			Marshal::FreeHGlobal(IntPtr(cs));
 		}
-
 
 		static int luaL_newmetatable(IntPtr luaState, String^ meta)
 		{
@@ -606,7 +536,6 @@ namespace Lua51
 
 			return result;
 		}
-
 
 		// steffenj: BEGIN Lua 5.1.1 API change (luaL_getmetatable is now a macro using lua_getfield)
 		static void lua_getfield(IntPtr luaState, int stackPos, String^ meta)
@@ -655,8 +584,7 @@ namespace Lua51
 			char *cs1 = (char *)Marshal::StringToHGlobalAnsi(buff).ToPointer();
 			char *cs2 = (char *)Marshal::StringToHGlobalAnsi(name).ToPointer();
 
-			//int result = ::luaL_loadbuffer(toState, cs1, buff->Length, cs2);
-			//CP: fix for MBCS, changed to use cs1's length (reported by qingrui.li) 
+			//CP: fix for MBCS, changed to use cs1's length (reported by qingrui.li)
 			int result = ::luaL_loadbuffer(toState, cs1, strlen(cs1), cs2);
 
 			Marshal::FreeHGlobal(IntPtr(cs1));
@@ -692,9 +620,6 @@ namespace Lua51
 			return ::lua_next(toState, index);
 		}
 
-
-
-
 		static void lua_pushlightuserdata(IntPtr luaState, IntPtr udata)
 		{
 			::lua_pushlightuserdata(toState, udata.ToPointer());
@@ -706,6 +631,100 @@ namespace Lua51
 			if (udata != NULL) return *udata;
 			return -1;
 		}
+
+
+		// lua debug hook functions added by Reinhard Ostermeier
+
+		static int lua_sethook(IntPtr luaState, LuaHookFunction^ func, int mask, int count)
+		{
+			IntPtr p;
+			if (func == nullptr)
+			{
+				p = IntPtr::Zero;
+			}
+			else
+			{
+				p = Marshal::GetFunctionPointerForDelegate(func);
+			}
+			return ::lua_sethook(toState, (lua_Hook)p.ToPointer(), mask, count);
+		}
+
+		static int lua_gethookmask(IntPtr luaState)
+		{
+			return ::lua_gethookmask(toState);
+		}
+
+		static int lua_gethookcount(IntPtr luaState)
+		{
+			return ::lua_gethookcount(toState);
+		}
+
+		static int lua_getstack(IntPtr luaState, int level, IntPtr luaDebug)
+		{
+			return ::lua_getstack(toState, level, (lua_Debug*)luaDebug.ToPointer());
+		}
+
+		static int lua_getinfo(IntPtr luaState, String^ what, IntPtr luaDebug)
+		{
+			char *cs = (char *)Marshal::StringToHGlobalAnsi(what).ToPointer();
+			int ret = ::lua_getinfo(toState, cs, (lua_Debug*)luaDebug.ToPointer());
+			Marshal::FreeHGlobal(IntPtr(cs));
+			return ret;
+		}
+
+		static String^ lua_getlocal(IntPtr luaState, IntPtr luaDebug, int n)
+		{
+			const char* str = ::lua_getlocal(toState, (lua_Debug*)luaDebug.ToPointer(), n);
+			if (str == NULL)
+			{
+				return nullptr;
+			}
+			else
+			{
+				return gcnew String(str);
+			}
+		}
+
+		static String^ lua_setlocal(IntPtr luaState, IntPtr luaDebug, int n)
+		{
+			const char* str = ::lua_setlocal(toState, (lua_Debug*)luaDebug.ToPointer(), n);
+			if (str == NULL)
+			{
+				return nullptr;
+			}
+			else
+			{
+				return gcnew String(str);
+			}
+		}
+
+		static String^ lua_getupvalue(IntPtr luaState, int funcindex, int n)
+		{
+			const char* str = ::lua_getupvalue(toState, funcindex, n);
+			if (str == NULL)
+			{
+				return nullptr;
+			}
+			else
+			{
+				return gcnew String(str);
+			}
+		}
+
+		static String^ lua_setupvalue(IntPtr luaState, int funcindex, int n)
+		{
+			const char* str = ::lua_setupvalue(toState, funcindex, n);
+			if (str == NULL)
+			{
+				return nullptr;
+			}
+			else
+			{
+				return gcnew String(str);
+			}
+		}
+
+		// end of lua debug hook functions
 
 	private:
 
@@ -756,7 +775,7 @@ namespace Lua51
 
 		static bool luaL_checkmetatable(IntPtr luaState, int index)
 		{
-			bool retVal = 0;
+			int retVal = 0;
 
 			if (lua_getmetatable(luaState, index) != 0)
 			{
@@ -802,12 +821,46 @@ namespace Lua51
 			return -1;
 		}
 
+		/// <summary>
+		/// 分配托管String,从Lua Stack获取字符串并封送到其中
+		/// </summary>
+		static String^ LuaToString(IntPtr luaState, int index, bool ansi)
+		{
+			LuaTypes type = lua_type(luaState, index);
 
-#if 0
+			if (type == LuaTypes::LUA_TSTRING)
+			{
+				size_t strlen;
+				const char *str = ::lua_tolstring(toState, index, &strlen);
 
+				if (ansi) return Marshal::PtrToStringAnsi(IntPtr((char *)str), strlen);
+				else return Marshal::PtrToStringUni(IntPtr((char *)str), strlen);
+			}
 
-		[DllImport(STUBDLL, CallingConvention = CallingConvention.Cdecl)]
+			else if (type == LuaTypes::LUA_TNUMBER)
+				return String::Format("{0}", lua_tonumber(luaState, index));
 
-#endif
+			else if (type == LuaTypes::LUA_TNIL) return nullptr;
+
+			else return gcnew String("");
+		}
+
+		/// <summary>
+		/// 分配托管Byte[],从Lua Stack获取字符串并封送到其中
+		/// </summary>
+		static array<Byte>^ LuaToByteArray(IntPtr luaState, int index)
+		{
+			LuaTypes type = lua_type(luaState, index);
+			if (type == LuaTypes::LUA_TSTRING)
+			{
+				size_t strlen;
+				const char *str = ::lua_tolstring(toState, index, &strlen);
+				array<Byte>^ data = gcnew array<Byte>(strlen);
+
+				Marshal::Copy(IntPtr((char *)str), data, 0, strlen);
+				return data;
+			}
+			else return nullptr;
+		}
 	};
 }
