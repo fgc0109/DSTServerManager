@@ -285,25 +285,27 @@
                     <GroupBox x:Name="groupBox" Header="当前服务器已下载模组" Margin="5">
                         <Grid Margin="0">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="334*"/>
-                                <RowDefinition Height="321*"/>
+                                <RowDefinition Height="330"/>
+                                <RowDefinition Height="100*"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="131*"/>
-                                <ColumnDefinition Width="165*"/>
+                                <ColumnDefinition Width="100*"/>
+                                <ColumnDefinition Width="540"/>
                             </Grid.ColumnDefinitions>
                             <DataGrid x:Name="dataGrid_Modifications_MainInfos" Margin="5" CanUserAddRows="False" AutoGenerateColumns="False" Style="{DynamicResource DataGridStyleCenter}" RowHeight="20" Grid.RowSpan="2" SelectionChanged="dataGrid_Modifications_MainInfos_SelectionChanged">
                                 <DataGrid.Columns>
+                                    <DataGridCheckBoxColumn Header="{DynamicResource ModInfo_Adde}" Binding="{Binding ModInfo_Adde}" Width ="36" MinWidth="36" IsReadOnly="False"/>
+                                    <DataGridCheckBoxColumn Header="{DynamicResource ModInfo_Actv}" Binding="{Binding ModInfo_Actv}" Width ="36" MinWidth="36" IsReadOnly="False"/>
                                     <DataGridTextColumn Header="{DynamicResource ModInfo_Indx}" Binding="{Binding ModInfo_Indx}" Width ="80" MinWidth="80" IsReadOnly="True"/>
                                     <DataGridTextColumn Header="{DynamicResource ModInfo_Name}" Binding="{Binding ModInfo_Name}" Width ="80" MinWidth="80" IsReadOnly="True"/>
                                     <DataGridTextColumn Header="{DynamicResource ModInfo_Auth}" Binding="{Binding ModInfo_Auth}" Width ="80" MinWidth="80" IsReadOnly="True"/>
                                     <DataGridTextColumn Header="{DynamicResource ModInfo_Vern}" Binding="{Binding ModInfo_Vern}" Width ="40" MinWidth="40" IsReadOnly="True"/>
                                     <DataGridTextColumn Header="{DynamicResource ModInfo_ApiV}" Binding="{Binding ModInfo_ApiV}" Width ="40" MinWidth="40" IsReadOnly="True"/>
-                                    <DataGridTextColumn Header="{DynamicResource ModInfo_Muti}" Binding="{Binding ModInfo_Muti}" Width ="40" MinWidth="40" IsReadOnly="True"/>
-                                    <DataGridTextColumn Header="{DynamicResource ModInfo_Solo}" Binding="{Binding ModInfo_Solo}" Width ="40" MinWidth="40" IsReadOnly="True"/>
-                                    <DataGridTextColumn Header="{DynamicResource ModInfo_Dlc1}" Binding="{Binding ModInfo_Dlc1}" Width ="40" MinWidth="40" IsReadOnly="True"/>
-                                    <DataGridTextColumn Header="{DynamicResource ModInfo_allC}" Binding="{Binding ModInfo_allC}" Width ="40" MinWidth="40" IsReadOnly="True"/>
-                                    <DataGridTextColumn Header="{DynamicResource ModInfo_Desc}" Binding="{Binding ModInfo_Desc}" Width ="200*" MinWidth="200" IsReadOnly="True"/>
+                                    <DataGridCheckBoxColumn Header="{DynamicResource ModInfo_Muti}" Binding="{Binding ModInfo_Muti}" Width ="36" MinWidth="36" IsReadOnly="True"/>
+                                    <DataGridCheckBoxColumn Header="{DynamicResource ModInfo_Solo}" Binding="{Binding ModInfo_Solo}" Width ="36" MinWidth="36" IsReadOnly="True"/>
+                                    <DataGridCheckBoxColumn Header="{DynamicResource ModInfo_Dlc1}" Binding="{Binding ModInfo_Dlc1}" Width ="36" MinWidth="36" IsReadOnly="True"/>
+                                    <DataGridCheckBoxColumn Header="{DynamicResource ModInfo_allC}" Binding="{Binding ModInfo_allC}" Width ="36" MinWidth="36" IsReadOnly="True"/>
+                                    <!--<DataGridTextColumn Header="{DynamicResource ModInfo_Desc}" Binding="{Binding ModInfo_Desc}" Width ="200*" MinWidth="200" IsReadOnly="True"/>-->
                                 </DataGrid.Columns>
                             </DataGrid>
                             <TextBox x:Name="textBox_Modifications_CurrentInfo" Margin="5" TextWrapping="Wrap" Background="#FF464646" Foreground="White" IsReadOnly="True" FontFamily="Courier New" Grid.Column="1"/>
@@ -380,7 +382,6 @@
                             <Label Content="路径" Margin="5,5,159,5" HorizontalContentAlignment="Center" RenderTransformOrigin="2.308,0.409" VerticalContentAlignment="Center" Padding="4"/>
                             <TextBox x:Name="textBox_LocalServer_ClusterSaveList_AddPath" Margin="5" TextWrapping="Wrap" VerticalContentAlignment="Center" Grid.Row="1"/>
                             <Button x:Name="button_LocalServer_AddCluster" Content="添加文件夹" Margin="5" Grid.Column="1" Width="90" Height="20" Grid.Row="1" Click="button_LocalServer_AddCluster_Click"/>
-                            <TextBox x:Name="textBox_LocalServer_ClusterSaveList_AddPath_Copy" Margin="249,-37,-357,47" TextWrapping="Wrap" VerticalContentAlignment="Center" Grid.Column="1"/>
                             <Button x:Name="button_LocalServer_AddCluster_Copy" Content="添加文件夹" Margin="467,-36,-457,48" Grid.Column="1" Width="90" Height="20" Click="button_LocalServer_AddCluster_Click"/>
                         </Grid>
                     </GroupBox>

@@ -532,6 +532,8 @@ namespace DSTServerManager
             for (int i = 0; i < columns; i++)
                 clusterServersTable.Columns.Add("Column_" + i.ToString());
 
+            modification.Columns.Add("ModInfo_Adde");
+            modification.Columns.Add("ModInfo_Actv");
             modification.Columns.Add("ModInfo_Indx");
             modification.Columns.Add("ModInfo_Name");
             modification.Columns.Add("ModInfo_Auth");

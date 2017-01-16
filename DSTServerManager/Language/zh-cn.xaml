@@ -44,6 +44,8 @@
     <s:String x:Key="SAVESERVER_SESSON">会话编号</s:String>
     <s:String x:Key="SAVESERVER_CONNEC">世界连接</s:String>
 
+    <s:String x:Key="ModInfo_Adde">添加</s:String>
+    <s:String x:Key="ModInfo_Actv">激活</s:String>
     <s:String x:Key="ModInfo_Indx">编号</s:String>
     <s:String x:Key="ModInfo_Name">名称</s:String>
     <s:String x:Key="ModInfo_Desc">描述</s:String>
