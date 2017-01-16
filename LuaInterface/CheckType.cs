@@ -81,6 +81,25 @@ namespace LuaInterface
             if (paramType.Equals(typeof(object)))
                 return extractValues[runtimeHandleValue];
 
+            //CP: Added support for generic parameters
+            if (paramType.IsGenericParameter)
+            {
+                if (luatype == LuaTypes.LUA_TBOOLEAN)
+                    return extractValues[typeof(bool).TypeHandle.Value.ToInt64()];
+                else if (luatype == LuaTypes.LUA_TSTRING)
+                    return extractValues[typeof(string).TypeHandle.Value.ToInt64()];
+                else if (luatype == LuaTypes.LUA_TTABLE)
+                    return extractValues[typeof(LuaTable).TypeHandle.Value.ToInt64()];
+                else if (luatype == LuaTypes.LUA_TUSERDATA)
+                    return extractValues[typeof(object).TypeHandle.Value.ToInt64()];
+                else if (luatype == LuaTypes.LUA_TFUNCTION)
+                    return extractValues[typeof(LuaFunction).TypeHandle.Value.ToInt64()];
+                else if (luatype == LuaTypes.LUA_TNUMBER)
+                    return extractValues[typeof(double).TypeHandle.Value.ToInt64()];
+                else
+                    ;//an unsupported type was encountered
+            }
+
             if (LuaDLL.lua_isnumber(luaState, stackPos))
                 return extractValues[runtimeHandleValue];
 
@@ -262,7 +281,7 @@ namespace LuaInterface
                     }
                 }
             }
-            object obj = translator.getObject(luaState, stackPos);
+            object obj = translator.GetStackObject(luaState, stackPos);
             return obj;
         }
         public object getAsNetObject(IntPtr luaState, int stackPos)

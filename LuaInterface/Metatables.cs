@@ -1,12 +1,12 @@
 namespace LuaInterface
 {
-    using Lua51;
     using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Diagnostics;
     using System.IO;
+    using System.Collections;
     using System.Reflection;
+    using System.Diagnostics;
+    using System.Collections.Generic;
+    using Lua51;
     using System.Runtime.InteropServices;
 
     /*
@@ -141,60 +141,101 @@ namespace LuaInterface
                 return 1;
             }
 
-            object index = translator.getObject(luaState, 2);
+            object index = translator.GetStackObject(luaState, 2);
             Type indexType = index.GetType();
 
             string methodName = index as string;        // will be null if not a string arg
             Type objType = obj.GetType();
 
-            // Handle the most common case, looking up the method by name
-            if (methodName != null && isMemberPresent(objType, methodName))
-                return getMember(luaState, objType, obj, methodName, BindingFlags.Instance);
+            // Handle the most common case, looking up the method by name. 
+
+            // CP: This will fail when using indexers and attempting to get a value with the same name as a property of the object, 
+            // ie: xmlelement['item'] <- item is a property of xmlelement
+            try
+            {
+                if (methodName != null && isMemberPresent(objType, methodName))
+                    return getMember(luaState, objType, obj, methodName, BindingFlags.Instance | BindingFlags.IgnoreCase);
+            }
+            catch { }
 
             // Try to access by array if the type is right and index is an int (lua numbers always come across as double)
             if (objType.IsArray && index is double)
             {
-                object[] arr = (object[])obj;
+                int intIndex = (int)((double)index);
 
-                translator.push(luaState, arr[(int)((double)index)]);
+                if (objType.UnderlyingSystemType == typeof(float[]))
+                {
+                    float[] arr = ((float[])obj);
+                    translator.push(luaState, arr[intIndex]);
+                }
+                else if (objType.UnderlyingSystemType == typeof(double[]))
+                {
+                    double[] arr = ((double[])obj);
+                    translator.push(luaState, arr[intIndex]);
+                }
+                else if (objType.UnderlyingSystemType == typeof(int[]))
+                {
+                    int[] arr = ((int[])obj);
+                    translator.push(luaState, arr[intIndex]);
+                }
+                else
+                {
+                    object[] arr = (object[])obj;
+                    translator.push(luaState, arr[intIndex]);
+                }
             }
             else
             {
                 // Try to use get_Item to index into this .net object
-                MethodInfo getter = objType.GetMethod("get_Item");
-                ParameterInfo[] actualParms = (getter != null) ? getter.GetParameters() : null;
+                //MethodInfo getter = objType.GetMethod("get_Item");
+                MethodInfo[] methods = objType.GetMethods();
 
-                if (actualParms == null || actualParms.Length != 1)
+                foreach (MethodInfo mInfo in methods)
                 {
-                    translator.throwError(luaState, "method not found (or no indexer): " + index);
-
-                    LuaDLL.lua_pushnil(luaState);
-                }
-                else
-                {
-                    // Get the index in a form acceptable to the getter
-                    index = translator.getAsType(luaState, 2, actualParms[0].ParameterType);
-
-                    object[] args = new object[1];
-
-                    // Just call the indexer - if out of bounds an exception will happen
-                    args[0] = index;
-                    try
+                    if (mInfo.Name == "get_Item")
                     {
-                        object result = getter.Invoke(obj, args);
-                        translator.push(luaState, result);
-                    }
-                    catch (TargetInvocationException e)
-                    {
-                        // Provide a more readable description for the common case of key not found
-                        if (e.InnerException is KeyNotFoundException)
-                            translator.throwError(luaState, "key '" + index + "' not found ");
-                        else
-                            translator.throwError(luaState, "exception indexing '" + index + "' " + e.Message);
+                        //check if the signature matches the input
+                        if (mInfo.GetParameters().Length == 1)
+                        {
+                            MethodInfo getter = mInfo;
+                            ParameterInfo[] actualParms = (getter != null) ? getter.GetParameters() : null;
 
-                        LuaDLL.lua_pushnil(luaState);
+                            if (actualParms == null || actualParms.Length != 1)
+                            {
+                                translator.throwError(luaState, "method not found (or no indexer): " + index);
+
+                                LuaDLL.lua_pushnil(luaState);
+                            }
+                            else
+                            {
+                                // Get the index in a form acceptable to the getter
+                                index = translator.getAsType(luaState, 2, actualParms[0].ParameterType);
+
+                                object[] args = new object[1];
+
+                                // Just call the indexer - if out of bounds an exception will happen
+                                args[0] = index;
+                                try
+                                {
+                                    object result = getter.Invoke(obj, args);
+                                    translator.push(luaState, result);
+                                }
+                                catch (TargetInvocationException e)
+                                {
+                                    // Provide a more readable description for the common case of key not found
+                                    if (e.InnerException is KeyNotFoundException)
+                                        translator.throwError(luaState, "key '" + index + "' not found ");
+                                    else
+                                        translator.throwError(luaState, "exception indexing '" + index + "' " + e.Message);
+
+                                    LuaDLL.lua_pushnil(luaState);
+                                }
+                            }
+                        }
                     }
                 }
+
+
             }
 
             LuaDLL.lua_pushboolean(luaState, false);
@@ -223,12 +264,12 @@ namespace LuaInterface
                 LuaDLL.lua_pushboolean(luaState, false);
                 return 2;
             }
-            getMember(luaState, obj.GetType(), obj, "__luaInterface_base_" + methodName, BindingFlags.Instance);
+            getMember(luaState, obj.GetType(), obj, "__luaInterface_base_" + methodName, BindingFlags.Instance | BindingFlags.IgnoreCase);
             LuaDLL.lua_settop(luaState, -2);
             if (LuaDLL.lua_type(luaState, -1) == LuaTypes.LUA_TNIL)
             {
                 LuaDLL.lua_settop(luaState, -2);
-                return getMember(luaState, obj.GetType(), obj, methodName, BindingFlags.Instance);
+                return getMember(luaState, obj.GetType(), obj, methodName, BindingFlags.Instance | BindingFlags.IgnoreCase);
             }
             LuaDLL.lua_pushboolean(luaState, false);
             return 2;
@@ -248,7 +289,8 @@ namespace LuaInterface
             if (cachedMember != null)
                 return true;
 
-            MemberInfo[] members = objType.GetMember(methodName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            //CP: Removed NonPublic binding search
+            MemberInfo[] members = objType.GetMember(methodName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase/* | BindingFlags.NonPublic*/);
             return (members.Length > 0);
         }
 
@@ -276,14 +318,16 @@ namespace LuaInterface
             }
             else
             {
-                MemberInfo[] members = objType.GetMember(methodName, bindingType | BindingFlags.Public | BindingFlags.NonPublic);
+                //CP: Removed NonPublic binding search
+                MemberInfo[] members = objType.GetMember(methodName, bindingType | BindingFlags.Public | BindingFlags.IgnoreCase/*| BindingFlags.NonPublic*/);
                 if (members.Length > 0)
                     member = members[0];
                 else
                 {
                     // If we can't find any suitable instance members, try to find them as statics - but we only want to allow implicit static
                     // lookups for fields/properties/events -kevinh
-                    members = objType.GetMember(methodName, bindingType | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+                    //CP: Removed NonPublic binding search and made case insensitive
+                    members = objType.GetMember(methodName, bindingType | BindingFlags.Static | BindingFlags.Public | BindingFlags.IgnoreCase/*| BindingFlags.NonPublic*/);
 
                     if (members.Length > 0)
                     {
@@ -362,6 +406,7 @@ namespace LuaInterface
                     {
                         // Member type must be 'method'
                         LuaCSFunction wrapper = new LuaCSFunction((new LuaMethodWrapper(translator, objType, methodName, bindingType)).call);
+
                         if (cachedMember == null) setMemberCache(memberCache, objType, methodName, wrapper);
                         translator.pushFunction(luaState, wrapper);
                         translator.push(luaState, true);
@@ -432,7 +477,7 @@ namespace LuaInterface
 
             // First try to look up the parameter as a property name
             string detailMessage;
-            bool didMember = trySetMember(luaState, type, target, BindingFlags.Instance, out detailMessage);
+            bool didMember = trySetMember(luaState, type, target, BindingFlags.Instance | BindingFlags.IgnoreCase, out detailMessage);
 
             if (didMember)
                 return 0;       // Must have found the property name
@@ -523,7 +568,8 @@ namespace LuaInterface
             MemberInfo member = (MemberInfo)checkMemberCache(memberCache, targetType, fieldName);
             if (member == null)
             {
-                MemberInfo[] members = targetType.GetMember(fieldName, bindingType | BindingFlags.Public | BindingFlags.NonPublic);
+                //CP: Removed NonPublic binding search and made case insensitive
+                MemberInfo[] members = targetType.GetMember(fieldName, bindingType | BindingFlags.Public | BindingFlags.IgnoreCase/*| BindingFlags.NonPublic*/);
                 if (members.Length > 0)
                 {
                     member = members[0];
@@ -630,8 +676,8 @@ namespace LuaInterface
                 {
                     LuaDLL.lua_pushnil(luaState);
                     return 1;
-                }
-                else return getMember(luaState, klass, null, methodName, BindingFlags.FlattenHierarchy | BindingFlags.Static);
+                } //CP: Ignore case
+                else return getMember(luaState, klass, null, methodName, BindingFlags.FlattenHierarchy | BindingFlags.Static | BindingFlags.IgnoreCase);
             }
         }
         /*
@@ -647,7 +693,7 @@ namespace LuaInterface
                 return 0;
             }
             else target = (IReflect)obj;
-            return setMember(luaState, target, null, BindingFlags.FlattenHierarchy | BindingFlags.Static);
+            return setMember(luaState, target, null, BindingFlags.FlattenHierarchy | BindingFlags.Static | BindingFlags.IgnoreCase);
         }
         /*
          * __call metafunction of type references. Searches for and calls
@@ -732,17 +778,61 @@ namespace LuaInterface
                         break;
                     }
                 }
-                else if ((extractValue = translator.typeChecker.checkType(luaState, currentLuaParam, currentNetParam.ParameterType)) != null)  // Type checking
+                else if (_IsTypeCorrect(luaState, currentLuaParam, currentNetParam, out extractValue))  // Type checking
                 {
                     int index = paramList.Add(extractValue(luaState, currentLuaParam));
+
                     MethodArgs methodArg = new MethodArgs();
                     methodArg.index = index;
                     methodArg.extractValue = extractValue;
                     argTypes.Add(methodArg);
+
                     if (currentNetParam.ParameterType.IsByRef)
                         outList.Add(index);
                     currentLuaParam++;
                 }  // Type does not match, ignore if the parameter is optional
+                else if (_IsParamsArray(luaState, currentLuaParam, currentNetParam, out extractValue))
+                {
+                    object luaParamValue = extractValue(luaState, currentLuaParam);
+
+                    Type paramArrayType = currentNetParam.ParameterType.GetElementType();
+
+                    Array paramArray;
+
+                    if (luaParamValue is LuaTable)
+                    {
+                        LuaTable table = (LuaTable)luaParamValue;
+                        IDictionaryEnumerator tableEnumerator = table.GetEnumerator();
+
+                        paramArray = Array.CreateInstance(paramArrayType, table.Values.Count);
+
+                        tableEnumerator.Reset();
+
+                        int paramArrayIndex = 0;
+
+                        while (tableEnumerator.MoveNext())
+                        {
+                            paramArray.SetValue(Convert.ChangeType(tableEnumerator.Value, currentNetParam.ParameterType.GetElementType()), paramArrayIndex);
+                            paramArrayIndex++;
+                        }
+                    }
+                    else
+                    {
+                        paramArray = Array.CreateInstance(paramArrayType, 1);
+                        paramArray.SetValue(luaParamValue, 0);
+                    }
+
+                    int index = paramList.Add(paramArray);
+
+                    MethodArgs methodArg = new MethodArgs();
+                    methodArg.index = index;
+                    methodArg.extractValue = extractValue;
+                    methodArg.isParamsArray = true;
+                    methodArg.paramsArrayType = paramArrayType;
+                    argTypes.Add(methodArg);
+
+                    currentLuaParam++;
+                }
                 else if (currentNetParam.IsOptional)
                 {
                     paramList.Add(currentNetParam.DefaultValue);
@@ -763,6 +853,90 @@ namespace LuaInterface
                 methodCache.argTypes = argTypes.ToArray();
             }
             return isMethod;
+        }
+
+        /// <summary>
+        /// CP: Fix for operator overloading failure
+        /// Returns true if the type is set and assigns the extract value
+        /// </summary>
+        /// <param name="luaState"></param>
+        /// <param name="currentLuaParam"></param>
+        /// <param name="currentNetParam"></param>
+        /// <param name="extractValue"></param>
+        /// <returns></returns>
+        private bool _IsTypeCorrect(IntPtr luaState, int currentLuaParam, ParameterInfo currentNetParam, out ExtractValue extractValue)
+        {
+            try
+            {
+                return (extractValue = translator.typeChecker.checkType(luaState, currentLuaParam, currentNetParam.ParameterType)) != null;
+            }
+            catch
+            {
+                extractValue = null;
+                Debug.WriteLine("Type wasn't correct");
+                return false;
+            }
+        }
+
+        private bool _IsParamsArray(IntPtr luaState, int currentLuaParam, ParameterInfo currentNetParam, out ExtractValue extractValue)
+        {
+            extractValue = null;
+
+            if (currentNetParam.GetCustomAttributes(typeof(ParamArrayAttribute), false).Length > 0)
+            {
+                LuaTypes luaType;
+
+                try
+                {
+                    luaType = LuaDLL.lua_type(luaState, currentLuaParam);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Could not retrieve lua type while attempting to determine params Array Status.");
+                    Debug.WriteLine(ex.Message);
+                    extractValue = null;
+                    return false;
+                }
+
+                if (luaType == LuaTypes.LUA_TTABLE)
+                {
+                    try
+                    {
+                        extractValue = translator.typeChecker.getExtractor(typeof(LuaTable));
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine("An error occurred during an attempt to retrieve a LuaTable extractor while checking for params array status.");
+                    }
+
+                    if (extractValue != null)
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    Type paramElementType = currentNetParam.ParameterType.GetElementType();
+
+                    try
+                    {
+                        extractValue = translator.typeChecker.checkType(luaState, currentLuaParam, paramElementType);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(string.Format("An error occurred during an attempt to retrieve an extractor ({0}) while checking for params array status.", paramElementType.FullName));
+                    }
+
+                    if (extractValue != null)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            Debug.WriteLine("Type wasn't Params object.");
+
+            return false;
         }
     }
 }

@@ -4,24 +4,15 @@ namespace LuaInterface
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
     using System.Reflection;
-
-    /*
-	 * Passes objects from the CLR to Lua and vice-versa
-	 * 
-	 * Author: Fabio Mascarenhas
-	 * Version: 1.0
-	 */
+    using System.Text;
     public class ObjectTranslator
     {
         internal CheckType typeChecker;
 
-        // object # to object (FIXME - it should be possible to get object address as an object #)
         public readonly Dictionary<int, object> objects = new Dictionary<int, object>();
-        // object to object #
         public readonly Dictionary<object, int> objectsBackMap = new Dictionary<object, int>();
+
         internal Lua interpreter;
         private MetaFunctions metaFunctions;
         private List<Assembly> assemblies;
@@ -160,20 +151,33 @@ namespace LuaInterface
 		 */
         internal void throwError(IntPtr luaState, object e)
         {
-            // If the argument is a mere string, we are free to add extra info to it (as opposed to some private C# exception object or somesuch, which we just pass up)
-            if (e is string)
+            // We use this to remove anything pushed by luaL_where
+            int oldTop = LuaDLL.lua_gettop(luaState);
+
+            // Stack frame #1 is our C# wrapper, so not very interesting to the user
+            // Stack frame #2 must be the lua code that called us, so that's what we want to use
+            LuaDLL.luaL_where(luaState, 1);
+            object[] curlev = popValues(luaState, oldTop);
+
+            // Determine the position in the script where the exception was triggered
+            string errLocation = "";
+            if (curlev.Length > 0)
+                errLocation = curlev[0].ToString();
+
+            string message = e as string;
+            if (message != null)
             {
-                // We use this to remove anything pushed by luaL_where
-                int oldTop = LuaDLL.lua_gettop(luaState);
-
-                // Stack frame #1 is our C# wrapper, so not very interesting to the user
-                // Stack frame #2 must be the lua code that called us, so that's what we want to use
-                LuaDLL.luaL_where(luaState, 2);
-                object[] curlev = popValues(luaState, oldTop);
-                // Debug.WriteLine(curlev);
-
-                if (curlev.Length > 0)
-                    e = curlev[0].ToString() + e;
+                // Wrap Lua error (just a string) and store the error location
+                e = new LuaScriptException(message, errLocation);
+            }
+            else
+            {
+                Exception ex = e as Exception;
+                if (ex != null)
+                {
+                    // Wrap generic .NET exception as an InnerException and store the error location
+                    e = new LuaScriptException(ex, errLocation);
+                }
             }
 
             push(luaState, e);
@@ -185,29 +189,36 @@ namespace LuaInterface
 		 */
         private int loadAssembly(IntPtr luaState)
         {
-            string assemblyName = LuaDLL.lua_tostring(luaState, 1);
             try
             {
-                Assembly assembly = Assembly.Load(assemblyName);
+                string assemblyName = LuaDLL.lua_tostring(luaState, 1);
+
+                Assembly assembly = null;
 
                 try
                 {
-                    // If we couldn't find it based on a name, see if we can use it as a filename and find it
-                    if (assembly == null)
-                        assembly = Assembly.Load(AssemblyName.GetAssemblyName(assemblyName));
+                    assembly = Assembly.Load(assemblyName);
                 }
-                catch (Exception)
+                catch (BadImageFormatException)
                 {
-                    // ignore - it might not even be a filename
+                    // The assemblyName was invalid.  It is most likely a path.
+                }
+
+                if (assembly == null)
+                {
+                    assembly = Assembly.Load(AssemblyName.GetAssemblyName(assemblyName));
                 }
 
                 if (assembly != null && !assemblies.Contains(assembly))
+                {
                     assemblies.Add(assembly);
+                }
             }
             catch (Exception e)
             {
                 throwError(luaState, e);
             }
+
             return 0;
         }
 
@@ -343,8 +354,9 @@ namespace LuaInterface
                 signature[i] = FindType(LuaDLL.lua_tostring(luaState, i + 3));
             try
             {
+                //CP: Added ignore case
                 MethodInfo method = klass.GetMethod(methodName, BindingFlags.Public | BindingFlags.Static |
-                    BindingFlags.Instance | BindingFlags.FlattenHierarchy, null, signature, null);
+                    BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.IgnoreCase, null, signature, null);
                 pushFunction(luaState, new LuaCSFunction((new LuaMethodWrapper(this, target, klass, method)).call));
             }
             catch (Exception e)
@@ -560,12 +572,13 @@ namespace LuaInterface
             return index;
         }
 
-
-
-        /*
-		 * Gets an object from the Lua stack according to its Lua type.
-		 */
-        internal object getObject(IntPtr luaState, int index)
+        /// <summary>
+        /// Gets an object from the Lua stack according to its Lua type.
+        /// </summary>
+        /// <param name="luaState"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        internal object GetStackObject(IntPtr luaState, int index)
         {
             LuaTypes type = LuaDLL.lua_type(luaState, index);
             switch (type)
@@ -576,7 +589,8 @@ namespace LuaInterface
                     }
                 case LuaTypes.LUA_TSTRING:
                     {
-                        return LuaDLL.lua_tostring(luaState, index);
+                        return Encoding.UTF8.GetString(LuaDLL.LuaToByteArray(luaState, index));
+                        //return LuaDLL.lua_tostring(luaState, index);
                     }
                 case LuaTypes.LUA_TBOOLEAN:
                     {
@@ -593,13 +607,10 @@ namespace LuaInterface
                 case LuaTypes.LUA_TUSERDATA:
                     {
                         int udata = LuaDLL.luanet_tonetobject(luaState, index);
-                        if (udata != -1)
-                            return objects[udata];
-                        else
-                            return getUserData(luaState, index);
+                        if (udata != -1) return objects[udata];
+                        else return getUserData(luaState, index);
                     }
-                default:
-                    return null;
+                default: return null;
             }
         }
         /*
@@ -684,7 +695,7 @@ namespace LuaInterface
                 ArrayList returnValues = new ArrayList();
                 for (int i = oldTop + 1; i <= newTop; i++)
                 {
-                    returnValues.Add(getObject(luaState, i));
+                    returnValues.Add(GetStackObject(luaState, i));
                 }
                 LuaDLL.lua_settop(luaState, oldTop);
                 return returnValues.ToArray();

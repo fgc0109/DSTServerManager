@@ -26,6 +26,7 @@ namespace LuaInterface
             return "ProxyType(" + UnderlyingSystemType + ")";
         }
 
+
         public Type UnderlyingSystemType
         {
             get
