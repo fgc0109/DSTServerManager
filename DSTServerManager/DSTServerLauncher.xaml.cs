@@ -205,7 +205,7 @@ namespace DSTServerManager
         private void button_Click(object sender, RoutedEventArgs e)
         {
             var test = new ServerModInfo(@"D:\UserFiles\Documents\Klei\DSTTools\mods\workshop-631648169");
-            test.LuaDoFile();
+            test.LuaGetModInfo();
             textBox_Servers_Tab_Log.Text = test.Name;
 
             UI.Modification.Rows.Add(test.GetItemArray());

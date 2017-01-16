@@ -94,14 +94,14 @@ namespace DSTServerManager.Saves
         }
 
         /// <summary>
-        /// 从文件读取配置文件
+        /// 读取本地Server配置文件
         /// </summary>
-        /// <param name="serverIniFullPath"></param>
-        public void ReadFromFile(string serverIniFullPath)
+        /// <param name="path">Server配置文件路径</param>
+        public void ReadFromFile(string path)
         {
-            if (!File.Exists(serverIniFullPath)) return;
+            if (!File.Exists(path)) return;
 
-            MemoryStream serverDataStream = new MemoryStream(File.ReadAllBytes(serverIniFullPath));
+            MemoryStream serverDataStream = new MemoryStream(File.ReadAllBytes(path));
             m_Setting = new IniHelper(serverDataStream, false);
             serverDataStream.Close();
 
@@ -110,36 +110,51 @@ namespace DSTServerManager.Saves
         }
 
         /// <summary>
-        /// 写入位于本地配置文件
+        /// 写入本地Server配置文件
         /// </summary>
-        /// <param name="serverIniFullPath"></param>
-        public void WriteToFile(string serverIniFullPath)
+        /// <param name="path">Server配置文件路径</param>
+        public void WriteToFile(string path)
         {
             if (null == m_Setting) return;
             try { FieldsToSetting(); }
             catch (Exception) { throw; }
 
             MemoryStream serverDataStream = m_Setting.GetIniStream();
-            FileStream clusterFileStream = new FileStream(serverIniFullPath, FileMode.Create);
-            BinaryWriter w = new BinaryWriter(clusterFileStream);
-            w.Write(serverDataStream.ToArray());
+            FileStream clusterFileStream = new FileStream(path, FileMode.Create);
+            BinaryWriter writer = new BinaryWriter(clusterFileStream);
+            writer.Write(serverDataStream.ToArray());
             clusterFileStream.Close();
             serverDataStream.Close();
         }
 
         /// <summary>
-        /// 写入位于SSH服务器配置文件
+        /// 读取SSH服务器Server配置文件
         /// </summary>
-        /// <param name="serverIniFullPath"></param>
-        public void ReadFromSSH(string serverIniFullPath, SftpClient client)
+        /// <param name="path">Server配置文件路径</param>
+        public void ReadFromSSH(string path, SftpClient client)
         {
             MemoryStream stream = new MemoryStream();
-            client.OpenRead(serverIniFullPath).CopyTo(stream);
+            client.OpenRead(path).CopyTo(stream);
             stream.Seek(0, SeekOrigin.Begin);
 
             m_Setting = new IniHelper(stream, false);
             try { SettingToFields(); }
             catch (Exception) { throw; }
+        }
+
+        /// <summary>
+        /// 写入SSH服务器Server配置文件
+        /// </summary>
+        /// <param name="path"></param>
+        public void WriteToSSH(string path, SftpClient client)
+        {
+            if (null == m_Setting) return;
+            try { FieldsToSetting(); }
+            catch (Exception) { throw; }
+
+            MemoryStream clusterDataStream = m_Setting.GetIniStream();
+            client.WriteAllBytes(path, clusterDataStream.ToArray());
+            clusterDataStream.Close();
         }
 
         /// <summary>

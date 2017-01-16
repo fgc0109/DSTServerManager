@@ -12,6 +12,13 @@ Class Lua51.LuaCSFunction: AutoLayout, AnsiClass, Class, Public, Sealed, BeforeF
     Invoke(IntPtr): PrivateScope, Public, Final, Virtual, VtableLayoutMask
     BeginInvoke(IntPtr, AsyncCallback, Object): PrivateScope, Public, Final, Virtual, VtableLayoutMask
     EndInvoke(IAsyncResult): PrivateScope, Public, Final, Virtual, VtableLayoutMask
+Class Lua51.LuaHookFunction: AutoLayout, AnsiClass, Class, Public, Sealed, BeforeFieldInit
+  :System.MulticastDelegate
+    Void .ctor(System.Object, IntPtr): PrivateScope, Public, SpecialName, RTSpecialName
+  Methods:
+    Invoke(IntPtr, IntPtr): PrivateScope, Public, Final, Virtual, VtableLayoutMask
+    BeginInvoke(IntPtr, IntPtr, AsyncCallback, Object): PrivateScope, Public, Final, Virtual, VtableLayoutMask
+    EndInvoke(IAsyncResult): PrivateScope, Public, Final, Virtual, VtableLayoutMask
 Class Lua51.LuaDLL: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
     Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
   Methods:
@@ -21,6 +28,7 @@ Class Lua51.LuaDLL: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
     luaL_error(IntPtr, String): PrivateScope, Public, Static, HideBySig
     luaL_where(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
     luaL_newstate(): PrivateScope, Public, Static, HideBySig
+    lua_close(IntPtr): PrivateScope, Public, Static, HideBySig
     luaL_openlibs(IntPtr): PrivateScope, Public, Static, HideBySig
     luaL_loadstring(IntPtr, String): PrivateScope, Public, Static, HideBySig
     luaL_dostring(IntPtr, String): PrivateScope, Public, Static, HideBySig
@@ -82,11 +90,22 @@ Class Lua51.LuaDLL: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
     lua_next(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
     lua_pushlightuserdata(IntPtr, IntPtr): PrivateScope, Public, Static, HideBySig
     luanet_rawnetobj(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_sethook(IntPtr, LuaHookFunction, Int32, Int32): PrivateScope, Public, Static, HideBySig
+    lua_gethookmask(IntPtr): PrivateScope, Public, Static, HideBySig
+    lua_gethookcount(IntPtr): PrivateScope, Public, Static, HideBySig
+    lua_getstack(IntPtr, Int32, IntPtr): PrivateScope, Public, Static, HideBySig
+    lua_getinfo(IntPtr, String, IntPtr): PrivateScope, Public, Static, HideBySig
+    lua_getlocal(IntPtr, IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_setlocal(IntPtr, IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    lua_getupvalue(IntPtr, Int32, Int32): PrivateScope, Public, Static, HideBySig
+    lua_setupvalue(IntPtr, Int32, Int32): PrivateScope, Public, Static, HideBySig
     luanet_checkudata(IntPtr, Int32, String): PrivateScope, Public, Static, HideBySig
     luaL_checkmetatable(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
     luanet_gettag(): PrivateScope, Public, Static, HideBySig
     luanet_newudata(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
     luanet_tonetobject(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
+    LuaToString(IntPtr, Int32, Boolean(HasFieldMarshal)): PrivateScope, Public, Static, HideBySig
+    LuaToByteArray(IntPtr, Int32): PrivateScope, Public, Static, HideBySig
 Struct Lua51.LuaTypes: AutoLayout, AnsiClass, Class, Public, Sealed, BeforeFieldInit
   :System.Enum
   Fields:

@@ -71,10 +71,6 @@
       <HintPath>..\packages\SSH.NET.2016.0.0\lib\net40\Renci.SshNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="slua-standalone, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\slua-standalone.1.0.63\lib\net35\slua-standalone.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
@@ -215,9 +211,6 @@
     <EmbeddedResource Include="DSTServerManager.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-    <None Include="lib\slua-standalone.dll.config" />
-    <None Include="lib\x64\slua.so" />
-    <None Include="lib\x86\slua.so" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -246,9 +239,6 @@
     <Resource Include="DSTServerManager.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="lib\SLUA_README.txt" />
-    <Content Include="lib\x64\slua.dll" />
-    <Content Include="lib\x86\slua.dll" />
     <Content Include="steamcmd.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

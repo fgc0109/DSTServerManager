@@ -13,7 +13,8 @@ namespace DSTServerManager.Saves
     {
         private string folder = string.Empty;
         private string session = string.Empty;
-        private ServerIni setting = new ServerIni();
+        private ServerMod mod = new ServerMod();
+        private ServerIni ini = new ServerIni();
         private ServerLevel level = new ServerLevel();
         private ServerShard shard = new ServerShard();
 
@@ -31,8 +32,8 @@ namespace DSTServerManager.Saves
 
         public ServerIni Setting
         {
-            get { return setting; }
-            set { setting = value; }
+            get { return ini; }
+            set { ini = value; }
         }
 
         public ServerLevel Level

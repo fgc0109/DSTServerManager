@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,6 +8,8 @@ using System.Text.RegularExpressions;
 using System.Globalization;
 using LuaInterface;
 using System.IO;
+using System.Data;
+using System.Collections;
 
 namespace DSTServerManager.Servers
 {
@@ -14,18 +17,27 @@ namespace DSTServerManager.Servers
     {
         private string m_FilePath = string.Empty;
         private string m_WorkShop = string.Empty;
+        private DataTable m_Configuration = new DataTable();
 
         public ServerModInfo(string path)
         {
             m_FilePath = path + @"\modinfo.lua";
             m_WorkShop = path.Split('\\')[path.Split('\\').Length - 1].Replace("workshop-", "");
-            LuaDoFile();
+            LuaGetModInfo();
+
+            m_Configuration.Columns.Add("id");
+            m_Configuration.Columns.Add("name");
+            m_Configuration.Columns.Add("label");
+            m_Configuration.Columns.Add("hover");
+            m_Configuration.Columns.Add("options");
+            m_Configuration.Columns.Add("default");
         }
 
         public string WorkShop { get { return m_WorkShop; } }
 
         #region 信息字段
 
+        //与配置文件内字段名相同,不能随意更改
         private string name;
         private string description;
         private string author;
@@ -37,6 +49,7 @@ namespace DSTServerManager.Servers
         private bool all_clients_require_mod;
 
         private LuaTable configuration_options;
+        private ListDictionary configuration;
         #endregion
 
         #region 信息属性
@@ -52,17 +65,26 @@ namespace DSTServerManager.Servers
         public bool All_clients_require_mod { get { return all_clients_require_mod; } }
 
         public LuaTable Configuration_options { get { return configuration_options; } }
+        public ListDictionary Configuration { get { return configuration; } }
         #endregion
 
-        public void LuaDoFile()
+        /// <summary>
+        /// 
+        /// </summary>
+        public void LuaGetModInfo()
         {
+
             Lua luaFile = new Lua();
             var interData = luaFile.DoFile(m_FilePath);
 
-            name = Encoding.UTF8.GetString(Encoding.Default.GetBytes((string)luaFile[nameof(name)]));
-            description = Encoding.UTF8.GetString(Encoding.Default.GetBytes((string)luaFile[nameof(description)]));
-            author = Encoding.UTF8.GetString(Encoding.Default.GetBytes((string)luaFile[nameof(author)]));
-            version = Encoding.UTF8.GetString(Encoding.Default.GetBytes((string)luaFile[nameof(version)]));
+            //name = Encoding.UTF8.GetString(Encoding.Default.GetBytes((string)luaFile[nameof(name)]));
+            //description = Encoding.UTF8.GetString(Encoding.Default.GetBytes((string)luaFile[nameof(description)]));
+            //author = Encoding.UTF8.GetString(Encoding.Default.GetBytes((string)luaFile[nameof(author)]));
+            //version = Encoding.UTF8.GetString(Encoding.Default.GetBytes((string)luaFile[nameof(version)]));
+            name = (string)luaFile[nameof(name)];
+            description = (string)luaFile[nameof(description)];
+            author = (string)luaFile[nameof(author)];
+            version = (string)luaFile[nameof(version)];
 
             api_version = (double)luaFile[nameof(api_version)];
             dst_compatible = (bool?)luaFile[nameof(dst_compatible)] ?? false;
@@ -71,15 +93,37 @@ namespace DSTServerManager.Servers
             all_clients_require_mod = (bool?)luaFile[nameof(all_clients_require_mod)] ?? false;
 
             configuration_options = luaFile[nameof(configuration_options)] as LuaTable;
+            if (configuration_options == null) return;
 
-            //要处理没有设置项的情况
-            //var config = luaFile.GetTableDict(configuration_options);
+            configuration = luaFile.GetTableDict(configuration_options);
+           
+            foreach (DictionaryEntry de in configuration)
+            {
+                var table = luaFile.GetTableDict((LuaTable)de.Value);
+
+                object[] array = new object[5];
+
+                int index = 0;
+                foreach (DictionaryEntry item in table)
+                {
+                    array[index] = item.Value;
+                    index++;
+                }
+                m_Configuration.Rows.Add(new object[] { 1, de });
+            }
+
         }
 
+        /// <summary>
+        /// 获取模组信息数组
+        /// </summary>
+        /// <returns></returns>
         public object[] GetItemArray()
         {
             var array = new object[]
             {
+                false,
+                false,
                 WorkShop,
                 name,
                 author,
@@ -89,9 +133,10 @@ namespace DSTServerManager.Servers
                 dont_starve_compatible,
                 reign_of_giants_compatible,
                 all_clients_require_mod,
-                description.Replace("\n"," ").Replace("\r"," ")
+                //description.Replace("\n"," ").Replace("\r"," ")
             };
             return array;
         }
     }
+
 }

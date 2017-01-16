@@ -222,15 +222,15 @@ namespace DSTServerManager.Saves
         }
 
         /// <summary>
-        /// 从文件读取配置文件
+        /// 读取本地Cluster配置文件
         /// </summary>
-        /// <param name="clusterIniFullPath">集群配置文件完整路径</param>
-        public void ReadFromFile(string clusterIniFullPath)
+        /// <param name="path">Cluster配置文件路径</param>
+        public void ReadFromFile(string path)
         {
             //没有文件时,需要创建默认配置
-            if (!File.Exists(clusterIniFullPath)) return;
+            if (!File.Exists(path)) return;
 
-            MemoryStream clusterDataStream = new MemoryStream(File.ReadAllBytes(clusterIniFullPath));
+            MemoryStream clusterDataStream = new MemoryStream(File.ReadAllBytes(path));
             m_Setting = new IniHelper(clusterDataStream, false);
             clusterDataStream.Close();
 
@@ -239,17 +239,17 @@ namespace DSTServerManager.Saves
         }
 
         /// <summary>
-        /// 写入位于本地的Cluster配置文件
+        /// 写入本地Cluster配置文件
         /// </summary>
-        /// <param name="clusterIniFullPath">集群配置文件完整路径</param>
-        public void WriteToFile(string clusterIniFullPath)
+        /// <param name="path">Cluster配置文件路径</param>
+        public void WriteToFile(string path)
         {
             if (null == m_Setting) return;
             try { FieldsToSetting(); }
             catch (Exception) { throw; }
 
             MemoryStream clusterDataStream = m_Setting.GetIniStream();
-            FileStream clusterFileStream = new FileStream(clusterIniFullPath, FileMode.Create);
+            FileStream clusterFileStream = new FileStream(path, FileMode.Create);
             BinaryWriter write = new BinaryWriter(clusterFileStream);
             write.Write(clusterDataStream.ToArray());
             clusterFileStream.Close();
@@ -257,15 +257,15 @@ namespace DSTServerManager.Saves
         }
 
         /// <summary>
-        /// 读取位于SSH服务器的Cluster配置文件
+        /// 读取SSH服务器Cluster配置文件
         /// </summary>
-        /// <param name="serverIniFullPath"></param>
-        public void ReadFromSSH(string clusterIniFullPath, SftpClient client)
+        /// <param name="path">Cluster配置文件路径</param>
+        public void ReadFromSSH(string path, SftpClient client)
         {
             //没有文件时,需要创建默认配置
 
             MemoryStream stream = new MemoryStream();
-            try { client.OpenRead(clusterIniFullPath).CopyTo(stream); }
+            try { client.OpenRead(path).CopyTo(stream); }
             catch { }
             stream.Seek(0, SeekOrigin.Begin);
 
@@ -275,17 +275,17 @@ namespace DSTServerManager.Saves
         }
 
         /// <summary>
-        /// 写入位于SSH服务器的Cluster配置文件
+        /// 写入SSH服务器Cluster配置文件
         /// </summary>
-        /// <param name="clusterIniFullPath"></param>
-        public void WriteToSSH(string clusterIniFullPath, SftpClient client)
+        /// <param name="path">Cluster配置文件路径</param>
+        public void WriteToSSH(string path, SftpClient client)
         {
             if (null == m_Setting) return;
             try { FieldsToSetting(); }
             catch (Exception) { throw; }
 
             MemoryStream clusterDataStream = m_Setting.GetIniStream();
-            client.WriteAllBytes(clusterIniFullPath, clusterDataStream.ToArray());
+            client.WriteAllBytes(path, clusterDataStream.ToArray());
             clusterDataStream.Close();
         }
 
