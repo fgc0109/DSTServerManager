@@ -61,16 +61,15 @@ namespace DSTServerManager.Servers
         public bool Dont_starve_compatible { get { return dont_starve_compatible; } }
         public bool Reign_of_giants_compatible { get { return reign_of_giants_compatible; } }
         public bool All_clients_require_mod { get { return all_clients_require_mod; } }
-        
+
         public DataTable Configuration { get { return m_Configuration; } }
         #endregion
 
         /// <summary>
-        /// 
+        /// 获取模组信息
         /// </summary>
         public void LuaGetModInfo()
         {
-
             Lua luaFile = new Lua();
             var interData = luaFile.DoFile(m_FilePath);
 
@@ -94,25 +93,14 @@ namespace DSTServerManager.Servers
             if (configuration_options == null) return;
             ListDictionary config = luaFile.GetTableDict(configuration_options);
 
+            int index = 0;
             foreach (DictionaryEntry de in config)
             {
                 var table = luaFile.GetTableDict((LuaTable)de.Value);
 
-                object[] array = new object[5];
-
-                int index = 0;
-                foreach (DictionaryEntry item in table)
-                {
-                    array[index] = item.Value;
-                    index++;
-                }
-
-                //m_Configuration.Columns.Add("id", typeof(int));
-
-                int count = m_Configuration.Columns.Count;
-                m_Configuration.Rows.Add(new object[] { 1, array[0], array[1], array[2], array[3], array[4] });
+                m_Configuration.Rows.Add(new object[]
+                { ++index, table["name"], table["label"], table["hover"], table["options"], table["default"]});
             }
-
         }
 
         /// <summary>
@@ -133,8 +121,7 @@ namespace DSTServerManager.Servers
                 dst_compatible,
                 dont_starve_compatible,
                 reign_of_giants_compatible,
-                all_clients_require_mod,
-                //description.Replace("\n"," ").Replace("\r"," ")
+                all_clients_require_mod
             };
             return array;
         }

@@ -225,7 +225,7 @@ namespace DSTServerManager
 
             textBox_Modifications_CurrentInfo.Text = modBuilder.ToString();
 
-            UI.Configuration = modData.Configuration.Copy();
+            UI.Configuration = modData.Configuration;
         }
 
         //dataGrid和datatable之间数据直接赋值的示例 不应该使用这种方式
