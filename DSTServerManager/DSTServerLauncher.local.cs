@@ -27,9 +27,9 @@ namespace DSTServerManager
 
             string path = (dataGrid_LocalServer_ServersPath.SelectedItem as DataRowView)[2].ToString();
             path = path.Replace("bin\\dontstarve_dedicated_server_nullrenderer.exe", "mods");
-            UI.Modification.Clear();
+            UI.Modifications.Clear();
             m_ServerModInfo = ServersManager.GetServerModInfo(path);
-            foreach (var item in m_ServerModInfo) UI.Modification.Rows.Add(item.GetItemArray());
+            foreach (var item in m_ServerModInfo) UI.Modifications.Rows.Add(item.GetItemArray());
         }
 
         /// <summary>

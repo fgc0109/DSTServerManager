@@ -403,7 +403,8 @@ namespace DSTServerManager
         private DataTable connections = new DataTable(nameof(connections));
         private DataTable clusterCommandLines = new DataTable(nameof(clusterCommandLines));
         private DataTable clusterServersLevel = new DataTable(nameof(clusterServersLevel));
-        private DataTable modification = new DataTable(nameof(modification));
+        private DataTable modifications = new DataTable(nameof(modifications));
+        private DataTable configuration = new DataTable(nameof(configuration));
 
         private ObservableCollection<string> saveFolders_Local = new ObservableCollection<string>();
         private ObservableCollection<string> saveFolders_Cloud = new ObservableCollection<string>();
@@ -477,13 +478,22 @@ namespace DSTServerManager
                 if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ServerLevel)));
             }
         }
-        public DataTable Modification
+        public DataTable Modifications
         {
-            get { return modification; }
+            get { return modifications; }
             set
             {
-                modification = value.Copy();
-                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Modification)));
+                modifications = value.Copy();
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Modifications)));
+            }
+        }
+        public DataTable Configuration
+        {
+            get { return configuration; }
+            set
+            {
+                configuration = value.Copy();
+                if (PropertyChanged != null) PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Configuration)));
             }
         }
 
@@ -532,18 +542,25 @@ namespace DSTServerManager
             for (int i = 0; i < columns; i++)
                 clusterServersTable.Columns.Add("Column_" + i.ToString());
 
-            modification.Columns.Add("ModInfo_Adde");
-            modification.Columns.Add("ModInfo_Actv");
-            modification.Columns.Add("ModInfo_Indx");
-            modification.Columns.Add("ModInfo_Name");
-            modification.Columns.Add("ModInfo_Auth");
-            modification.Columns.Add("ModInfo_Vern");
-            modification.Columns.Add("ModInfo_ApiV");
-            modification.Columns.Add("ModInfo_Muti");
-            modification.Columns.Add("ModInfo_Solo");
-            modification.Columns.Add("ModInfo_Dlc1");
-            modification.Columns.Add("ModInfo_allC");
-            modification.Columns.Add("ModInfo_Desc");
+            modifications.Columns.Add("ModInfo_Adde");
+            modifications.Columns.Add("ModInfo_Actv");
+            modifications.Columns.Add("ModInfo_Indx");
+            modifications.Columns.Add("ModInfo_Name");
+            modifications.Columns.Add("ModInfo_Auth");
+            modifications.Columns.Add("ModInfo_Vern");
+            modifications.Columns.Add("ModInfo_ApiV");
+            modifications.Columns.Add("ModInfo_Muti");
+            modifications.Columns.Add("ModInfo_Solo");
+            modifications.Columns.Add("ModInfo_Dlc1");
+            modifications.Columns.Add("ModInfo_allC");
+            modifications.Columns.Add("ModInfo_Desc");
+
+            configuration.Columns.Add("id", typeof(int));
+            configuration.Columns.Add("name");
+            configuration.Columns.Add("label");
+            configuration.Columns.Add("hover");
+            configuration.Columns.Add("options");
+            configuration.Columns.Add("default");
         }
 
         /// <summary>

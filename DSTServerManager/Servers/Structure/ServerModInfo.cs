@@ -23,14 +23,14 @@ namespace DSTServerManager.Servers
         {
             m_FilePath = path + @"\modinfo.lua";
             m_WorkShop = path.Split('\\')[path.Split('\\').Length - 1].Replace("workshop-", "");
-            LuaGetModInfo();
 
-            m_Configuration.Columns.Add("id");
+            m_Configuration.Columns.Add("id", typeof(int));
             m_Configuration.Columns.Add("name");
             m_Configuration.Columns.Add("label");
             m_Configuration.Columns.Add("hover");
             m_Configuration.Columns.Add("options");
             m_Configuration.Columns.Add("default");
+            LuaGetModInfo();
         }
 
         public string WorkShop { get { return m_WorkShop; } }
@@ -48,8 +48,6 @@ namespace DSTServerManager.Servers
         private bool reign_of_giants_compatible;
         private bool all_clients_require_mod;
 
-        private LuaTable configuration_options;
-        private ListDictionary configuration;
         #endregion
 
         #region 信息属性
@@ -63,9 +61,8 @@ namespace DSTServerManager.Servers
         public bool Dont_starve_compatible { get { return dont_starve_compatible; } }
         public bool Reign_of_giants_compatible { get { return reign_of_giants_compatible; } }
         public bool All_clients_require_mod { get { return all_clients_require_mod; } }
-
-        public LuaTable Configuration_options { get { return configuration_options; } }
-        public ListDictionary Configuration { get { return configuration; } }
+        
+        public DataTable Configuration { get { return m_Configuration; } }
         #endregion
 
         /// <summary>
@@ -92,12 +89,12 @@ namespace DSTServerManager.Servers
             reign_of_giants_compatible = (bool?)luaFile[nameof(reign_of_giants_compatible)] ?? false;
             all_clients_require_mod = (bool?)luaFile[nameof(all_clients_require_mod)] ?? false;
 
-            configuration_options = luaFile[nameof(configuration_options)] as LuaTable;
-            if (configuration_options == null) return;
 
-            configuration = luaFile.GetTableDict(configuration_options);
-           
-            foreach (DictionaryEntry de in configuration)
+            LuaTable configuration_options = luaFile[nameof(configuration_options)] as LuaTable;
+            if (configuration_options == null) return;
+            ListDictionary config = luaFile.GetTableDict(configuration_options);
+
+            foreach (DictionaryEntry de in config)
             {
                 var table = luaFile.GetTableDict((LuaTable)de.Value);
 
@@ -109,7 +106,11 @@ namespace DSTServerManager.Servers
                     array[index] = item.Value;
                     index++;
                 }
-                //m_Configuration.Rows.Add(new object[] { 1, de });
+
+                //m_Configuration.Columns.Add("id", typeof(int));
+
+                int count = m_Configuration.Columns.Count;
+                m_Configuration.Rows.Add(new object[] { 1, array[0], array[1], array[2], array[3], array[4] });
             }
 
         }

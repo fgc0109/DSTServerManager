@@ -309,7 +309,16 @@
                                 </DataGrid.Columns>
                             </DataGrid>
                             <TextBox x:Name="textBox_Modifications_CurrentInfo" Margin="5" TextWrapping="Wrap" Background="#FF464646" Foreground="White" IsReadOnly="True" FontFamily="Courier New" Grid.Column="1"/>
-                            <DataGrid Grid.Column="1" Margin="5" Grid.Row="1"/>
+                            <DataGrid x:Name="dataGrid_Modifications_Configura" Grid.Column="1" Margin="5"  CanUserAddRows="False" AutoGenerateColumns="False" Style="{DynamicResource DataGridStyleCenter}" Grid.Row="1">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="{DynamicResource ModInfo_Indx}" Binding="{Binding id}" Width ="80" MinWidth="80" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="{DynamicResource ModInfo_Indx}" Binding="{Binding name}" Width ="80" MinWidth="80" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="{DynamicResource ModInfo_Name}" Binding="{Binding label}" Width ="80" MinWidth="80" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="{DynamicResource ModInfo_Auth}" Binding="{Binding hover}" Width ="80" MinWidth="80" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="{DynamicResource ModInfo_Vern}" Binding="{Binding options}" Width ="40" MinWidth="40" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="{DynamicResource ModInfo_ApiV}" Binding="{Binding default}" Width ="40" MinWidth="40" IsReadOnly="True"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
                         </Grid>
                     </GroupBox>
                     <GroupBox Header="下载新的模组" Margin="5" Grid.Row="1"/>

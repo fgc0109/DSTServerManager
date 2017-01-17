@@ -67,7 +67,8 @@ namespace DSTServerManager
             dataGrid_CloudServer_Connections.SetBinding(DataGrid.SelectedItemProperty, new Binding(nameof(UI.CurrentConn)) { Source = UI });
 
             //当前服务器模组文件信息
-            dataGrid_Modifications_MainInfos.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(UI.Modification)) { Source = UI });
+            dataGrid_Modifications_MainInfos.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(UI.Modifications)) { Source = UI });
+            dataGrid_Modifications_Configura.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(UI.Configuration)) { Source = UI });
         }
 
         #region 获取用户配置文件数据

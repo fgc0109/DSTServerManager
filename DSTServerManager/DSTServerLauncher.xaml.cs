@@ -205,10 +205,10 @@ namespace DSTServerManager
         private void button_Click(object sender, RoutedEventArgs e)
         {
             var test = new ServerModInfo(@"D:\UserFiles\Documents\Klei\DSTTools\mods\workshop-631648169");
-            test.LuaGetModInfo();
+            //test.LuaGetModInfo();
             textBox_Servers_Tab_Log.Text = test.Name;
 
-            UI.Modification.Rows.Add(test.GetItemArray());
+            UI.Modifications.Rows.Add(test.GetItemArray());
         }
 
         private void dataGrid_Modifications_MainInfos_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -224,6 +224,8 @@ namespace DSTServerManager
             modBuilder.Append($"模组介绍:{modData.Description}\r\n");
 
             textBox_Modifications_CurrentInfo.Text = modBuilder.ToString();
+
+            UI.Configuration = modData.Configuration.Copy();
         }
 
         //dataGrid和datatable之间数据直接赋值的示例 不应该使用这种方式

@@ -14,12 +14,18 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lua51", "Lua51\Lua51.vcxpro
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		BuildPart|Any CPU = BuildPart|Any CPU
+		BuildPart|x86 = BuildPart|x86
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E54B8709-26D6-4A25-8222-68BCEBAC3CE7}.BuildPart|Any CPU.ActiveCfg = BuildPart|Any CPU
+		{E54B8709-26D6-4A25-8222-68BCEBAC3CE7}.BuildPart|Any CPU.Build.0 = BuildPart|Any CPU
+		{E54B8709-26D6-4A25-8222-68BCEBAC3CE7}.BuildPart|x86.ActiveCfg = BuildPart|Any CPU
+		{E54B8709-26D6-4A25-8222-68BCEBAC3CE7}.BuildPart|x86.Build.0 = BuildPart|Any CPU
 		{E54B8709-26D6-4A25-8222-68BCEBAC3CE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E54B8709-26D6-4A25-8222-68BCEBAC3CE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E54B8709-26D6-4A25-8222-68BCEBAC3CE7}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -28,6 +34,10 @@ Global
 		{E54B8709-26D6-4A25-8222-68BCEBAC3CE7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E54B8709-26D6-4A25-8222-68BCEBAC3CE7}.Release|x86.ActiveCfg = Release|Any CPU
 		{E54B8709-26D6-4A25-8222-68BCEBAC3CE7}.Release|x86.Build.0 = Release|Any CPU
+		{F55CABBB-4108-4A39-94E1-581FD46DC021}.BuildPart|Any CPU.ActiveCfg = BuildPart|Any CPU
+		{F55CABBB-4108-4A39-94E1-581FD46DC021}.BuildPart|Any CPU.Build.0 = BuildPart|Any CPU
+		{F55CABBB-4108-4A39-94E1-581FD46DC021}.BuildPart|x86.ActiveCfg = BuildPart|Any CPU
+		{F55CABBB-4108-4A39-94E1-581FD46DC021}.BuildPart|x86.Build.0 = BuildPart|Any CPU
 		{F55CABBB-4108-4A39-94E1-581FD46DC021}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F55CABBB-4108-4A39-94E1-581FD46DC021}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F55CABBB-4108-4A39-94E1-581FD46DC021}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -36,7 +46,10 @@ Global
 		{F55CABBB-4108-4A39-94E1-581FD46DC021}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F55CABBB-4108-4A39-94E1-581FD46DC021}.Release|x86.ActiveCfg = Release|Any CPU
 		{F55CABBB-4108-4A39-94E1-581FD46DC021}.Release|x86.Build.0 = Release|Any CPU
+		{0A82CC4C-9A27-461C-8DB0-A65AC6393748}.BuildPart|Any CPU.ActiveCfg = BuildPart|Win32
+		{0A82CC4C-9A27-461C-8DB0-A65AC6393748}.BuildPart|x86.ActiveCfg = BuildPart|Win32
 		{0A82CC4C-9A27-461C-8DB0-A65AC6393748}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{0A82CC4C-9A27-461C-8DB0-A65AC6393748}.Debug|Any CPU.Build.0 = Debug|Win32
 		{0A82CC4C-9A27-461C-8DB0-A65AC6393748}.Debug|x86.ActiveCfg = Debug|Win32
 		{0A82CC4C-9A27-461C-8DB0-A65AC6393748}.Debug|x86.Build.0 = Debug|Win32
 		{0A82CC4C-9A27-461C-8DB0-A65AC6393748}.Release|Any CPU.ActiveCfg = Release|Win32
