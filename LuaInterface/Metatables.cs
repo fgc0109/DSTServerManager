@@ -904,7 +904,7 @@ namespace LuaInterface
                     {
                         extractValue = translator.typeChecker.getExtractor(typeof(LuaTable));
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         Debug.WriteLine("An error occurred during an attempt to retrieve a LuaTable extractor while checking for params array status.");
                     }
@@ -922,7 +922,7 @@ namespace LuaInterface
                     {
                         extractValue = translator.typeChecker.checkType(luaState, currentLuaParam, paramElementType);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         Debug.WriteLine(string.Format("An error occurred during an attempt to retrieve an extractor ({0}) while checking for params array status.", paramElementType.FullName));
                     }

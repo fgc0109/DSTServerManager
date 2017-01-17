@@ -96,8 +96,7 @@ namespace LuaInterface
                     return extractValues[typeof(LuaFunction).TypeHandle.Value.ToInt64()];
                 else if (luatype == LuaTypes.LUA_TNUMBER)
                     return extractValues[typeof(double).TypeHandle.Value.ToInt64()];
-                else
-                    ;//an unsupported type was encountered
+                else return null;
             }
 
             if (LuaDLL.lua_isnumber(luaState, stackPos))

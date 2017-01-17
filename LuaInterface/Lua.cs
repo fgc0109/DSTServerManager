@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Reflection;
 
-[assembly: CLSCompliant(true)]
+//[assembly: CLSCompliant(true)]
 namespace LuaInterface
 {
     /// <summary>
@@ -13,61 +13,57 @@ namespace LuaInterface
     public class Lua : IDisposable
     {
         static string init_luanet =
-            "local metatable = {}									\n" +
-            "local import_type = luanet.import_type							\n" +
-            "local load_assembly = luanet.load_assembly						\n" +
-            "											\n" +
-            "-- Lookup a .NET identifier component.							\n" +
-            "function metatable:__index(key) -- key is e.g. \"Form\"				\n" +
-            "    -- Get the fully-qualified name, e.g. \"System.Windows.Forms.Form\"		\n" +
-            "    local fqn = ((rawget(self,\".fqn\") and rawget(self,\".fqn\") ..			\n" +
-            "		\".\") or \"\") .. key							\n" +
-            "											\n" +
-            "    -- Try to find either a luanet function or a CLR type				\n" +
-            "    local obj = rawget(luanet,key) or import_type(fqn)					\n" +
-            "											\n" +
-            "    -- If key is neither a luanet function or a CLR type, then it is simply		\n" +
-            "    -- an identifier component.							\n" +
-            "    if obj == nil then									\n" +
-            "		-- It might be an assembly, so we load it too.				\n" +
-            "        load_assembly(fqn)								\n" +
-            "        obj = { [\".fqn\"] = fqn }							\n" +
-            "        setmetatable(obj, metatable)							\n" +
-            "    end										\n" +
-            "											\n" +
-            "    -- Cache this lookup								\n" +
-            "    rawset(self, key, obj)								\n" +
-            "    return obj										\n" +
-            "end											\n" +
-            "											\n" +
-            "-- A non-type has been called; e.g. foo = System.Foo()					\n" +
-            "function metatable:__call(...)								\n" +
-            "    error(\"No such type: \" .. rawget(self,\".fqn\"), 2)				\n" +
-            "end											\n" +
-            "											\n" +
-            "-- This is the root of the .NET namespace						\n" +
-            "luanet[\".fqn\"] = false								\n" +
-            "setmetatable(luanet, metatable)							\n" +
-            "											\n" +
-            "-- Preload the mscorlib assembly							\n" +
-            "luanet.load_assembly(\"mscorlib\")							\n";
+            "local metatable = { }                                                                     \n" +
+            "local import_type = luanet.import_type                                                    \n" +
+            "local load_assembly = luanet.load_assembly                                                \n" +
+            "                                                                                          \n" +
+            "-- Lookup a.NET identifier component.                                                     \n" +
+            "function metatable:__index(key) -- key is e.g. \"Form\"                                   \n" +
+            "    -- Get the fully-qualified name, e.g. \"System.Windows.Forms.Form\"                   \n" +
+            "    local fqn = ((rawget(self,\".fqn\") and rawget(self,\".fqn\") ..                      \n" +
+            "        \".\") or \"\") .. key                                                            \n" +
+            "                                                                                          \n" +
+            "    -- Try to find either a luanet function or a CLR type                                 \n" +
+            "    local obj = rawget(luanet, key) or import_type(fqn)                                   \n" +
+            "                                                                                          \n" +
+            "    -- If key is neither a luanet function or a CLR type, then it is simply               \n" +
+            "    --an identifier component.                                                            \n" +
+            "    if obj == nil then                                                                    \n" +
+            "        -- It might be an assembly, so we load it too.                                    \n" +
+            "        load_assembly(fqn)                                                                \n" +
+            "        obj = { [\".fqn\"] = fqn }                                                        \n" +
+            "        setmetatable(obj, metatable)                                                      \n" +
+            "    end                                                                                   \n" +
+            "                                                                                          \n" +
+            "    -- Cache this lookup                                                                  \n" +
+            "    rawset(self, key, obj)                                                                \n" +
+            "    return obj                                                                            \n" +
+            "end                                                                                       \n" +
+            "                                                                                          \n" +
+            "-- A non - type has been called; e.g.foo = System.Foo()                                   \n" +
+            "function metatable:__call(...)                                                            \n" +
+            "    error(\"No such type: \" .. rawget(self,\".fqn\"), 2)                                 \n" +
+            "end                                                                                       \n" +
+            "                                                                                          \n" +
+            "-- This is the root of the .NET namespace                                                 \n" +
+            "luanet[\".fqn\"] = false                                                                  \n" +
+            "setmetatable(luanet, metatable)                                                           \n" +
+            "                                                                                          \n" +
+            "-- Preload the mscorlib assembly                                                          \n" +
+            "luanet.load_assembly(\"mscorlib\")                                                        \n";
 
-        /*readonly */
+        private bool _StatePassed;
+
         IntPtr luaState;
         ObjectTranslator translator;
-
-        LuaCSFunction panicCallback, lockCallback, unlockCallback;
-
-        /// <summary>
-        /// Used to ensure multiple .net threads all get serialized by this single lock for access to the lua stack/objects
-        /// </summary>
-        object luaLock = new object();
+        LuaCSFunction panicCallback = null;
 
         public Lua()
         {
-            luaState = LuaDLL.luaL_newstate();  // steffenj: Lua 5.1.1 API change (lua_open is gone)
-                                                //LuaDLL.luaopen_base(luaState);	// steffenj: luaopen_* no longer used
-            LuaDLL.luaL_openlibs(luaState);     // steffenj: Lua 5.1.1 API change (luaopen_base is gone, just open all libs right here)
+            luaState = LuaDLL.luaL_newstate();
+            translator = new ObjectTranslator(this, luaState);
+
+            LuaDLL.luaL_openlibs(luaState);
             LuaDLL.lua_pushstring(luaState, "LUAINTERFACE LOADED");
             LuaDLL.lua_pushboolean(luaState, true);
             LuaDLL.lua_settable(luaState, (int)LuaIndexes.LUA_REGISTRYINDEX);
@@ -79,24 +75,14 @@ namespace LuaInterface
             LuaDLL.lua_getglobal(luaState, "getmetatable");
             LuaDLL.lua_settable(luaState, -3);
             LuaDLL.lua_replace(luaState, (int)LuaIndexes.LUA_GLOBALSINDEX);
-            translator = new ObjectTranslator(this, luaState);
             LuaDLL.lua_replace(luaState, (int)LuaIndexes.LUA_GLOBALSINDEX);
-            LuaDLL.luaL_dostring(luaState, Lua.init_luanet);	// steffenj: lua_dostring renamed to luaL_dostring
+            LuaDLL.luaL_dostring(luaState, Lua.init_luanet);
 
-            // We need to keep this in a managed reference so the delegate doesn't get garbage collected
             panicCallback = new LuaCSFunction(PanicCallback);
             LuaDLL.lua_atpanic(luaState, panicCallback);
-
-            //LuaDLL.lua_atlock(luaState, lockCallback = new LuaCSFunction(LockCallback));
-            //LuaDLL.lua_atunlock(luaState, unlockCallback = new LuaCSFunction(UnlockCallback));
         }
 
-        private bool _StatePassed;
-
-        /*
-    	 * CAUTION: LuaInterface.Lua instances can't share the same lua state! 
-    	 */
-        public Lua(Int64 luaState)
+        public Lua(long luaState)
         {
             IntPtr lState = new IntPtr(luaState);
             LuaDLL.lua_pushstring(lState, "LUAINTERFACE LOADED");
@@ -122,57 +108,22 @@ namespace LuaInterface
                 LuaDLL.lua_replace(lState, (int)LuaIndexes.LUA_GLOBALSINDEX);
                 translator = new ObjectTranslator(this, this.luaState);
                 LuaDLL.lua_replace(lState, (int)LuaIndexes.LUA_GLOBALSINDEX);
-                LuaDLL.luaL_dostring(lState, Lua.init_luanet);  // steffenj: lua_dostring renamed to luaL_dostring
+                LuaDLL.luaL_dostring(lState, Lua.init_luanet);
             }
-
             _StatePassed = true;
-        }
-
-        /// <summary>
-        /// Called for each lua_lock call 
-        /// </summary>
-        /// <param name="luaState"></param>
-        /// Not yet used
-        int LockCallback(IntPtr luaState)
-        {
-            // Monitor.Enter(luaLock);
-
-            return 0;
-        }
-
-        /// <summary>
-        /// Called for each lua_unlock call 
-        /// </summary>
-        /// <param name="luaState"></param>
-        /// Not yet used
-        int UnlockCallback(IntPtr luaState)
-        {
-            // Monitor.Exit(luaLock);
-
-            return 0;
         }
 
         public void Close()
         {
-            if (_StatePassed)
-                return;
-
-            if (luaState != IntPtr.Zero)
-                LuaDLL.lua_close(luaState);
-            //luaState = IntPtr.Zero; <- suggested by Christopher Cebulski http://luaforge.net/forum/forum.php?thread_id=44593&forum_id=146
+            if (_StatePassed) return;
+            if (luaState != IntPtr.Zero) LuaDLL.lua_close(luaState);
         }
 
         static int PanicCallback(IntPtr luaState)
         {
-            // string desc = LuaDLL.lua_tostring(luaState, 1);
             string reason = String.Format("unprotected error in call to Lua API ({0})", LuaDLL.lua_tostring(luaState, -1));
-
-            //        lua_tostring(L, -1);
-
             throw new LuaException(reason);
         }
-
-
 
         /// <summary>
         /// Assuming we have a Lua error string sitting on the stack, throw a C# exception out to the user's app
@@ -192,8 +143,6 @@ namespace LuaInterface
             throw new LuaScriptException(err.ToString(), "");
         }
 
-
-
         /// <summary>
         /// Convert C# exceptions into Lua errors
         /// </summary>
@@ -210,8 +159,7 @@ namespace LuaInterface
 
                 return 1;
             }
-            else
-                return 0;
+            else return 0;
         }
 
         private bool executing;
@@ -262,11 +210,11 @@ namespace LuaInterface
             return result;
         }
 
-
-        /*
-		 * Excutes a Lua chunk and returns all the chunk's return
-		 * values in an array
-		 */
+        /// <summary>
+        /// Excutes a Lua chunk and returns all the chunk's return values in an array
+        /// </summary>
+        /// <param name="chunk"></param>
+        /// <returns></returns>
         public object[] DoString(string chunk)
         {
             int oldTop = LuaDLL.lua_gettop(luaState);
@@ -277,15 +225,12 @@ namespace LuaInterface
                 {
                     if (LuaDLL.lua_pcall(luaState, 0, -1, 0) == 0)
                         return translator.popValues(luaState, oldTop);
-                    else
-                        ThrowExceptionFromError(oldTop);
+                    else ThrowExceptionFromError(oldTop);
                 }
                 finally { executing = false; }
             }
-            else
-                ThrowExceptionFromError(oldTop);
-
-            return null;            // Never reached - keeps compiler happy
+            else ThrowExceptionFromError(oldTop);
+            return null;
         }
 
         /// <summary>
@@ -304,21 +249,19 @@ namespace LuaInterface
                 {
                     if (LuaDLL.lua_pcall(luaState, 0, -1, 0) == 0)
                         return translator.popValues(luaState, oldTop);
-                    else
-                        ThrowExceptionFromError(oldTop);
+                    else ThrowExceptionFromError(oldTop);
                 }
                 finally { executing = false; }
             }
-            else
-                ThrowExceptionFromError(oldTop);
-
-            return null;            // Never reached - keeps compiler happy
+            else ThrowExceptionFromError(oldTop);
+            return null;
         }
 
-        /*
-		 * Excutes a Lua file and returns all the chunk's return
-		 * values in an array
-		 */
+        /// <summary>
+        /// Excutes a Lua file and returns all the chunk's return values in an array
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
         public object[] DoFile(string fileName)
         {
             int oldTop = LuaDLL.lua_gettop(luaState);
@@ -329,14 +272,11 @@ namespace LuaInterface
                 {
                     if (LuaDLL.lua_pcall(luaState, 0, -1, 0) == 0)
                         return translator.popValues(luaState, oldTop);
-                    else
-                        ThrowExceptionFromError(oldTop);
+                    else ThrowExceptionFromError(oldTop);
                 }
                 finally { executing = false; }
             }
-            else
-                ThrowExceptionFromError(oldTop);
-
+            else ThrowExceptionFromError(oldTop);
             return null;            // Never reached - keeps compiler happy
         }
 
